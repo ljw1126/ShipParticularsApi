@@ -1,0 +1,6 @@
+@ShipParticularsApi_HostAddress = http://localhost:5222
+
+GET {{ShipParticularsApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
