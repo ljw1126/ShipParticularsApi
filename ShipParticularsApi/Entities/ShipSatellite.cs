@@ -24,14 +24,14 @@ namespace ShipParticularsApi.Entities
 
         [Column("SATELLITE_ID")]
         [MaxLength(256)]
-        public string SatelliteId { get; set; }
+        public string? SatelliteId { get; set; }
 
         [Column("IS_USE_SATELLITE")]
         public bool IsUseSatellite { get; set; }
 
         [Column("CREATE_USER_ID")]
         [MaxLength(200)]
-        public string CreateUserId { get; set; }
+        public string? CreateUserId { get; set; }
 
         [Column("CREATE_DATE_TIME")]
         public DateTime CreateDateTime { get; set; }
