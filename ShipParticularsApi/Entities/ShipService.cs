@@ -19,7 +19,7 @@ namespace ShipParticularsApi.Entities
 
         [Column("SERVICE_NAME")]
         [MaxLength(100)]
-        public string ServiceName { get; set; }
+        public string? ServiceName { get; set; }
 
         [Column("IS_COMPLETED")]
         public bool IsCompleted { get; set; }

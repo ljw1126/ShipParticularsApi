@@ -28,15 +28,15 @@ namespace ShipParticularsApi.Entities
 
         [Column("SHIP_TYPE")]
         [MaxLength(100)]
-        public string ShipType { get; set; }
+        public string? ShipType { get; set; }
 
         [Column("SHIP_CODE")]
         [MaxLength(100)]
-        public string ShipCode { get; set; }
+        public string? ShipCode { get; set; }
 
         [Column("EXTERNAL_SHIP_ID")]
         [MaxLength(36)]
-        public string ExternalShipId { get; set; }
+        public string? ExternalShipId { get; set; }
 
         [Column("IS_USE_KTSAT")]
         public bool IsUseKtsat { get; set; }
@@ -47,10 +47,10 @@ namespace ShipParticularsApi.Entities
         [Column("IS_USE_AIS")]
         public bool IsUseAis { get; set; }
 
-        public virtual ICollection<ReplaceShipName>? ReplaceShipNames { get; set; }
-        public virtual ICollection<ShipModelTest>? ShipModelTests { get; set; }
-        public virtual ICollection<ShipSatellite>? ShipSatellites { get; set; }
+        public virtual ReplaceShipName? ReplaceShipName { get; set; }
+        public virtual ShipModelTest? ShipModelTest { get; set; }
+        public virtual ShipSatellite? ShipSatellite { get; set; }
         public virtual ICollection<ShipService>? ShipServices { get; set; }
-        public virtual ICollection<SkTelinkCompanyShip>? SkTelinkCompanyShips { get; set; }
+        public virtual SkTelinkCompanyShip? SkTelinkCompanyShip { get; set; }
     }
 }
