@@ -39,13 +39,13 @@ namespace ShipParticularsApi.Entities
         public string? ExternalShipId { get; set; }
 
         [Column("IS_USE_KTSAT")]
-        public bool IsUseKtsat { get; set; }
+        public bool? IsUseKtsat { get; set; }
 
         [Column("IS_SERVICE")]
-        public bool IsService { get; set; }
+        public bool? IsService { get; set; }
 
         [Column("IS_USE_AIS")]
-        public bool IsUseAis { get; set; }
+        public bool? IsUseAis { get; set; }
 
         public virtual ReplaceShipName? ReplaceShipName { get; set; }
         public virtual ShipModelTest? ShipModelTest { get; set; }
