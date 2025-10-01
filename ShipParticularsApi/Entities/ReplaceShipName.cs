@@ -15,7 +15,7 @@ namespace ShipParticularsApi.Entities
         [MaxLength(10)]
         public string ShipKey { get; set; }
 
-        public ShipInfo ShipInfo { get; set; }
+        public virtual ShipInfo ShipInfo { get; set; }
 
         [Column("REPLACED_SHIP_NAME")]
         public string ReplacedShipName { get; set; }
