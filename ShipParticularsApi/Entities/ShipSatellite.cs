@@ -38,7 +38,7 @@ namespace ShipParticularsApi.Entities
 
         [Column("UPDATE_USER_ID")]
         [MaxLength(200)]
-        public string? UPDATE_USER_ID { get; set; }
+        public string? UpdateUserId { get; set; }
 
         [Column("UPDATE_DATE_TIME")]
         public DateTime? UpdateDateTime { get; set; }
