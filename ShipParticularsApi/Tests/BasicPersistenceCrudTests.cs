@@ -5,6 +5,8 @@ using ShipParticularsApi.Entities;
 using Xunit;
 using Xunit.Abstractions;
 
+using static ShipParticularsApi.Tests.Builders.ShipInfoTestBuilder;
+
 namespace ShipParticularsApi.Tests
 {
     public class BasicPersistenceCrudTests : IDisposable
@@ -40,13 +42,9 @@ namespace ShipParticularsApi.Tests
             // Arrange
             await using var context = CreateContext();
 
-            var newShip = new ShipInfo
-            {
-                ShipKey = "CREATE01",
-                ShipName = "New Vessel",
-                Callsign = "CALL01",
-                ShipType = "-"
-            };
+            ShipInfo newShip = ShipInfo()
+                .WithShipKey("CREATE01")
+                .Build();
 
             context.ShipInfos.Add(newShip);
             await context.SaveChangesAsync();
@@ -61,12 +59,9 @@ namespace ShipParticularsApi.Tests
             // Arrange
             await using var context = CreateContext();
 
-            var newShip = new ShipInfo
-            {
-                ShipKey = "CREATE01",
-                ShipName = "New Vessel",
-                Callsign = "CALL01"
-            };
+            ShipInfo newShip = ShipInfo()
+                .WithShipKey("CREATE01")
+                .Build();
 
             context.ShipInfos.Add(newShip);
             await context.SaveChangesAsync();
@@ -87,13 +82,9 @@ namespace ShipParticularsApi.Tests
             // Arrange
             await using var context = CreateContext();
 
-            var newShip = new ShipInfo
-            {
-                ShipKey = "CREATE01",
-                ShipName = "New Vessel",
-                Callsign = "CALL01",
-                ShipType = "-"
-            };
+            ShipInfo newShip = ShipInfo()
+                .WithShipKey("CREATE01")
+                .Build();
 
             context.ShipInfos.Add(newShip);
             await context.SaveChangesAsync();
@@ -125,21 +116,17 @@ namespace ShipParticularsApi.Tests
         {
             //Arrange
             await using var context = CreateContext();
-            context.ShipInfos.Add(new ShipInfo
-            {
-                ShipKey = "CREATE01",
-                ShipName = "ALPHA",
-                Callsign = "CALL01",
-                IsService = true
-            });
+            context.ShipInfos.Add(ShipInfo()
+                .WithShipKey("CREATE01")
+                .WithShipName("ALPHA")
+                .WithIsService(true)
+                .Build());
 
-            context.ShipInfos.Add(new ShipInfo
-            {
-                ShipKey = "CREATE02",
-                ShipName = "BETA",
-                Callsign = "CALL02",
-                IsService = false
-            });
+            context.ShipInfos.Add(ShipInfo()
+                .WithShipKey("CREATE02")
+                .WithShipName("BETA")
+                .WithIsService(false)
+                .Build());
 
             await context.SaveChangesAsync();
 
@@ -157,8 +144,7 @@ namespace ShipParticularsApi.Tests
         {
             // Arrange
             await using var context = CreateContext();
-            var originalShip = new ShipInfo { ShipKey = "UPDATE01", ShipName = "Old Name", Callsign = "CALL01" };
-            context.ShipInfos.Add(originalShip);
+            context.ShipInfos.Add(ShipInfo().WithShipKey("UPDATE01").WithShipName("Old Name").Build());
             await context.SaveChangesAsync();
 
             // Act
@@ -180,8 +166,8 @@ namespace ShipParticularsApi.Tests
         {
             // Arrange
             await using var context = CreateContext();
-            var originalShip = new ShipInfo { ShipKey = "DELETE01", ShipName = "To Delete", Callsign = "CALL01" };
-            context.ShipInfos.Add(originalShip);
+
+            context.ShipInfos.Add(ShipInfo().WithShipKey("DELETE01").Build());
             await context.SaveChangesAsync();
 
             // Act

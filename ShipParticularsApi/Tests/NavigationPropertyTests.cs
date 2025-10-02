@@ -5,6 +5,8 @@ using ShipParticularsApi.Entities;
 using Xunit;
 using Xunit.Abstractions;
 
+using static ShipParticularsApi.Tests.Builders.ShipInfoTestBuilder;
+
 namespace ShipParticularsApi.Tests
 {
     public class NavigationPropertyTests
@@ -43,21 +45,17 @@ namespace ShipParticularsApi.Tests
             // Arrange
             await using (var arrangeContext = CreateContext())
             {
-                List<ShipService> shipServices = [];
-                shipServices.Add(new ShipService { ShipKey = "SHIP01", ServiceName = "cctv", IsCompleted = true });
-                shipServices.Add(new ShipService { ShipKey = "SHIP01", ServiceName = "eu-mrv", IsCompleted = true });
-                shipServices.Add(new ShipService { ShipKey = "SHIP01", ServiceName = "noon-report", IsCompleted = false });
+                ShipService cctv = new() { ServiceName = "cctv", IsCompleted = true };
+                ShipService euMrv = new() { ServiceName = "eu-mrv", IsCompleted = true };
+                ShipService noonReport = new() { ServiceName = "noon-report", IsCompleted = false };
 
-                var shipInfo = new ShipInfo
-                {
-                    ShipKey = "SHIP01",
-                    ShipName = "New Vessel",
-                    Callsign = "CALL01",
-                    ReplaceShipName = new ReplaceShipName { ShipKey = "SHIP01", ReplacedShipName = "Next Vessel" },
-                    ShipServices = shipServices
-                };
+                ReplaceShipName replaceShipName = new() { ReplacedShipName = "Next Vessel" };
 
-                arrangeContext.ShipInfos.Add(shipInfo);
+                arrangeContext.ShipInfos.Add(ShipInfo()
+                    .WithShipKey("SHIP01")
+                    .WithReplaceShipName(replaceShipName)
+                    .WithShipServices(cctv, euMrv, noonReport)
+                    .Build());
                 await arrangeContext.SaveChangesAsync();
             }
 
