@@ -1,11 +1,12 @@
 ﻿using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using ShipParticularsApi.Contexts;
-using ShipParticularsApi.Entities;
 using Xunit;
 using Xunit.Abstractions;
-
+using static ShipParticularsApi.Tests.Builders.ReplaceShipNameTestBuilder;
 using static ShipParticularsApi.Tests.Builders.ShipInfoTestBuilder;
+using static ShipParticularsApi.Tests.Builders.ShipServiceTestBuilder;
+
 
 namespace ShipParticularsApi.Tests
 {
@@ -45,16 +46,14 @@ namespace ShipParticularsApi.Tests
             // Arrange
             await using (var arrangeContext = CreateContext())
             {
-                ShipService cctv = new() { ServiceName = "cctv", IsCompleted = true };
-                ShipService euMrv = new() { ServiceName = "eu-mrv", IsCompleted = true };
-                ShipService noonReport = new() { ServiceName = "noon-report", IsCompleted = false };
-
-                ReplaceShipName replaceShipName = new() { ReplacedShipName = "Next Vessel" };
-
                 arrangeContext.ShipInfos.Add(ShipInfo()
                     .WithShipKey("SHIP01")
-                    .WithReplaceShipName(replaceShipName)
-                    .WithShipServices(cctv, euMrv, noonReport)
+                    .WithReplaceShipName(ReplaceShipName().WithReplaceShipName("Next Vessel"))
+                    .WithShipServices(
+                        ShipService().WithServiceName("cctv").WithIsCompleted(true),
+                        ShipService().WithServiceName("eu-mrv").WithIsCompleted(true),
+                        ShipService().WithServiceName("noon-report").WithIsCompleted(false)
+                    )
                     .Build());
                 await arrangeContext.SaveChangesAsync();
             }
