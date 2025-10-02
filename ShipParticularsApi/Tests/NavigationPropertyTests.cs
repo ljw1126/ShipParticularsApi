@@ -9,7 +9,7 @@ using static ShipParticularsApi.Tests.Builders.ShipInfoTestBuilder;
 
 namespace ShipParticularsApi.Tests
 {
-    public class NavigationPropertyTests
+    public class NavigationPropertyTests : IDisposable
     {
         private readonly SqliteConnection _connection;
         private readonly DbContextOptions<ShipParticularsContext> _options;
@@ -40,7 +40,7 @@ namespace ShipParticularsApi.Tests
         ShipParticularsContext CreateContext() => new(_options);
 
         [Fact]
-        public async Task Test2()
+        public async Task SplitQueryTest()
         {
             // Arrange
             await using (var arrangeContext = CreateContext())
