@@ -86,9 +86,16 @@ namespace ShipParticularsApi.Tests.Builders
             return this;
         }
 
+        // NOTE : deprecated
         public ShipInfoTestBuilder WithReplaceShipName(ReplaceShipName replaceShipName)
         {
             _ReplaceShipName = replaceShipName;
+            return this;
+        }
+
+        public ShipInfoTestBuilder WithReplaceShipName(ReplaceShipNameTestBuilder builder)
+        {
+            _ReplaceShipName = builder.Build();
             return this;
         }
 
@@ -104,11 +111,22 @@ namespace ShipParticularsApi.Tests.Builders
             return this;
         }
 
+        // NOTE : deprecated
         public ShipInfoTestBuilder WithShipServices(params ShipService[] shipServices)
         {
             foreach (var item in shipServices)
             {
                 _ShipServices.Add(item);
+            }
+
+            return this;
+        }
+
+        public ShipInfoTestBuilder WithShipServices(params ShipServiceTestBuilder[] builders)
+        {
+            foreach (var item in builders)
+            {
+                _ShipServices.Add(item.Build());
             }
 
             return this;
