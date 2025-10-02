@@ -62,16 +62,14 @@ namespace ShipParticularsApi.Tests
             // Act, Assert
             await using (var assertContext = CreateContext())
             {
-                var retrevedShipInfo = await assertContext.ShipInfos
+                var savedShipInfo = await assertContext.ShipInfos
                     .Include(s => s.ReplaceShipName)
                     .Include(s => s.ShipServices)
                     .AsSplitQuery()
                     .SingleAsync(s => s.ShipKey == "SHIP01");
-                var services = retrevedShipInfo.ShipServices;
-                var replaceShipName = retrevedShipInfo.ReplaceShipName;
 
-                Assert.NotNull(services);
-                Assert.NotNull(replaceShipName);
+                Assert.NotNull(savedShipInfo.ShipServices);
+                Assert.NotNull(savedShipInfo.ReplaceShipName);
             }
         }
     }
