@@ -27,8 +27,7 @@ namespace ShipParticularsApi.Entities
         public string ShipName { get; set; }
 
         [Column("SHIP_TYPE")]
-        [MaxLength(100)]
-        public string? ShipType { get; set; }
+        public ShipTypes? ShipType { get; set; }
 
         [Column("SHIP_CODE")]
         [MaxLength(100)]
@@ -50,7 +49,7 @@ namespace ShipParticularsApi.Entities
         public virtual ReplaceShipName? ReplaceShipName { get; set; }
         public virtual ShipModelTest? ShipModelTest { get; set; }
         public virtual ShipSatellite? ShipSatellite { get; set; }
-        public virtual ICollection<ShipService>? ShipServices { get; set; }
+        public virtual ICollection<ShipService>? ShipServices { get; set; } = [];
         public virtual SkTelinkCompanyShip? SkTelinkCompanyShip { get; set; }
     }
 }

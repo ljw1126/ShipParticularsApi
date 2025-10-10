@@ -24,11 +24,11 @@ namespace ShipParticularsApi.Contexts
                 .HasPrincipalKey<ShipInfo>(parent => parent.ShipKey);
             });
 
-            // TODO. Enum 사용
             modelBuilder.Entity<ShipInfo>(entity =>
             {
                 entity.Property(p => p.ShipType)
-                    .HasDefaultValue("-");
+                    .HasDefaultValue(ShipTypes.Default)
+                    .HasConversion<ShipTypesToStringConverter>();
 
                 entity.Property(p => p.IsUseKtsat)
                     .HasDefaultValue(false);
@@ -65,6 +65,9 @@ namespace ShipParticularsApi.Contexts
                 .WithMany(parent => parent.ShipServices)
                 .HasForeignKey(child => child.ShipKey)
                 .HasPrincipalKey(parent => parent.ShipKey);
+
+                entity.Property(p => p.ServiceName)
+                    .HasConversion<ServiceNameToStringConverter>();
 
                 entity.Property(p => p.IsCompleted)
                     .HasDefaultValue(false);

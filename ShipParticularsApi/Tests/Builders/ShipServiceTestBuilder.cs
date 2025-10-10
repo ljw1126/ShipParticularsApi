@@ -6,7 +6,7 @@ namespace ShipParticularsApi.Tests.Builders
     {
         private long _Id;
         private string _ShipKey;
-        private string? _ServiceName;
+        private ServiceNameTypes? _ServiceName;
         private bool _IsCompleted;
 
         public static ShipServiceTestBuilder ShipService()
@@ -26,7 +26,7 @@ namespace ShipParticularsApi.Tests.Builders
             return this;
         }
 
-        public ShipServiceTestBuilder WithServiceName(string serviceName)
+        public ShipServiceTestBuilder WithServiceName(ServiceNameTypes serviceName)
         {
             _ServiceName = serviceName;
             return this;

@@ -8,7 +8,7 @@ namespace ShipParticularsApi.Tests.Builders
         private string _ShipKey;
         private string _Callsign = "TEST_CALLSIGN";
         private string _ShipName = "TEST_SHIPNAME";
-        private string? _ShipType;
+        private ShipTypes? _ShipType;
         private string? _ShipCode;
         private string? _ExternalShipId;
         private bool? _IsUseKtsat;
@@ -50,7 +50,7 @@ namespace ShipParticularsApi.Tests.Builders
             return this;
         }
 
-        public ShipInfoTestBuilder WithShipType(string shipType)
+        public ShipInfoTestBuilder WithShipType(ShipTypes shipType)
         {
             _ShipType = shipType;
             return this;
