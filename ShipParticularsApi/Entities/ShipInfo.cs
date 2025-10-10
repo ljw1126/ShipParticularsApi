@@ -103,5 +103,15 @@ namespace ShipParticularsApi.Entities
             ShipCode = param.ShipCode;
             return this;
         }
+
+        public void EnableAis()
+        {
+            IsUseAis = true;
+        }
+
+        public void DisableAis()
+        {
+            IsUseAis = false;
+        }
     }
 }
