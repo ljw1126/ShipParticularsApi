@@ -1,4 +1,5 @@
-﻿using Moq;
+﻿using FluentAssertions;
+using Moq;
 using ShipParticularsApi.Entities;
 using ShipParticularsApi.Services;
 using Xunit;
@@ -69,7 +70,7 @@ namespace ShipParticularsApi.Tests.Services
             _mockShipServiceRepository.Verify(e => e.GetByShipKeyAndServiceNameAsync(
                     It.IsAny<string>(),
                     It.IsAny<ServiceNameTypes>()
-                ), Times.Never);
+                ), Times.Once);
             _mockShipInfoRepository.Verify(e => e.UpsertAsync(It.Is<ShipInfo>(
                     s => s.ShipType == ShipTypes.Fishing && s.ShipKey == param.ShipKey
                 )), Times.Once);
@@ -80,6 +81,107 @@ namespace ShipParticularsApi.Tests.Services
 
         // GPS Toggle = false 인 경우에도 SHIP_SERVICE 조회 필요
         // GPS Toggle 관련 SERVICE_NAME = "kt-sat"
+
+        [Fact]
+        public async Task Insert_new_shipInfo_with_ais_toggle_on()
+        {
+            // Arrange
+            var param = new ShipParticularsParam
+            {
+                IsAisToggleOn = false,
+                IsGPSToggleOn = false,
+                ShipKey = "NEW_SHIP_KEY",
+                Callsign = "NEW_CALLSIGN",
+                ShipName = "NEW_SHIP_NAME",
+                ShipType = "FISHING",
+                ShipCode = "NEW_SHIP_CODE"
+            };
+
+            _mockShipInfoRepository
+                .Setup(e => e.GetByShipKeyAsync(param.ShipKey))
+                .ReturnsAsync((ShipInfo?)null);
+
+            _mockShipServiceRepository
+               .Setup(e => e.GetByShipKeyAndServiceNameAsync(param.ShipKey, ServiceNameTypes.SatAis))
+               .ReturnsAsync((ShipService?)null);
+
+            _mockShipInfoRepository
+                .Setup(e => e.UpsertAsync(It.IsAny<ShipInfo>()))
+                .ReturnsAsync((ShipInfo entity) =>
+                {
+                    entity.Id = 1L;
+                    return entity;
+                });
+
+            // Act
+            await _sut.Process(param);
+
+            // Assert
+            _mockShipServiceRepository.Verify(e => e.GetByShipKeyAndServiceNameAsync(
+                    It.IsAny<string>(),
+                    It.IsAny<ServiceNameTypes>()
+                ), Times.Once);
+            _mockShipInfoRepository.Verify(e => e.UpsertAsync(It.Is<ShipInfo>(
+                    s => s.ShipType == ShipTypes.Fishing && s.ShipKey == param.ShipKey
+                )), Times.Once);
+        }
+
+        [Fact]
+        public async Task Case2_1()
+        {
+            // Arrange
+            var param = new ShipParticularsParam
+            {
+                IsAisToggleOn = true,
+                IsGPSToggleOn = false,
+                ShipKey = "NEW_SHIP_KEY",
+                Callsign = "NEW_CALLSIGN",
+                ShipName = "NEW_SHIP_NAME",
+                ShipType = "FISHING",
+                ShipCode = "NEW_SHIP_CODE"
+            };
+
+            _mockShipInfoRepository
+                .Setup(e => e.GetByShipKeyAsync(param.ShipKey))
+                .ReturnsAsync((ShipInfo?)null);
+
+            _mockShipServiceRepository
+                .Setup(e => e.GetByShipKeyAndServiceNameAsync(param.ShipKey, ServiceNameTypes.SatAis))
+                .ReturnsAsync((ShipService?)null);
+
+            ShipInfo capturedEntity = null;
+            _mockShipInfoRepository
+                .Setup(e => e.UpsertAsync(It.IsAny<ShipInfo>()))
+                .ReturnsAsync((ShipInfo entity) =>
+                {
+                    entity.Id = 1L;
+                    var aisService = entity.ShipServices.FirstOrDefault();
+                    if (aisService != null)
+                    {
+                        aisService.Id = 1L;
+                    }
+
+                    capturedEntity = entity;
+                    return entity;
+                });
+
+            // Act
+            await _sut.Process(param);
+
+            // Assert
+            _mockShipInfoRepository.Verify(e => e.UpsertAsync(It.IsAny<ShipInfo>()), Times.Once);
+
+            capturedEntity.Should().NotBeNull();
+            capturedEntity.IsUseAis.Should().BeTrue();
+
+            capturedEntity.ShipServices.Should().HaveCount(1);
+            capturedEntity.ShipServices.Should().ContainSingle()
+                .Which.Should().Match<ShipService>(s =>
+                    s.Id == 1L &&
+                    s.ServiceName == ServiceNameTypes.SatAis
+            );
+        }
+
 
         public class ShipParticularsParam
         {

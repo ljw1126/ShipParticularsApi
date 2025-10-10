@@ -22,11 +22,25 @@ namespace ShipParticularsApi.Services
 
             if (param.IsAisToggleOn)
             {
-                ShipService aisService = await shipServiceRepository.GetByShipKeyAndServiceNameAsync(
-                    param.ShipKey,
-                    ServiceNameTypes.SatAis
+                ShipService existingAisService = await shipServiceRepository.GetByShipKeyAndServiceNameAsync(
+                   param.ShipKey,
+                   ServiceNameTypes.SatAis
                 );
-                // biz logic
+
+                if (existingAisService == null)
+                {
+                    entityToProcess.ShipServices.Add(ShipService.of(param.ShipKey, ServiceNameTypes.SatAis));
+                    entityToProcess.EnableAis();
+                }
+            }
+            else
+            {
+                ShipService existingAisService = await shipServiceRepository.GetByShipKeyAndServiceNameAsync(
+                   param.ShipKey,
+                   ServiceNameTypes.SatAis
+                );
+
+                // do something
             }
 
             if (param.IsGPSToggleOn)
