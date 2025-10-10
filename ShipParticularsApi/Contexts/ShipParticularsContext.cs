@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ShipParticularsApi.Entities;
+using ShipParticularsApi.ValueConverters;
 
 namespace ShipParticularsApi.Contexts
 {

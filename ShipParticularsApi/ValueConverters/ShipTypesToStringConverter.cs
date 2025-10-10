@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using ShipParticularsApi.Entities;
 
-namespace ShipParticularsApi.Entities
+namespace ShipParticularsApi.ValueConverters
 {
     public class ShipTypesToStringConverter : ValueConverter<ShipTypes, string>
     {

@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using ShipParticularsApi.Entities;
 
-namespace ShipParticularsApi.Entities
+namespace ShipParticularsApi.ValueConverters
 {
     public class ServiceNameToStringConverter : ValueConverter<ServiceNameTypes, string>
     {
@@ -32,7 +33,7 @@ namespace ShipParticularsApi.Entities
             };
         }
 
-        private static ServiceNameTypes StringToServiceNameType(String value)
+        private static ServiceNameTypes StringToServiceNameType(string value)
         {
             return value switch
             {
