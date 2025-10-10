@@ -27,6 +27,7 @@ namespace ShipParticularsApi.Entities
         public string ShipName { get; set; }
 
         [Column("SHIP_TYPE")]
+        [MaxLength(100)]
         public ShipTypes? ShipType { get; set; }
 
         [Column("SHIP_CODE")]
