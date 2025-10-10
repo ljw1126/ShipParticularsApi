@@ -61,6 +61,7 @@ namespace ShipParticularsApi.Tests
 
             ShipInfo newShip = ShipInfo()
                 .WithShipKey("CREATE01")
+                .WithShipType(ShipTypes.Fishing)
                 .Build();
 
             context.ShipInfos.Add(newShip);
@@ -72,7 +73,7 @@ namespace ShipParticularsApi.Tests
             // Assert
             Assert.Same(newShip, savedShip);
             Assert.Equal(1, savedShip.Id);
-            Assert.Equal("-", savedShip.ShipType);
+            Assert.Equal(ShipTypes.Fishing, savedShip.ShipType);
             Assert.True(savedShip.IsService);
         }
 

@@ -50,9 +50,9 @@ namespace ShipParticularsApi.Tests
                     .WithShipKey("SHIP01")
                     .WithReplaceShipName(ReplaceShipName().WithReplaceShipName("Next Vessel"))
                     .WithShipServices(
-                        ShipService().WithServiceName("cctv").WithIsCompleted(true),
-                        ShipService().WithServiceName("eu-mrv").WithIsCompleted(true),
-                        ShipService().WithServiceName("noon-report").WithIsCompleted(false)
+                        ShipService().WithServiceName(Entities.ServiceNameTypes.Cctv).WithIsCompleted(true),
+                        ShipService().WithServiceName(Entities.ServiceNameTypes.EuMrv).WithIsCompleted(true),
+                        ShipService().WithServiceName(Entities.ServiceNameTypes.NoonReport).WithIsCompleted(false)
                     )
                     .Build());
                 await arrangeContext.SaveChangesAsync();
