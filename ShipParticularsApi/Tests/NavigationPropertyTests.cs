@@ -1,4 +1,5 @@
-﻿using Microsoft.Data.Sqlite;
+﻿using FluentAssertions;
+using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using ShipParticularsApi.Contexts;
 using Xunit;
@@ -67,8 +68,12 @@ namespace ShipParticularsApi.Tests
                     .AsSplitQuery()
                     .SingleAsync(s => s.ShipKey == "SHIP01");
 
-                Assert.NotNull(savedShipInfo.ShipServices);
-                Assert.NotNull(savedShipInfo.ReplaceShipName);
+                var shipServices = savedShipInfo.ShipServices;
+                var replaceShipName = savedShipInfo.ReplaceShipName;
+
+                shipServices.Should().NotBeNullOrEmpty()
+                        .And.HaveCount(3);
+                replaceShipName.Should().NotBeNull();
             }
         }
     }

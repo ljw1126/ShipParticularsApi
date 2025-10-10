@@ -1,4 +1,5 @@
-﻿using Microsoft.Data.Sqlite;
+﻿using FluentAssertions;
+using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using ShipParticularsApi.Contexts;
 using ShipParticularsApi.Entities;
@@ -50,7 +51,7 @@ namespace ShipParticularsApi.Tests
             await context.SaveChangesAsync();
 
             // Act, Assert
-            Assert.Equal(1L, newShip.Id);
+            newShip.Id.Should().Be(1L);
         }
 
         [Fact]
@@ -71,10 +72,10 @@ namespace ShipParticularsApi.Tests
             var savedShip = await context.ShipInfos.SingleAsync(s => s.Id == newShip.Id);
 
             // Assert
-            Assert.Same(newShip, savedShip);
-            Assert.Equal(1, savedShip.Id);
-            Assert.Equal(ShipTypes.Fishing, savedShip.ShipType);
-            Assert.True(savedShip.IsService);
+            savedShip.Should().BeEquivalentTo(newShip);
+            savedShip.Id.Should().Be(1L);
+            savedShip.ShipType.Should().Be(ShipTypes.Fishing);
+            savedShip.IsService.Should().BeTrue();
         }
 
         [Fact]
@@ -96,7 +97,7 @@ namespace ShipParticularsApi.Tests
                     .SingleAsync(s => s.Id == newShip.Id);
 
             // Assert
-            Assert.NotSame(newShip, savedShip);
+            savedShip.Should().NotBe(newShip);
         }
 
         [Fact]
@@ -109,7 +110,7 @@ namespace ShipParticularsApi.Tests
             var actual = await context.ShipInfos.LongCountAsync();
 
             // Assert
-            Assert.Equal(0L, actual);
+            actual.Should().Be(0L);
         }
 
         [Fact]
@@ -131,13 +132,12 @@ namespace ShipParticularsApi.Tests
 
             await context.SaveChangesAsync();
 
-            // Act
-            var shipInfo = await context.ShipInfos.Where(s => s.IsService == true)
+            // Act, Assert
+            var actual = await context.ShipInfos.Where(s => s.IsService == true)
                                                 .FirstOrDefaultAsync();
 
-            // Assert
-            Assert.Equal("ALPHA", shipInfo.ShipName);
-            Assert.True(shipInfo.IsService);
+            actual.ShipName.Should().Be("ALPHA");
+            actual.IsService.Should().BeTrue();
         }
 
         [Fact]
@@ -158,8 +158,8 @@ namespace ShipParticularsApi.Tests
             var actual = await context.ShipInfos.AsNoTracking()
                                 .SingleAsync(s => s.ShipKey == "UPDATE01");
 
-            Assert.Equal("New Name", actual.ShipName);
-            Assert.True(actual.IsUseAis);
+            actual.ShipName.Should().Be("New Name");
+            actual.IsUseAis.Should().BeTrue();
         }
 
         [Fact]
@@ -179,7 +179,7 @@ namespace ShipParticularsApi.Tests
             // Assert
             var actual = await context.ShipInfos.FirstOrDefaultAsync(s => s.ShipKey == "DELETE01");
 
-            Assert.Null(actual);
+            actual.Should().BeNull();
         }
 
     }

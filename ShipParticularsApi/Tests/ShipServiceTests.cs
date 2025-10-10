@@ -1,4 +1,5 @@
-﻿using Microsoft.Data.Sqlite;
+﻿using FluentAssertions;
+using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using ShipParticularsApi.Contexts;
 using ShipParticularsApi.Entities;
@@ -59,8 +60,10 @@ namespace ShipParticularsApi.Tests
             var expected = ShipService().WithId(1L)
                             .WithIsCompleted(true)
                             .WithServiceName(ServiceNameTypes.SatAis)
-                            .WithShipKey("TEST_KEY");
-            Assert.Equivalent(expected, actual);
+                            .WithShipKey("TEST_KEY")
+                            .Build();
+
+            actual.Should().BeEquivalentTo(expected);
         }
     }
 }
