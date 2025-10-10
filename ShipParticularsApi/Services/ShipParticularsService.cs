@@ -1,31 +1,44 @@
-﻿using ShipParticularsApi.Contexts;
+﻿using ShipParticularsApi.Entities;
+using static ShipParticularsApi.Tests.Services.ShipParticularsServiceTests;
 
 namespace ShipParticularsApi.Services
 {
-    public class ShipParticularsService(ShipParticularsContext dbContext,
-        IReplaceShipNameRepository replaceShipNameRepository,
+    // NOTE: ShipInfo가 자식의 생명 주기를 관리하다보니, 불필요한 Repository도 존재할 수 있음. 
+    public class ShipParticularsService(IReplaceShipNameRepository replaceShipNameRepository,
         IShipInfoRepository shipInfoRepository,
         IShipModelTestRepository shipModelTestRepository,
         IShipSatelliteRepository shipSatelliteRepository,
         IShipServiceRepository shipServiceRepository,
         ISkTelinkCompanyShipRepository skTelinkCompanyShipRepository)
     {
-        public async Task Process(Object param)
+        public async Task Process(ShipParticularsParam param)
         {
-            await using var transaction = await dbContext.Database.BeginTransactionAsync();
 
-            try
-            {
-                // 비즈니스 로직 작성
+            ShipInfo shipInfo = await shipInfoRepository.GetByShipKeyAsync(param.ShipKey);
 
-                await dbContext.SaveChangesAsync();
-                await transaction.CommitAsync();
-            }
-            catch
+            bool isNewShipInfo = shipInfo == null;
+
+            ShipInfo entityToProcess = isNewShipInfo ? ShipInfo.From(param) : shipInfo.Update(param);
+
+            if (param.IsAisToggleOn)
             {
-                await transaction.RollbackAsync();
-                throw;
+                ShipService aisService = await shipServiceRepository.GetByShipKeyAndServiceNameAsync(
+                    param.ShipKey,
+                    ServiceNameTypes.SatAis
+                );
+                // biz logic
             }
+
+            if (param.IsGPSToggleOn)
+            {
+                ShipService gpsService = await shipServiceRepository.GetByShipKeyAndServiceNameAsync(
+                    param.ShipKey,
+                    ServiceNameTypes.KtSat
+                );
+                // biz logic
+            }
+
+            await shipInfoRepository.UpsertAsync(entityToProcess);
         }
     }
 }
