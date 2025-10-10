@@ -18,6 +18,7 @@ namespace ShipParticularsApi.Entities
         public virtual ShipInfo ShipInfo { get; set; }
 
         [Column("SERVICE_NAME")]
+        [MaxLength(100)]
         public ServiceNameTypes? ServiceName { get; set; }
 
         [Column("IS_COMPLETED")]
