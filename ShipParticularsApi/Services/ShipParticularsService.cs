@@ -16,50 +16,9 @@ namespace ShipParticularsApi.Services
 
             ShipInfo? shipInfo = await shipInfoRepository.GetByShipKeyAsync(param.ShipKey);
 
-            bool isNewShipInfo = shipInfo == null;
+            ShipInfo entityToProcess = (shipInfo == null) ? ShipInfo.From(param) : shipInfo.Update(param);
 
-            ShipInfo entityToProcess = isNewShipInfo ? ShipInfo.From(param) : shipInfo.Update(param);
-
-            if (param.IsAisToggleOn)
-            {
-                ShipService existingAisService = await shipServiceRepository.GetByShipKeyAndServiceNameAsync(
-                   param.ShipKey,
-                   ServiceNameTypes.SatAis
-                );
-
-                if (existingAisService == null)
-                {
-                    entityToProcess.ShipServices.Add(ShipService.of(param.ShipKey, ServiceNameTypes.SatAis));
-                    entityToProcess.EnableAis();
-                }
-                else if (isNewShipInfo)
-                {
-                    entityToProcess.ShipServices.Add(existingAisService);
-                    entityToProcess.EnableAis();
-                }
-            }
-            else
-            {
-                ShipService existingAisService = await shipServiceRepository.GetByShipKeyAndServiceNameAsync(
-                   param.ShipKey,
-                   ServiceNameTypes.SatAis
-                );
-
-                if (existingAisService != null)
-                {
-                    entityToProcess.ShipServices.Remove(existingAisService);
-                    entityToProcess.DisableAis();
-                }
-            }
-
-            if (param.IsGPSToggleOn)
-            {
-                ShipService gpsService = await shipServiceRepository.GetByShipKeyAndServiceNameAsync(
-                    param.ShipKey,
-                    ServiceNameTypes.KtSat
-                );
-                // biz logic
-            }
+            entityToProcess.ManageAisService(param.IsAisToggleOn);
 
             await shipInfoRepository.UpsertAsync(entityToProcess);
         }
