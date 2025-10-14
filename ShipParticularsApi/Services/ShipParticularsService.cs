@@ -14,7 +14,7 @@ namespace ShipParticularsApi.Services
         public async Task Process(ShipParticularsParam param)
         {
 
-            ShipInfo shipInfo = await shipInfoRepository.GetByShipKeyAsync(param.ShipKey);
+            ShipInfo? shipInfo = await shipInfoRepository.GetByShipKeyAsync(param.ShipKey);
 
             bool isNewShipInfo = shipInfo == null;
 
@@ -32,6 +32,11 @@ namespace ShipParticularsApi.Services
                     entityToProcess.ShipServices.Add(ShipService.of(param.ShipKey, ServiceNameTypes.SatAis));
                     entityToProcess.EnableAis();
                 }
+                else if (isNewShipInfo)
+                {
+                    entityToProcess.ShipServices.Add(existingAisService);
+                    entityToProcess.EnableAis();
+                }
             }
             else
             {
@@ -40,7 +45,11 @@ namespace ShipParticularsApi.Services
                    ServiceNameTypes.SatAis
                 );
 
-                // do something
+                if (existingAisService != null)
+                {
+                    entityToProcess.ShipServices.Remove(existingAisService);
+                    entityToProcess.DisableAis();
+                }
             }
 
             if (param.IsGPSToggleOn)
