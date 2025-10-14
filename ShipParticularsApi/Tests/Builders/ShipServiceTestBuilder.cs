@@ -4,6 +4,8 @@ namespace ShipParticularsApi.Tests.Builders
 {
     public class ShipServiceTestBuilder
     {
+        private const long SHIP_SERVICE_ID = 1L;
+
         private long _Id;
         private string _ShipKey;
         private ServiceNameTypes? _ServiceName;
@@ -12,6 +14,16 @@ namespace ShipParticularsApi.Tests.Builders
         public static ShipServiceTestBuilder ShipService()
         {
             return new ShipServiceTestBuilder();
+        }
+
+        public static ShipService SatAisService(string shipKey)
+        {
+            return ShipService()
+                .WithId(SHIP_SERVICE_ID)
+                .WithShipKey(shipKey)
+                .WithServiceName(ServiceNameTypes.SatAis)
+                .WithIsCompleted(true)
+                .Build();
         }
 
         public ShipServiceTestBuilder WithId(long id)
