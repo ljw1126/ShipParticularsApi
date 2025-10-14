@@ -24,7 +24,7 @@ namespace ShipParticularsApi.Entities
         [Column("IS_COMPLETED")]
         public bool IsCompleted { get; set; }
 
-        public static ShipService of(string shipKey, ServiceNameTypes serviceName)
+        public static ShipService Of(string shipKey, ServiceNameTypes serviceName)
         {
             return new()
             {

@@ -122,7 +122,7 @@ namespace ShipParticularsApi.Entities
             {
                 if (existingService == null)
                 {
-                    this.ShipServices.Add(ShipService.of(this.ShipKey, ServiceNameTypes.SatAis));
+                    this.ShipServices.Add(ShipService.Of(this.ShipKey, ServiceNameTypes.SatAis));
                 }
 
                 this.IsUseAis = true;
@@ -135,6 +135,39 @@ namespace ShipParticularsApi.Entities
                 }
 
                 this.IsUseAis = false;
+            }
+        }
+
+        public void ManageGpsService(bool isGPSToggleOn, string? satelliteId, string? satelliteType, string? companyName)
+        {
+            var existingService = this.ShipServices.FirstOrDefault(s => s.ServiceName == ServiceNameTypes.KtSat);
+
+            if (isGPSToggleOn)
+            {
+                if (existingService == null)
+                {
+                    this.ShipServices.Add(ShipService.Of(this.ShipKey, ServiceNameTypes.KtSat)); // NOTE. 무조건인가??
+                    this.ShipSatellite = ShipSatellite.Of(this.ShipKey, satelliteId, satelliteType);
+                }
+
+                if (this.ShipSatellite != null && this.ShipSatellite.IsSkTelink())
+                {
+                    // 신규 ShipInfo이고 SK Telink 위성을 사용하는 경우 SkTelinkCompanyShip을 추가해야 한다
+                    this.SkTelinkCompanyShip = SkTelinkCompanyShip.Of(this.ShipKey, companyName);
+                }
+            }
+            else
+            {
+                if (existingService != null)
+                {
+                    this.ShipServices.Remove(existingService);
+
+                    this.SkTelinkCompanyShip = null;
+
+                    this.ShipSatellite = null;
+                    this.ExternalShipId = null;
+                    this.IsUseKtsat = false;
+                }
             }
         }
     }

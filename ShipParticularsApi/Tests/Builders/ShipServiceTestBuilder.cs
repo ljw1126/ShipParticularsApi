@@ -31,6 +31,21 @@ namespace ShipParticularsApi.Tests.Builders
                 .Build();
         }
 
+        public static ShipService KtSatService(string shipKey)
+        {
+            return KtSatService(SHIP_SERVICE_ID, shipKey);
+        }
+
+        public static ShipService KtSatService(long id, string shipKey)
+        {
+            return ShipService()
+                .WithId(id)
+                .WithShipKey(shipKey)
+                .WithServiceName(ServiceNameTypes.KtSat)
+                .WithIsCompleted(true)
+                .Build();
+        }
+
         public ShipServiceTestBuilder WithId(long id)
         {
             _Id = id;
