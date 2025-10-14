@@ -235,6 +235,49 @@ namespace ShipParticularsApi.Tests.Services
             );
         }
 
+        // 신규 ShipInfo이고, AIS Toggle = false인데, ShipService가 존재하는 경우
+        [Fact]
+        public async Task Case2_3()
+        {// Arrange
+            var param = new ShipParticularsParam
+            {
+                IsAisToggleOn = false,
+                IsGPSToggleOn = false,
+                ShipKey = "NEW_SHIP_KEY",
+                Callsign = "NEW_CALLSIGN",
+                ShipName = "NEW_SHIP_NAME",
+                ShipType = "FISHING",
+                ShipCode = "NEW_SHIP_CODE"
+            };
+
+            _mockShipInfoRepository
+                .Setup(e => e.GetByShipKeyAsync(param.ShipKey))
+                .ReturnsAsync((ShipInfo?)null);
+
+            _mockShipServiceRepository
+                .Setup(e => e.GetByShipKeyAndServiceNameAsync(param.ShipKey, ServiceNameTypes.SatAis))
+                .ReturnsAsync(SatAisService(param.ShipKey));
+
+            ShipInfo? capturedEntity = null;
+            _mockShipInfoRepository
+                .Setup(e => e.UpsertAsync(It.IsAny<ShipInfo>()))
+                .ReturnsAsync((ShipInfo entity) =>
+                {
+                    entity.Id = 1L;
+                    capturedEntity = entity;
+                    return entity;
+                });
+
+            // Act
+            await _sut.Process(param);
+
+            // Assert
+            _mockShipInfoRepository.Verify(e => e.UpsertAsync(It.IsAny<ShipInfo>()), Times.Once);
+
+            capturedEntity.Should().NotBeNull();
+            capturedEntity.IsUseAis.Should().BeFalse();
+            capturedEntity.ShipServices.Should().BeEmpty();
+        }
 
         public class ShipParticularsParam
         {
