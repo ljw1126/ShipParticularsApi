@@ -6,10 +6,10 @@ namespace ShipParticularsApi.Tests.Builders
     {
         private long _Id;
         private string _ShipKey;
-        private string _SatelliteType;
-        private string _SatelliteId;
+        private SatelliteTypes _SatelliteType;
+        private string? _SatelliteId;
         private bool _IsUseSatellite;
-        private string _CreateUserId;
+        private string? _CreateUserId;
         private DateTime _CreateDateTime;
         private string _UpdateUserId;
         private DateTime _UpdateDateTime;
@@ -17,6 +17,26 @@ namespace ShipParticularsApi.Tests.Builders
         public static ShipSatelliteTestBuilder ShipSatellite()
         {
             return new ShipSatelliteTestBuilder();
+        }
+
+        public static ShipSatellite KtSatellite(string shipKey, string satelliteId)
+        {
+            return ShipSatellite()
+                .WithShipKey(shipKey)
+                .WithSatelliteType(SatelliteTypes.KtSat)
+                .WithSatelliteId(satelliteId)
+                .WithIsUseSatellite(true)
+                .Build();
+        }
+
+        public static ShipSatellite SkTelinkSatellite(string shipKey, string satelliteId)
+        {
+            return ShipSatellite()
+                .WithShipKey(shipKey)
+                .WithSatelliteType(SatelliteTypes.SkTelink)
+                .WithSatelliteId(satelliteId)
+                .WithIsUseSatellite(true)
+                .Build();
         }
 
         public ShipSatelliteTestBuilder WithId(long id)
@@ -31,7 +51,7 @@ namespace ShipParticularsApi.Tests.Builders
             return this;
         }
 
-        public ShipSatelliteTestBuilder WithSatelliteType(string satelliteType)
+        public ShipSatelliteTestBuilder WithSatelliteType(SatelliteTypes satelliteType)
         {
             _SatelliteType = satelliteType;
             return this;

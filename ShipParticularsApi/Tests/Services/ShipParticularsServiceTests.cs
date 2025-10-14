@@ -133,6 +133,20 @@ namespace ShipParticularsApi.Tests.Services
             public string ShipName { get; set; }
             public string ShipType { get; set; }
             public string ShipCode { get; set; }
+
+            public ShipSatelliteParam? ShipSatelliteParam { get; set; }
+            public SkTelinkCompanyShipParam? SkTelinkCompanyShipParam { get; set; }
+        }
+
+        public class ShipSatelliteParam
+        {
+            public string SatelliteType { get; set; }
+            public string SatelliteId { get; set; }
+        }
+
+        public class SkTelinkCompanyShipParam
+        {
+            public string CompanyName { get; set; }
         }
     }
 }
