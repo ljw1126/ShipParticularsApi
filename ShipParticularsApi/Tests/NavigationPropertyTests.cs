@@ -2,8 +2,10 @@
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using ShipParticularsApi.Contexts;
+using ShipParticularsApi.Entities;
 using Xunit;
 using Xunit.Abstractions;
+
 using static ShipParticularsApi.Tests.Builders.ReplaceShipNameTestBuilder;
 using static ShipParticularsApi.Tests.Builders.ShipInfoTestBuilder;
 using static ShipParticularsApi.Tests.Builders.ShipServiceTestBuilder;
@@ -51,9 +53,9 @@ namespace ShipParticularsApi.Tests
                     .WithShipKey("SHIP01")
                     .WithReplaceShipName(ReplaceShipName().WithReplaceShipName("Next Vessel"))
                     .WithShipServices(
-                        ShipService().WithServiceName(Entities.ServiceNameTypes.Cctv).WithIsCompleted(true),
-                        ShipService().WithServiceName(Entities.ServiceNameTypes.EuMrv).WithIsCompleted(true),
-                        ShipService().WithServiceName(Entities.ServiceNameTypes.NoonReport).WithIsCompleted(false)
+                        ShipService().WithServiceName(ServiceNameTypes.Cctv).WithIsCompleted(true),
+                        ShipService().WithServiceName(ServiceNameTypes.EuMrv).WithIsCompleted(true),
+                        ShipService().WithServiceName(ServiceNameTypes.NoonReport).WithIsCompleted(false)
                     )
                     .Build());
                 await arrangeContext.SaveChangesAsync();

@@ -18,8 +18,13 @@ namespace ShipParticularsApi.Tests.Builders
 
         public static ShipService SatAisService(string shipKey)
         {
+            return SatAisService(SHIP_SERVICE_ID, shipKey);
+        }
+
+        public static ShipService SatAisService(long id, string shipKey)
+        {
             return ShipService()
-                .WithId(SHIP_SERVICE_ID)
+                .WithId(id)
                 .WithShipKey(shipKey)
                 .WithServiceName(ServiceNameTypes.SatAis)
                 .WithIsCompleted(true)

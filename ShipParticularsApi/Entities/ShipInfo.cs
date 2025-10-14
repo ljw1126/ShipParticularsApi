@@ -113,5 +113,29 @@ namespace ShipParticularsApi.Entities
         {
             IsUseAis = false;
         }
+
+        public void ManageAisService(bool isAisToggleOn)
+        {
+            var existingService = this.ShipServices.FirstOrDefault(s => s.ServiceName == ServiceNameTypes.SatAis);
+
+            if (isAisToggleOn)
+            {
+                if (existingService == null)
+                {
+                    this.ShipServices.Add(ShipService.of(this.ShipKey, ServiceNameTypes.SatAis));
+                }
+
+                this.IsUseAis = true;
+            }
+            else
+            {
+                if (existingService != null)
+                {
+                    this.ShipServices.Remove(existingService);
+                }
+
+                this.IsUseAis = false;
+            }
+        }
     }
 }
