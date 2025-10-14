@@ -107,11 +107,13 @@ namespace ShipParticularsApi.Tests.Services
                .Setup(e => e.GetByShipKeyAndServiceNameAsync(param.ShipKey, ServiceNameTypes.SatAis))
                .ReturnsAsync((ShipService?)null);
 
+            ShipInfo? capturedEntity = null;
             _mockShipInfoRepository
                 .Setup(e => e.UpsertAsync(It.IsAny<ShipInfo>()))
                 .ReturnsAsync((ShipInfo entity) =>
                 {
                     entity.Id = 1L;
+                    capturedEntity = entity;
                     return entity;
                 });
 
@@ -222,6 +224,9 @@ namespace ShipParticularsApi.Tests.Services
             await _sut.Process(param);
 
             // Assert
+            _mockShipServiceRepository
+                .Verify(e => e.GetByShipKeyAndServiceNameAsync("NEW_SHIP_KEY", ServiceNameTypes.SatAis), Times.Once);
+
             _mockShipInfoRepository.Verify(e => e.UpsertAsync(It.IsAny<ShipInfo>()), Times.Once);
 
             capturedEntity.Should().NotBeNull();
@@ -272,6 +277,9 @@ namespace ShipParticularsApi.Tests.Services
             await _sut.Process(param);
 
             // Assert
+            _mockShipServiceRepository
+                .Verify(e => e.GetByShipKeyAndServiceNameAsync("NEW_SHIP_KEY", ServiceNameTypes.SatAis), Times.Once);
+
             _mockShipInfoRepository.Verify(e => e.UpsertAsync(It.IsAny<ShipInfo>()), Times.Once);
 
             capturedEntity.Should().NotBeNull();
