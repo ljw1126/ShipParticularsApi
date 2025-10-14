@@ -19,6 +19,12 @@ namespace ShipParticularsApi.Services
             ShipInfo entityToProcess = (shipInfo == null) ? ShipInfo.From(param) : shipInfo.Update(param);
 
             entityToProcess.ManageAisService(param.IsAisToggleOn);
+            entityToProcess.ManageGpsService(
+                param.IsGPSToggleOn,
+                param.ShipSatelliteParam?.SatelliteId,
+                param.ShipSatelliteParam?.SatelliteType,
+                param.SkTelinkCompanyShipParam?.CompanyName
+            );
 
             await shipInfoRepository.UpsertAsync(entityToProcess);
         }

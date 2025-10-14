@@ -3,7 +3,9 @@ using Moq;
 using ShipParticularsApi.Entities;
 using ShipParticularsApi.Services;
 using Xunit;
+using static ShipParticularsApi.Tests.Builders.ShipSatelliteTestBuilder;
 using static ShipParticularsApi.Tests.Builders.ShipServiceTestBuilder;
+using static ShipParticularsApi.Tests.Builders.SkTelinkCompanyShipTestBuilder;
 namespace ShipParticularsApi.Tests.Services
 {
     public class ShipParticularsServiceTests
@@ -121,6 +123,187 @@ namespace ShipParticularsApi.Tests.Services
             capturedEntity.IsUseAis.Should().BeTrue();
             capturedEntity.ShipServices.Should().HaveCount(1);
             capturedEntity.ShipServices.Should().ContainEquivalentOf(SatAisService(1L, param.ShipKey));
+        }
+
+        [Fact(DisplayName = "GPS Toggle Off인 경우 ShipServices가 비어있다.")]
+        public async Task Case3()
+        {
+            // Arrange
+            var param = new ShipParticularsParam
+            {
+                IsAisToggleOn = false,
+                IsGPSToggleOn = false,
+                ShipKey = "NEW_SHIP_KEY",
+                Callsign = "NEW_CALLSIGN",
+                ShipName = "NEW_SHIP_NAME",
+                ShipType = "FISHING",
+                ShipCode = "NEW_SHIP_CODE"
+            };
+
+            _mockShipInfoRepository
+                .Setup(e => e.GetByShipKeyAsync(param.ShipKey))
+                .ReturnsAsync((ShipInfo?)null);
+
+            ShipInfo? capturedEntity = null;
+            _mockShipInfoRepository
+                .Setup(e => e.UpsertAsync(It.IsAny<ShipInfo>()))
+                .ReturnsAsync((ShipInfo entity) =>
+                {
+                    entity.Id = 1L;
+                    capturedEntity = entity;
+                    return entity;
+                });
+
+            // Act
+            await _sut.Process(param);
+
+            // Assert
+            _mockShipInfoRepository.Verify(e => e.UpsertAsync(It.IsAny<ShipInfo>()), Times.Once);
+
+            capturedEntity.Should().NotBeNull();
+            capturedEntity.Id.Should().Be(1L);
+
+            capturedEntity.ShipServices.Should().BeEmpty();
+            capturedEntity.ShipSatellite.Should().BeNull();
+            capturedEntity.SkTelinkCompanyShip.Should().BeNull();
+        }
+
+        [Fact(DisplayName = "GPS Toggle On & SatelliteType이 SK가 아닌 경우 ShipService, ShipSatellite만 추가된다")]
+        public async Task Case4()
+        {
+            // Arrange
+            var param = new ShipParticularsParam
+            {
+                IsAisToggleOn = false,
+                IsGPSToggleOn = true,
+                ShipKey = "NEW_SHIP_KEY",
+                Callsign = "NEW_CALLSIGN",
+                ShipName = "NEW_SHIP_NAME",
+                ShipType = "FISHING",
+                ShipCode = "NEW_SHIP_CODE",
+                ShipSatelliteParam = new ShipSatelliteParam
+                {
+                    SatelliteId = "TEST_SATELLITE_ID",
+                    SatelliteType = "KT_SAT"
+                }
+            };
+
+            _mockShipInfoRepository
+                .Setup(e => e.GetByShipKeyAsync(param.ShipKey))
+                .ReturnsAsync((ShipInfo?)null);
+
+            ShipInfo? capturedEntity = null;
+            _mockShipInfoRepository
+                .Setup(e => e.UpsertAsync(It.IsAny<ShipInfo>()))
+                .ReturnsAsync((ShipInfo entity) =>
+                {
+                    entity.Id = 1L;
+                    var ktSatService = entity.ShipServices.FirstOrDefault();
+                    if (ktSatService != null)
+                    {
+                        ktSatService.Id = 1L;
+                    }
+
+                    if (entity.ShipSatellite != null)
+                    {
+                        entity.ShipSatellite.Id = 1L;
+                    }
+
+                    capturedEntity = entity;
+                    return entity;
+                });
+
+            // Act
+            await _sut.Process(param);
+
+            // Assert
+            _mockShipInfoRepository.Verify(e => e.UpsertAsync(It.IsAny<ShipInfo>()), Times.Once);
+
+            capturedEntity.Should().NotBeNull();
+            capturedEntity.Id.Should().Be(1L);
+
+            capturedEntity.ShipServices.Should().HaveCount(1)
+                .And.ContainEquivalentOf(KtSatService(1L, param.ShipKey));
+
+            capturedEntity.ShipSatellite.Should().NotBeNull()
+                .And.BeEquivalentTo(KtSatellite(1L, param.ShipKey, param.ShipSatelliteParam.SatelliteId),
+                options => options.Excluding(s => s.UpdateDateTime));
+
+            capturedEntity.SkTelinkCompanyShip.Should().BeNull();
+        }
+
+        [Fact(DisplayName = "GPS Toggle On & SatelliteType이 SK인 경우 ShipService, ShipSatellite, SkTelinkCompanyShip이 추가된다")]
+        public async Task Case5()
+        {
+            // Arrange
+            var param = new ShipParticularsParam
+            {
+                IsAisToggleOn = false,
+                IsGPSToggleOn = true,
+                ShipKey = "NEW_SHIP_KEY",
+                Callsign = "NEW_CALLSIGN",
+                ShipName = "NEW_SHIP_NAME",
+                ShipType = "FISHING",
+                ShipCode = "NEW_SHIP_CODE",
+                ShipSatelliteParam = new ShipSatelliteParam
+                {
+                    SatelliteId = "TEST_SATELLITE_ID",
+                    SatelliteType = "SK_TELINK"
+                },
+                SkTelinkCompanyShipParam = new SkTelinkCompanyShipParam
+                {
+                    CompanyName = "TEST_COMPANY_KEY"
+                }
+            };
+
+            _mockShipInfoRepository
+                .Setup(e => e.GetByShipKeyAsync(param.ShipKey))
+                .ReturnsAsync((ShipInfo?)null);
+
+            ShipInfo? capturedEntity = null;
+            _mockShipInfoRepository
+                .Setup(e => e.UpsertAsync(It.IsAny<ShipInfo>()))
+                .ReturnsAsync((ShipInfo entity) =>
+                {
+                    entity.Id = 1L;
+                    var ktSatService = entity.ShipServices.FirstOrDefault();
+                    if (ktSatService != null)
+                    {
+                        ktSatService.Id = 1L;
+                    }
+
+                    if (entity.ShipSatellite != null)
+                    {
+                        entity.ShipSatellite.Id = 1L;
+                    }
+
+                    if (entity.SkTelinkCompanyShip != null)
+                    {
+                        entity.SkTelinkCompanyShip.Id = 1L;
+                    }
+
+                    capturedEntity = entity;
+                    return entity;
+                });
+
+            // Act
+            await _sut.Process(param);
+
+            // Assert
+            _mockShipInfoRepository.Verify(e => e.UpsertAsync(It.IsAny<ShipInfo>()), Times.Once);
+
+            capturedEntity.Should().NotBeNull();
+            capturedEntity.Id.Should().Be(1L);
+
+            capturedEntity.ShipServices.Should().HaveCount(1)
+                .And.ContainEquivalentOf(KtSatService(1L, param.ShipKey));
+
+            capturedEntity.ShipSatellite.Should().NotBeNull()
+                .And.BeEquivalentTo(SkTelinkSatellite(1L, param.ShipKey, param.ShipSatelliteParam.SatelliteId),
+                options => options.Excluding(s => s.UpdateDateTime));
+
+            capturedEntity.SkTelinkCompanyShip.Should().NotBeNull()
+                .And.BeEquivalentTo(SkTelinkCompanyShip(1L, param.ShipKey, param.SkTelinkCompanyShipParam.CompanyName));
         }
 
         public class ShipParticularsParam

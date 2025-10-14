@@ -15,7 +15,13 @@ namespace ShipParticularsApi.Tests.Builders
 
         public static SkTelinkCompanyShip SkTelinkCompanyShip(string shipKey, string companyName)
         {
+            return SkTelinkCompanyShip(0L, shipKey, companyName);
+        }
+
+        public static SkTelinkCompanyShip SkTelinkCompanyShip(long id, string shipKey, string companyName)
+        {
             return SkTelinkCompanyShip()
+                .WithId(id)
                 .WithShipKey(shipKey)
                 .WithCompanyName(companyName)
                 .Build();
