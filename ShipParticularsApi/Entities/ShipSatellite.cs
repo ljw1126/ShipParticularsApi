@@ -45,6 +45,8 @@ namespace ShipParticularsApi.Entities
 
         public static ShipSatellite Of(string shipKey, string satelliteId, string satelliteType)
         {
+            // TODO. 유효성 검사
+
             return new()
             {
                 ShipKey = shipKey,

@@ -21,17 +21,30 @@ namespace ShipParticularsApi.Tests.Builders
 
         public static ShipSatellite KtSatellite(string shipKey, string satelliteId)
         {
+            return KtSatellite(0L, shipKey, satelliteId);
+        }
+
+        public static ShipSatellite KtSatellite(long id, string shipKey, string satelliteId)
+        {
             return ShipSatellite()
+                .WithId(id)
                 .WithShipKey(shipKey)
                 .WithSatelliteType(SatelliteTypes.KtSat)
                 .WithSatelliteId(satelliteId)
                 .WithIsUseSatellite(true)
                 .Build();
+
         }
 
         public static ShipSatellite SkTelinkSatellite(string shipKey, string satelliteId)
         {
+            return SkTelinkSatellite(0L, shipKey, satelliteId);
+        }
+
+        public static ShipSatellite SkTelinkSatellite(long id, string shipKey, string satelliteId)
+        {
             return ShipSatellite()
+                .WithId(id)
                 .WithShipKey(shipKey)
                 .WithSatelliteType(SatelliteTypes.SkTelink)
                 .WithSatelliteId(satelliteId)
