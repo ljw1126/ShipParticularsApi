@@ -147,41 +147,10 @@ namespace ShipParticularsApi.Entities
 
         public void ManageGpsService(bool isGPSToggleOn, string? satelliteId, string? satelliteType, string? companyName)
         {
-            var existingService = this.ShipServices.FirstOrDefault(s => s.ServiceName == ServiceNameTypes.KtSat);
-
             if (isGPSToggleOn)
             {
-                if (existingService == null)
-                {
-                    this.ShipServices.Add(ShipService.Of(this.ShipKey, ServiceNameTypes.KtSat)); // NOTE. 무조건 ServiceNameTypes.KtSat ?
-
-                    this.ShipSatellite = ShipSatellite.Of(this.ShipKey, satelliteId, satelliteType); // NOTE. NONE 타입인 경우 IsUseKtsat = true ?
-                    this.ExternalShipId = satelliteId;
-                    this.IsUseKtsat = true; // NOTE. SHIP_SATELLITE.IS_USE_SATELLITE (bit)와 동일?
-                }
-                else // isGPSToggleOn == true && existringService != null
-                {
-                    // ShipSatellite가 같이 등록되어 있으니, 업데이트 처리
-                    this.ShipSatellite.Update(satelliteId, satelliteType);
-                    this.ExternalShipId = satelliteId;
-                    this.IsUseKtsat = true;
-                }
-
-                if (this.ShipSatellite.IsSkTelink())
-                {
-                    if (this.SkTelinkCompanyShip == null)
-                    {
-                        this.SkTelinkCompanyShip = SkTelinkCompanyShip.Of(this.ShipKey, companyName);
-                    }
-                    else
-                    {
-                        this.SkTelinkCompanyShip.Update(companyName);
-                    }
-                }
-                else
-                {
-                    this.SkTelinkCompanyShip = null;
-                }
+                this.ActivateGpsService(satelliteId, satelliteType);
+                this.ManageSkTelinkCompanyShip(companyName);
             }
             else
             {
@@ -189,10 +158,48 @@ namespace ShipParticularsApi.Entities
             }
         }
 
+        private void ActivateGpsService(string? satelliteId, string? satelliteType)
+        {
+            if (HasKtSatService())
+            {
+                this.ShipSatellite.Update(satelliteId, satelliteType);
+            }
+            else
+            {
+                this.ShipServices.Add(ShipService.Of(this.ShipKey, ServiceNameTypes.KtSat));
+                this.ShipSatellite = ShipSatellite.Of(this.ShipKey, satelliteId, satelliteType);
+            }
+
+            this.ExternalShipId = satelliteId;
+            this.IsUseKtsat = true;
+        }
+
+        private void ManageSkTelinkCompanyShip(string? companyName)
+        {
+            if (this.ShipSatellite == null)
+            {
+                return;
+            }
+
+            if (!this.ShipSatellite.IsSkTelink())
+            {
+                this.SkTelinkCompanyShip = null;
+                return;
+            }
+
+            if (this.SkTelinkCompanyShip == null)
+            {
+                this.SkTelinkCompanyShip = SkTelinkCompanyShip.Of(this.ShipKey, companyName);
+            }
+            else
+            {
+                this.SkTelinkCompanyShip.Update(companyName);
+            }
+        }
+
         private void DeactiveGpsService()
         {
-            var existingService = this.ShipServices.FirstOrDefault(s => s.ServiceName == ServiceNameTypes.KtSat);
-            if (existingService == null)
+            if (!HasKtSatService())
             {
                 return;
             }
@@ -206,7 +213,13 @@ namespace ShipParticularsApi.Entities
             this.ExternalShipId = null;
             this.IsUseKtsat = false;
 
+            var existingService = this.ShipServices.First(s => s.ServiceName == ServiceNameTypes.KtSat);
             this.ShipServices.Remove(existingService);
+        }
+
+        private bool HasKtSatService()
+        {
+            return this.ShipServices.Any(s => s.ServiceName == ServiceNameTypes.KtSat);
         }
     }
 }
