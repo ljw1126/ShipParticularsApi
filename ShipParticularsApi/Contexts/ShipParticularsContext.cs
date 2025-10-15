@@ -59,7 +59,6 @@ namespace ShipParticularsApi.Contexts
                 entity.Property(p => p.CreateDateTime)
                     .HasDefaultValueSql("SYSDATETIME()");
 
-                // TODO. Migrations 필요
                 entity.Property(p => p.SatelliteType)
                     .HasDefaultValue(SatelliteTypes.None)
                     .HasConversion<SatelliteTypesToStringConverter>();
