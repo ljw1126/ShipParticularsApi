@@ -113,7 +113,7 @@ namespace ShipParticularsApi.Tests.Entities
                 newShipInfo.Should().BeEquivalentTo(expected);
             }
 
-            [Fact(DisplayName = "GPS Toggle On & SatelliteType이 SK가 아닌 경우 ShipService, ShipSatellite만 추가된다")]
+            [Fact(DisplayName = "GPS Toggle On & SatelliteType이 SK_TELINK가 아닌 경우 ShipService, ShipSatellite만 추가된다")]
             public void Case4()
             {
                 // Arrange
@@ -158,7 +158,7 @@ namespace ShipParticularsApi.Tests.Entities
                     options => options.Excluding(s => s.ShipSatellite.UpdateDateTime));
             }
 
-            [Fact(DisplayName = "GPS Toggle On & SatelliteType이 SK인 경우 ShipService, ShipSatellite, SkTelinkCompanyShip이 추가된다")]
+            [Fact(DisplayName = "GPS Toggle On & SatelliteType이 SK_TELINK인 경우 ShipService, ShipSatellite, SkTelinkCompanyShip이 추가된다")]
             public void Case5()
             {
                 // Arrange
@@ -363,7 +363,7 @@ namespace ShipParticularsApi.Tests.Entities
 
                 // Act
                 // NOTE. ShipService는 고정('kt-sat'), ShipSatellite, SkTelinkCompanyShip
-                target.ManageGpsService(isGPSToggleOn, "SATELLITE_ID", "SK_TELINK", "UNIQUE_COMPANY_NAME");
+                target.ManageGpsService(isGPSToggleOn, null, null, null);
 
                 // Assert
                 target.ShipServices.Should().BeEmpty();
@@ -399,8 +399,32 @@ namespace ShipParticularsApi.Tests.Entities
                 target.IsUseKtsat.Should().BeTrue();
             }
 
-            [Fact(DisplayName = "기존 ShipInfo가 KT_SAT에서 SK_TELINK로 변경하는 경우, ShipSatellite가 업데이트되고, SKTelinkCompanyShip이 추가된다")]
+            [Fact(DisplayName = "기존 ShipInfo가 신규로 SK_TELINK 사용하는 경우, ShipService,ShipSatellite, SkTelinkCompanyShip가 등록된다")]
             public void Case14()
+            {
+                // Arrange
+                const bool isGPSToggleOn = true;
+                var target = ShipInfo()
+                    .WithId(1L)
+                    .WithShipKey("UNIQUE_SHIP_KEY")
+                    .Build();
+                const string registeSatelliteType = "SK_TELINK";
+
+                // Act
+                target.ManageGpsService(isGPSToggleOn, "SATELLITE_ID", registeSatelliteType, "UNIQUE_COMPANY_NAME");
+
+                // Assert
+                target.ShipServices.Should().ContainEquivalentOf(KtSatService("UNIQUE_SHIP_KEY"));
+                target.ShipSatellite.Should().BeEquivalentTo(SkTelinkSatellite("UNIQUE_SHIP_KEY", "SATELLITE_ID"),
+                    options => options.Excluding(s => s.UpdateDateTime));
+                target.SkTelinkCompanyShip.Should().BeEquivalentTo(SkTelinkCompanyShip("UNIQUE_SHIP_KEY", "UNIQUE_COMPANY_NAME"));
+
+                target.ExternalShipId.Should().Be("SATELLITE_ID");
+                target.IsUseKtsat.Should().BeTrue();
+            }
+
+            [Fact(DisplayName = "기존 ShipInfo가 KT_SAT에서 SK_TELINK로 변경하는 경우, ShipSatellite가 업데이트되고, SKTelinkCompanyShip이 추가된다")]
+            public void Case15()
             {
                 const bool isGPSToggleOn = true;
                 var target = ShipInfo()
@@ -426,7 +450,7 @@ namespace ShipParticularsApi.Tests.Entities
             }
 
             [Fact(DisplayName = "기존 ShipInfo가 SK_TELINK에서 KT_SAT로 변경하는 경우, ShipSatellite가 업데이트되고, SKTelinkCompanyShip이 제거된다")]
-            public void Case15()
+            public void Case16()
             {
                 const bool isGPSToggleOn = true;
                 var target = ShipInfo()
@@ -455,7 +479,7 @@ namespace ShipParticularsApi.Tests.Entities
 
 
             [Fact(DisplayName = "기존 ShipInfo가 GPS 서비스 사용 중일때 SK TELINK의 CompanyName을 업데이트 한다")]
-            public void Case16()
+            public void Case17()
             {
                 const bool isGPSToggleOn = true;
                 var target = ShipInfo()
@@ -477,7 +501,7 @@ namespace ShipParticularsApi.Tests.Entities
             }
 
             [Fact(DisplayName = "SK TELINK의 CompanyName 변경시 다른 엔티티는 변경되지 않아야 한다")]
-            public void Case17()
+            public void Case18()
             {
                 const bool isGPSToggleOn = true;
                 var shipService = KtSatService(1L, "UNIQUE_SHIP_KEY");
