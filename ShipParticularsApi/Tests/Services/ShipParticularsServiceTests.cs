@@ -92,7 +92,7 @@ namespace ShipParticularsApi.Tests.Services
             capturedEntity.ShipServices.Should().ContainEquivalentOf(SatAisService(param.ShipKey));
         }
 
-        [Fact(DisplayName = "GPS Toggle Off인 경우 ShipServices가 비어있다.")]
+        [Fact(DisplayName = "신규 ShipInfo이고, GPS Toggle Off인 경우 ShipServices가 비어있다.")]
         public async Task Case3()
         {
             // Arrange
@@ -130,7 +130,7 @@ namespace ShipParticularsApi.Tests.Services
             capturedEntity.SkTelinkCompanyShip.Should().BeNull();
         }
 
-        [Fact(DisplayName = "GPS Toggle On & SatelliteType이 SK가 아닌 경우 ShipService, ShipSatellite만 추가된다")]
+        [Fact(DisplayName = "신규 ShipInfo이고, GPS Toggle On & SatelliteType이 SK가 아닌 경우 ShipService, ShipSatellite만 추가된다")]
         public async Task Case4()
         {
             // Arrange
@@ -180,7 +180,7 @@ namespace ShipParticularsApi.Tests.Services
             capturedEntity.SkTelinkCompanyShip.Should().BeNull();
         }
 
-        [Fact(DisplayName = "GPS Toggle On & SatelliteType이 SK인 경우 ShipService, ShipSatellite, SkTelinkCompanyShip이 추가된다")]
+        [Fact(DisplayName = "신규 ShipInfo이고, GPS Toggle On & SatelliteType이 SK인 경우 ShipService, ShipSatellite, SkTelinkCompanyShip이 추가된다")]
         public async Task Case5()
         {
             // Arrange
