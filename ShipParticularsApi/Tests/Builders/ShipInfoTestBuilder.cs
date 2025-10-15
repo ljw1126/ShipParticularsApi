@@ -13,7 +13,7 @@ namespace ShipParticularsApi.Tests.Builders
         private string? _ExternalShipId;
         private bool? _IsUseKtsat;
         private bool? _IsService;
-        private bool? _IsUseAis;
+        private bool _IsUseAis;
 
         private ReplaceShipName _ReplaceShipName = null;
         private ShipModelTest _ShipModelTest = null;

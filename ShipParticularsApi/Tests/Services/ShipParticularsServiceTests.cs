@@ -235,6 +235,21 @@ namespace ShipParticularsApi.Tests.Services
                 .And.BeEquivalentTo(SkTelinkCompanyShip(param.ShipKey, param.SkTelinkCompanyShipParam.CompanyName));
         }
 
+        [Fact(DisplayName = "기존 ShipInfo에 대한 컬럼 정보만 업데이트한다.")]
+        public async Task Case6()
+        {
+            var param = new ShipParticularsParam
+            {
+                IsAisToggleOn = false,
+                IsGPSToggleOn = false,
+                ShipKey = "UNIQUE_SHIP_KEY",
+                Callsign = "UPDATE_CALLSIGN",
+                ShipName = "UPDATE_SHIP_NAME",
+                ShipType = "FISHING",
+                ShipCode = "NEW_SHIP_CODE"
+            };
+        }
+
         public class ShipParticularsParam
         {
             public bool IsAisToggleOn { get; set; } = false;
