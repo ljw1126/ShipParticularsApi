@@ -46,7 +46,7 @@ namespace ShipParticularsApi.Entities
         public bool? IsService { get; set; }
 
         [Column("IS_USE_AIS")]
-        public bool? IsUseAis { get; set; }
+        public bool IsUseAis { get; set; }
 
         public virtual ReplaceShipName? ReplaceShipName { get; set; }
         public virtual ShipModelTest? ShipModelTest { get; set; }
@@ -96,7 +96,6 @@ namespace ShipParticularsApi.Entities
 
         public ShipInfo Update(ShipParticularsServiceTests.ShipParticularsParam param)
         {
-            ShipKey = param.ShipKey;
             Callsign = param.Callsign;
             ShipName = param.ShipName;
             ShipType = ConvertStringToShipTypes(param.ShipType);
@@ -104,38 +103,46 @@ namespace ShipParticularsApi.Entities
             return this;
         }
 
-        public void EnableAis()
-        {
-            IsUseAis = true;
-        }
-
-        public void DisableAis()
-        {
-            IsUseAis = false;
-        }
-
         public void ManageAisService(bool isAisToggleOn)
         {
-            var existingService = this.ShipServices.FirstOrDefault(s => s.ServiceName == ServiceNameTypes.SatAis);
-
-            if (isAisToggleOn)
+            if (ShouldActivateAis(isAisToggleOn))
             {
-                if (existingService == null)
-                {
-                    this.ShipServices.Add(ShipService.Of(this.ShipKey, ServiceNameTypes.SatAis));
-                }
-
-                this.IsUseAis = true;
+                this.ShipServices.Add(ShipService.Of(this.ShipKey, ServiceNameTypes.SatAis));
+                this.ActiveAis();
+                return;
             }
-            else
+
+            if (ShouldDeactivateAis(isAisToggleOn))
             {
-                if (existingService != null)
-                {
-                    this.ShipServices.Remove(existingService);
-                }
-
-                this.IsUseAis = false;
+                var existingService = this.ShipServices.First(s => s.ServiceName == ServiceNameTypes.SatAis);
+                this.ShipServices.Remove(existingService);
+                this.DeactiveAis();
             }
+        }
+
+        private bool ShouldActivateAis(bool isAisToggleOn)
+        {
+            return isAisToggleOn && !this.HasSatAisService();
+        }
+
+        private bool ShouldDeactivateAis(bool isAisToggleOn)
+        {
+            return !isAisToggleOn && this.HasSatAisService();
+        }
+
+        private bool HasSatAisService()
+        {
+            return this.ShipServices.Any(s => s.ServiceName == ServiceNameTypes.SatAis);
+        }
+
+        private void ActiveAis()
+        {
+            this.IsUseAis = true;
+        }
+
+        private void DeactiveAis()
+        {
+            this.IsUseAis = false;
         }
 
         public void ManageGpsService(bool isGPSToggleOn, string? satelliteId, string? satelliteType, string? companyName)
@@ -148,7 +155,7 @@ namespace ShipParticularsApi.Entities
                 {
                     this.ShipServices.Add(ShipService.Of(this.ShipKey, ServiceNameTypes.KtSat)); // NOTE. 무조건 ServiceNameTypes.KtSat ?
 
-                    this.ShipSatellite = ShipSatellite.Of(this.ShipKey, satelliteId, satelliteType);
+                    this.ShipSatellite = ShipSatellite.Of(this.ShipKey, satelliteId, satelliteType); // NOTE. NONE 타입인 경우 IsUseKtsat = true ?
                     this.ExternalShipId = satelliteId;
                     this.IsUseKtsat = true; // NOTE. SHIP_SATELLITE.IS_USE_SATELLITE (bit)와 동일?
                 }
