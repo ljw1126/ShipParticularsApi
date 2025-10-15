@@ -146,8 +146,11 @@ namespace ShipParticularsApi.Entities
             {
                 if (existingService == null)
                 {
-                    this.ShipServices.Add(ShipService.Of(this.ShipKey, ServiceNameTypes.KtSat)); // NOTE. 무조건인가??
+                    this.ShipServices.Add(ShipService.Of(this.ShipKey, ServiceNameTypes.KtSat)); // NOTE. 무조건 ServiceNameTypes.KtSat ?
+
                     this.ShipSatellite = ShipSatellite.Of(this.ShipKey, satelliteId, satelliteType);
+                    this.ExternalShipId = satelliteId;
+                    this.IsUseKtsat = true; // NOTE. SHIP_SATELLITE.IS_USE_SATELLITE (bit)와 동일?
                 }
 
                 if (this.ShipSatellite != null && this.ShipSatellite.IsSkTelink())
