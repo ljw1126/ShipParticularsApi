@@ -308,6 +308,7 @@ namespace ShipParticularsApi.Tests.Entities
                 target.IsUseAis.Should().BeFalse();
             }
 
+            // TODO. Case6가 동일해보임
             [Fact(DisplayName = "등록된 ShipService가 없는 경우, AIS Toggle Off해도 아무것도 하지 않는다")]
             public void Case10()
             {
@@ -343,7 +344,8 @@ namespace ShipParticularsApi.Tests.Entities
                 target.ShipServices.Should().BeEmpty();
 
                 target.ShipSatellite.Should().BeNull();
-                target.IsUseAis.Should().BeFalse();
+                target.IsUseKtsat.Should().BeNull();
+                target.ExternalShipId.Should().BeNull();
 
                 target.SkTelinkCompanyShip.Should().BeNull();
             }
@@ -371,7 +373,7 @@ namespace ShipParticularsApi.Tests.Entities
                 target.ShipServices.Should().BeEmpty();
 
                 target.ShipSatellite.Should().BeNull();
-                target.IsUseAis.Should().BeFalse();
+                target.IsUseKtsat.Should().BeFalse();
                 target.ExternalShipId.Should().BeNull();
 
                 target.SkTelinkCompanyShip.Should().BeNull();
@@ -393,12 +395,13 @@ namespace ShipParticularsApi.Tests.Entities
 
                 // Assert
                 target.ShipServices.Should().ContainEquivalentOf(KtSatService("UNIQUE_SHIP_KEY"));
+
                 target.ShipSatellite.Should().BeEquivalentTo(KtSatellite("UNIQUE_SHIP_KEY", "SATELLITE_ID"),
                     options => options.Excluding(s => s.UpdateDateTime));
-                target.SkTelinkCompanyShip.Should().BeNull();
-
                 target.ExternalShipId.Should().Be("SATELLITE_ID");
                 target.IsUseKtsat.Should().BeTrue();
+
+                target.SkTelinkCompanyShip.Should().BeNull();
             }
 
             [Fact(DisplayName = "신규로 SK_TELINK 서비스 사용하는 경우, ShipService,ShipSatellite, SkTelinkCompanyShip가 등록된다")]
