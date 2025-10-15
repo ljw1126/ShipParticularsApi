@@ -8,7 +8,7 @@ using Xunit.Abstractions;
 
 using static ShipParticularsApi.Tests.Builders.ShipInfoTestBuilder;
 
-namespace ShipParticularsApi.Tests
+namespace ShipParticularsApi.Tests.Examples
 {
     public class BasicPersistenceCrudTests : IDisposable
     {

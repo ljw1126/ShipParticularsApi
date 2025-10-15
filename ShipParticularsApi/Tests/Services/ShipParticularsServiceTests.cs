@@ -167,6 +167,8 @@ namespace ShipParticularsApi.Tests.Services
 
             capturedEntity.Should().NotBeNull();
             capturedEntity.Id.Should().Be(0L);
+            capturedEntity.ExternalShipId.Should().BeSameAs(param.ShipSatelliteParam.SatelliteId);
+            capturedEntity.IsUseKtsat.Should().BeTrue();
 
             capturedEntity.ShipServices.Should().HaveCount(1)
                 .And.ContainEquivalentOf(KtSatService(param.ShipKey));
@@ -219,6 +221,8 @@ namespace ShipParticularsApi.Tests.Services
 
             capturedEntity.Should().NotBeNull();
             capturedEntity.Id.Should().Be(0L);
+            capturedEntity.ExternalShipId.Should().BeSameAs(param.ShipSatelliteParam.SatelliteId);
+            capturedEntity.IsUseKtsat.Should().BeTrue();
 
             capturedEntity.ShipServices.Should().HaveCount(1)
                 .And.ContainEquivalentOf(KtSatService(param.ShipKey));

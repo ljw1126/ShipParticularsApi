@@ -149,6 +149,8 @@ namespace ShipParticularsApi.Tests.Entities
                     .WithShipCode(param.ShipCode)
                     .WithShipServices(KtSatService(0L, param.ShipKey))
                     .WithShipSatellite(KtSatellite(param.ShipKey, param.ShipSatelliteParam.SatelliteId))
+                    .WithExternalShipId(param.ShipSatelliteParam.SatelliteId)
+                    .WithIsUseKtsat(true)
                     .Build();
 
                 newShipInfo.Should().NotBeNull();
@@ -197,6 +199,8 @@ namespace ShipParticularsApi.Tests.Entities
                     .WithShipServices(KtSatService(0L, param.ShipKey))
                     .WithShipSatellite(SkTelinkSatellite(param.ShipKey, param.ShipSatelliteParam.SatelliteId))
                     .WithSkTelinkCompanyShip(SkTelinkCompanyShip(param.ShipKey, param.SkTelinkCompanyShipParam.CompanyName))
+                    .WithExternalShipId(param.ShipSatelliteParam.SatelliteId)
+                    .WithIsUseKtsat(true)
                     .Build();
 
                 newShipInfo.Should().NotBeNull();

@@ -11,7 +11,7 @@ using static ShipParticularsApi.Tests.Builders.ShipInfoTestBuilder;
 using static ShipParticularsApi.Tests.Builders.ShipServiceTestBuilder;
 
 
-namespace ShipParticularsApi.Tests
+namespace ShipParticularsApi.Tests.Examples
 {
     public class NavigationPropertyTests : IDisposable
     {
