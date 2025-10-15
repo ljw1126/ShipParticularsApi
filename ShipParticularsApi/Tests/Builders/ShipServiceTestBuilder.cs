@@ -4,7 +4,7 @@ namespace ShipParticularsApi.Tests.Builders
 {
     public class ShipServiceTestBuilder
     {
-        private const long SHIP_SERVICE_ID = 1L;
+        private const long NEW_ID = 0L;
 
         private long _Id;
         private string _ShipKey;
@@ -18,7 +18,7 @@ namespace ShipParticularsApi.Tests.Builders
 
         public static ShipService SatAisService(string shipKey)
         {
-            return SatAisService(SHIP_SERVICE_ID, shipKey);
+            return SatAisService(NEW_ID, shipKey);
         }
 
         public static ShipService SatAisService(long id, string shipKey)
@@ -33,7 +33,7 @@ namespace ShipParticularsApi.Tests.Builders
 
         public static ShipService KtSatService(string shipKey)
         {
-            return KtSatService(SHIP_SERVICE_ID, shipKey);
+            return KtSatService(NEW_ID, shipKey);
         }
 
         public static ShipService KtSatService(long id, string shipKey)

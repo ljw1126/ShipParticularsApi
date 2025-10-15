@@ -4,6 +4,8 @@ namespace ShipParticularsApi.Tests.Builders
 {
     public class ShipSatelliteTestBuilder
     {
+        private const long NEW_ID = 0L;
+
         private long _Id;
         private string _ShipKey;
         private SatelliteTypes _SatelliteType;
@@ -21,7 +23,7 @@ namespace ShipParticularsApi.Tests.Builders
 
         public static ShipSatellite KtSatellite(string shipKey, string satelliteId)
         {
-            return KtSatellite(0L, shipKey, satelliteId);
+            return KtSatellite(NEW_ID, shipKey, satelliteId);
         }
 
         public static ShipSatellite KtSatellite(long id, string shipKey, string satelliteId)

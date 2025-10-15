@@ -4,6 +4,8 @@ namespace ShipParticularsApi.Tests.Builders
 {
     public class SkTelinkCompanyShipTestBuilder
     {
+        private const long NEW_ID = 0L;
+
         private long _Id;
         private string _ShipKey;
         private string _CompanyName;
@@ -15,7 +17,7 @@ namespace ShipParticularsApi.Tests.Builders
 
         public static SkTelinkCompanyShip SkTelinkCompanyShip(string shipKey, string companyName)
         {
-            return SkTelinkCompanyShip(0L, shipKey, companyName);
+            return SkTelinkCompanyShip(NEW_ID, shipKey, companyName);
         }
 
         public static SkTelinkCompanyShip SkTelinkCompanyShip(long id, string shipKey, string companyName)
