@@ -3,9 +3,13 @@ using static ShipParticularsApi.Tests.Services.ShipParticularsServiceTests;
 
 namespace ShipParticularsApi.Services
 {
-    // NOTE: ShipInfo가 자식의 생명 주기를 관리하다보니, 불필요한 Repository도 존재할 수 있음. 
+    // TODO. IUserService 정의해서 임의 랜덤한 userId 값 반환하는 구현체 추가
     public class ShipParticularsService(IShipInfoRepository shipInfoRepository)
     {
+        /*
+         * TODO. VO 사용 여부 
+         * TODO. ReplaceShipName, ShipModelTest 처리
+         */
         public async Task Process(ShipParticularsParam param)
         {
 

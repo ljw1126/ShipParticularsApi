@@ -31,5 +31,12 @@ namespace ShipParticularsApi.Entities
                 CompanyName = companyName
             };
         }
+
+        public void Update(string companyName)
+        {
+            ArgumentException.ThrowIfNullOrWhiteSpace(companyName);
+
+            this.CompanyName = companyName;
+        }
     }
 }

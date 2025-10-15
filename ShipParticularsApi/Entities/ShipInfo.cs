@@ -159,26 +159,54 @@ namespace ShipParticularsApi.Entities
                     this.ExternalShipId = satelliteId;
                     this.IsUseKtsat = true; // NOTE. SHIP_SATELLITE.IS_USE_SATELLITE (bit)와 동일?
                 }
-
-                if (this.ShipSatellite != null && this.ShipSatellite.IsSkTelink())
+                else // isGPSToggleOn == true && existringService != null
                 {
-                    // 신규 ShipInfo이고 SK Telink 위성을 사용하는 경우 SkTelinkCompanyShip을 추가해야 한다
-                    this.SkTelinkCompanyShip = SkTelinkCompanyShip.Of(this.ShipKey, companyName);
+                    // ShipSatellite가 같이 등록되어 있으니, 업데이트 처리
+                    this.ShipSatellite.Update(satelliteId, satelliteType);
+                    this.ExternalShipId = satelliteId;
+                    this.IsUseKtsat = true;
+                }
+
+                if (this.ShipSatellite.IsSkTelink())
+                {
+                    if (this.SkTelinkCompanyShip == null)
+                    {
+                        this.SkTelinkCompanyShip = SkTelinkCompanyShip.Of(this.ShipKey, companyName);
+                    }
+                    else
+                    {
+                        this.SkTelinkCompanyShip.Update(companyName);
+                    }
+                }
+                else
+                {
+                    this.SkTelinkCompanyShip = null;
                 }
             }
             else
             {
-                if (existingService != null)
-                {
-                    this.ShipServices.Remove(existingService);
-
-                    this.SkTelinkCompanyShip = null;
-
-                    this.ShipSatellite = null;
-                    this.ExternalShipId = null;
-                    this.IsUseKtsat = false;
-                }
+                DeactiveGpsService();
             }
+        }
+
+        private void DeactiveGpsService()
+        {
+            var existingService = this.ShipServices.FirstOrDefault(s => s.ServiceName == ServiceNameTypes.KtSat);
+            if (existingService == null)
+            {
+                return;
+            }
+
+            if (this.ShipSatellite != null && this.ShipSatellite.IsSkTelink())
+            {
+                this.SkTelinkCompanyShip = null;
+            }
+
+            this.ShipSatellite = null;
+            this.ExternalShipId = null;
+            this.IsUseKtsat = false;
+
+            this.ShipServices.Remove(existingService);
         }
     }
 }

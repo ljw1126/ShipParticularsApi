@@ -74,5 +74,14 @@ namespace ShipParticularsApi.Entities
         {
             return SatelliteType == SatelliteTypes.SkTelink;
         }
+
+        public void Update(string satelliteId, string satelliteType)
+        {
+            ArgumentException.ThrowIfNullOrWhiteSpace(satelliteId);
+            ArgumentException.ThrowIfNullOrWhiteSpace(satelliteType);
+
+            this.SatelliteId = satelliteId;
+            this.SatelliteType = ConvertStringToSatelliteType(satelliteType);
+        }
     }
 }
