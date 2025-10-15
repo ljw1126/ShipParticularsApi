@@ -207,7 +207,9 @@ namespace ShipParticularsApi.Tests.Entities
                 newShipInfo.Should().BeEquivalentTo(expected,
                     options => options.Excluding(s => s.ShipSatellite.UpdateDateTime));
             }
-
+        }
+        public class When_shipInfo_already_exist
+        {
             [Fact(DisplayName = "기존 ShipInfo 정보를 업데이트한다")]
             public void Case6()
             {
@@ -247,7 +249,7 @@ namespace ShipParticularsApi.Tests.Entities
                 );
             }
 
-            [Fact(DisplayName = "기존 ShipInfo에 ShipService가 없고, AIS Toggle On인 경우 서비스('sat-ais')가 추가된다")]
+            [Fact(DisplayName = "AIS Toggle On인 경우 서비스('sat-ais')가 추가된다")]
             public void Case7()
             {
                 // Arrange
@@ -266,7 +268,7 @@ namespace ShipParticularsApi.Tests.Entities
                 target.IsUseAis.Should().BeTrue();
             }
 
-            [Fact(DisplayName = "기존 ShipInfo에 'sat-ais' ShipService 이용 중일때, AIS Toggle On해도 아무것도 하지 않는다")]
+            [Fact(DisplayName = "'sat-ais' ShipService 사용 중일때, AIS Toggle On해도 아무것도 하지 않는다")]
             public void Case8()
             {
                 // Arrange
@@ -287,7 +289,7 @@ namespace ShipParticularsApi.Tests.Entities
                 target.IsUseAis.Should().BeTrue();
             }
 
-            [Fact(DisplayName = "기존 ShipInfo에 'sat-ais' ShipService가 있고, AIS Toggle Off하는 경우 컬렉션 길이가 0이 된다")]
+            [Fact(DisplayName = "'sat-ais' ShipService를 사용 중이고, AIS Toggle Off하는 경우 컬렉션 길이가 0이 된다")]
             public void Case9()
             {
                 // Arrange
@@ -306,7 +308,7 @@ namespace ShipParticularsApi.Tests.Entities
                 target.IsUseAis.Should().BeFalse();
             }
 
-            [Fact(DisplayName = "기존 ShipInfo에 등록된 서비스가 없는 경우, AIS Toggle Off해도 아무것도 하지 않는다")]
+            [Fact(DisplayName = "등록된 ShipService가 없는 경우, AIS Toggle Off해도 아무것도 하지 않는다")]
             public void Case10()
             {
                 // Arrange
@@ -324,7 +326,7 @@ namespace ShipParticularsApi.Tests.Entities
                 target.IsUseAis.Should().BeFalse();
             }
 
-            [Fact(DisplayName = "기존 ShipInfo에 등록된 서비스가 없는 경우, GPS Toggle Off 해도 아무것도 하지 않는다")]
+            [Fact(DisplayName = "등록된 ShipService가 없는 경우, GPS Toggle Off 해도 아무것도 하지 않는다")]
             public void Case11()
             {
                 // Arrange
@@ -346,7 +348,7 @@ namespace ShipParticularsApi.Tests.Entities
                 target.SkTelinkCompanyShip.Should().BeNull();
             }
 
-            [Fact(DisplayName = "기존 ShipInfo가 사용중인 GPS 서비스를 비활성화하면 관련 엔티티와 필드를 초기화한다")]
+            [Fact(DisplayName = "사용중인 GPS 서비스를 비활성화하면 관련 엔티티와 필드를 초기화한다")]
             public void Case12()
             {
                 // Arrange
@@ -375,7 +377,7 @@ namespace ShipParticularsApi.Tests.Entities
                 target.SkTelinkCompanyShip.Should().BeNull();
             }
 
-            [Fact(DisplayName = "기존 ShipInfo가 KT_SAT를 신규 사용하는 경우, ShipService와 ShipSatellite가 등록된다")]
+            [Fact(DisplayName = "KT_SAT 서비스를 신규 사용하는 경우, ShipService와 ShipSatellite가 등록된다")]
             public void Case13()
             {
                 // Arrange
@@ -399,7 +401,7 @@ namespace ShipParticularsApi.Tests.Entities
                 target.IsUseKtsat.Should().BeTrue();
             }
 
-            [Fact(DisplayName = "기존 ShipInfo가 신규로 SK_TELINK 사용하는 경우, ShipService,ShipSatellite, SkTelinkCompanyShip가 등록된다")]
+            [Fact(DisplayName = "신규로 SK_TELINK 서비스 사용하는 경우, ShipService,ShipSatellite, SkTelinkCompanyShip가 등록된다")]
             public void Case14()
             {
                 // Arrange
@@ -423,7 +425,7 @@ namespace ShipParticularsApi.Tests.Entities
                 target.IsUseKtsat.Should().BeTrue();
             }
 
-            [Fact(DisplayName = "기존 ShipInfo가 KT_SAT에서 SK_TELINK로 변경하는 경우, ShipSatellite가 업데이트되고, SKTelinkCompanyShip이 추가된다")]
+            [Fact(DisplayName = "KT_SAT에서 SK_TELINK로 서비스 변경하는 경우, ShipSatellite가 업데이트되고, SKTelinkCompanyShip이 추가된다")]
             public void Case15()
             {
                 const bool isGPSToggleOn = true;
@@ -449,7 +451,7 @@ namespace ShipParticularsApi.Tests.Entities
                 target.IsUseKtsat.Should().BeTrue();
             }
 
-            [Fact(DisplayName = "기존 ShipInfo가 SK_TELINK에서 KT_SAT로 변경하는 경우, ShipSatellite가 업데이트되고, SKTelinkCompanyShip이 제거된다")]
+            [Fact(DisplayName = "SK_TELINK에서 KT_SAT로 서비스 변경하는 경우, ShipSatellite가 업데이트되고, SKTelinkCompanyShip이 제거된다")]
             public void Case16()
             {
                 const bool isGPSToggleOn = true;
@@ -478,7 +480,7 @@ namespace ShipParticularsApi.Tests.Entities
             }
 
 
-            [Fact(DisplayName = "기존 ShipInfo가 GPS 서비스 사용 중일때 SK TELINK의 CompanyName을 업데이트 한다")]
+            [Fact(DisplayName = "SK TELINK의 CompanyName을 업데이트 한다")]
             public void Case17()
             {
                 const bool isGPSToggleOn = true;
@@ -500,7 +502,7 @@ namespace ShipParticularsApi.Tests.Entities
                     .BeEquivalentTo(SkTelinkCompanyShip(1L, "UNIQUE_SHIP_KEY", "UPDATE_COMPANY_NAME"));
             }
 
-            [Fact(DisplayName = "SK TELINK의 CompanyName 변경시 다른 엔티티는 변경되지 않아야 한다")]
+            [Fact(DisplayName = "SK TELINK의 CompanyName 업데이트시 다른 엔티티는 변경되지 않는다")]
             public void Case18()
             {
                 const bool isGPSToggleOn = true;
