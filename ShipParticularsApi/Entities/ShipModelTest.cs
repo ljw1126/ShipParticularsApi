@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using ShipParticularsApi.ValueObjects;
 
 namespace ShipParticularsApi.Entities
 {
@@ -71,5 +72,55 @@ namespace ShipParticularsApi.Entities
 
         [Column("etaD_SCANTLING")]
         public string EtaDScantling { get; set; }
+
+        public static ShipModelTest From(string shipKey, ShipModelTestDetails data)
+        {
+            ArgumentException.ThrowIfNullOrWhiteSpace(shipKey);
+
+            return new()
+            {
+                ShipKey = shipKey,
+                ZaBallast = data.ZaBallast,
+                TransverseProjectionAreaBallast = data.TransverseProjectionAreaBallast,
+                TransverseProjectionAreaScantling = data.TransverseProjectionAreaScantling,
+                Kyy = data.Kyy,
+                DraftFore = data.DraftFore,
+                DraftAft = data.DraftAft,
+                CbBallast = data.CbBallast,
+                CbScantling = data.CbScantling,
+                SubmergedSurfaceBallast = data.SubmergedSurfaceBallast,
+                SubmergedSurfaceScantling = data.SubmergedSurfaceScantling,
+                MidShipSectionAreaBallast = data.MidShipSectionAreaBallast,
+                MidShipSectionAreaScantling = data.MidShipSectionAreaScantling,
+                DisplacementBallast = data.DisplacementBallast,
+                DisplacementScantling = data.DisplacementScantling,
+                SpeedEtaDBallast = data.SpeedEtaDBallast,
+                EtaDBallast = data.EtaDBallast,
+                SpeedEtaDScantling = data.SpeedEtaDScantling,
+                EtaDScantling = data.EtaDScantling
+            };
+        }
+
+        public void Update(ShipModelTestDetails data)
+        {
+            this.ZaBallast = data.ZaBallast;
+            this.TransverseProjectionAreaBallast = data.TransverseProjectionAreaBallast;
+            this.TransverseProjectionAreaScantling = data.TransverseProjectionAreaScantling;
+            this.Kyy = data.Kyy;
+            this.DraftFore = data.DraftFore;
+            this.DraftAft = data.DraftAft;
+            this.CbBallast = data.CbBallast;
+            this.CbScantling = data.CbScantling;
+            this.SubmergedSurfaceBallast = data.SubmergedSurfaceBallast;
+            this.SubmergedSurfaceScantling = data.SubmergedSurfaceScantling;
+            this.MidShipSectionAreaBallast = data.MidShipSectionAreaBallast;
+            this.MidShipSectionAreaScantling = data.MidShipSectionAreaScantling;
+            this.DisplacementBallast = data.DisplacementBallast;
+            this.DisplacementScantling = data.DisplacementScantling;
+            this.SpeedEtaDBallast = data.SpeedEtaDBallast;
+            this.EtaDBallast = data.EtaDBallast;
+            this.SpeedEtaDScantling = data.SpeedEtaDScantling;
+            this.EtaDScantling = data.EtaDScantling;
+        }
     }
 }

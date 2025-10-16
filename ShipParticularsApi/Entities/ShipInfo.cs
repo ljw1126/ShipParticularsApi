@@ -2,6 +2,7 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 using ShipParticularsApi.Tests.Services;
+using ShipParticularsApi.ValueObjects;
 
 namespace ShipParticularsApi.Entities
 {
@@ -66,6 +67,18 @@ namespace ShipParticularsApi.Entities
             };
         }
 
+        public static ShipInfo From(ShipInfoDetails details)
+        {
+            return new()
+            {
+                ShipKey = details.ShipKey,
+                Callsign = details.Callsign,
+                ShipName = details.ShipName,
+                ShipType = ConvertStringToShipTypes(details.ShipType),
+                ShipCode = details.ShipCode
+            };
+        }
+
         private static ShipTypes ConvertStringToShipTypes(string value)
         {
             return value switch
@@ -100,6 +113,15 @@ namespace ShipParticularsApi.Entities
             ShipName = param.ShipName;
             ShipType = ConvertStringToShipTypes(param.ShipType);
             ShipCode = param.ShipCode;
+            return this;
+        }
+
+        public ShipInfo UpdateDetails(ShipInfoDetails details)
+        {
+            this.Callsign = details.Callsign;
+            this.ShipName = details.ShipName;
+            this.ShipType = ConvertStringToShipTypes(details.ShipType);
+            this.ShipCode = details.ShipCode;
             return this;
         }
 
@@ -151,6 +173,19 @@ namespace ShipParticularsApi.Entities
             {
                 this.ActivateGpsService(satelliteId, satelliteType);
                 this.ManageSkTelinkCompanyShip(companyName);
+            }
+            else
+            {
+                DeactiveGpsService();
+            }
+        }
+
+        public void ManageGpsService(bool isGPSToggleOn, SatelliteDetails details)
+        {
+            if (isGPSToggleOn)
+            {
+                this.ActivateGpsService(details.SatelliteId, details.SatelliteType);
+                this.ManageSkTelinkCompanyShip(details.CompanyName);
             }
             else
             {
@@ -220,6 +255,30 @@ namespace ShipParticularsApi.Entities
         private bool HasKtSatService()
         {
             return this.ShipServices.Any(s => s.ServiceName == ServiceNameTypes.KtSat);
+        }
+
+        public void ManageShipModelTest(ShipModelTestDetails data)
+        {
+            if (this.ShipModelTest == null)
+            {
+                this.ShipModelTest = ShipModelTest.From(this.ShipKey, data);
+            }
+            else
+            {
+                this.ShipModelTest.Update(data);
+            }
+        }
+
+        public void ManageReplaceShipName(ReplaceShipNameDetails data)
+        {
+            if (this.ReplaceShipName == null)
+            {
+                this.ReplaceShipName = ReplaceShipName.From(this.ShipKey, data);
+            }
+            else
+            {
+                this.ReplaceShipName.Update(data);
+            }
         }
     }
 }
