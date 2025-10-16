@@ -4,7 +4,7 @@ namespace ShipParticularsApi.Repositories
 {
     public interface IShipInfoRepository
     {
-        Task<ShipInfo> GetByShipKeyAsync(string shipKey);
-        Task<ShipInfo> UpsertAsync(ShipInfo shipInfo);
+        Task<ShipInfo?> GetByShipKeyAsync(string shipKey);
+        Task UpsertAsync(ShipInfo shipInfo);
     }
 }
