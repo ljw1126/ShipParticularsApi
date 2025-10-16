@@ -1,18 +1,35 @@
-﻿using ShipParticularsApi.Contexts;
+﻿using Microsoft.EntityFrameworkCore;
+using ShipParticularsApi.Contexts;
 using ShipParticularsApi.Entities;
 
 namespace ShipParticularsApi.Repositories
 {
     public class ShipInfoRepository(ShipParticularsContext context) : IShipInfoRepository
     {
-        public Task<ShipInfo> GetByShipKeyAsync(string shipKey)
+        public async Task<ShipInfo?> GetByShipKeyAsync(string shipKey)
         {
-            throw new NotImplementedException();
+            return await context.ShipInfos
+                 .Include(s => s.ShipServices)
+                 .Include(s => s.ShipSatellite)
+                 .Include(s => s.SkTelinkCompanyShip)
+                 .Include(s => s.ReplaceShipName)
+                 .Include(s => s.ShipModelTest)
+                 .AsSplitQuery()
+                 .SingleOrDefaultAsync(s => s.ShipKey == shipKey);
         }
 
-        public Task<ShipInfo> UpsertAsync(ShipInfo shipInfo)
+        public Task UpsertAsync(ShipInfo shipInfo)
         {
-            throw new NotImplementedException();
+            if (shipInfo.Id == 0)
+            {
+                context.ShipInfos.Add(shipInfo);
+            }
+            else
+            {
+                context.ShipInfos.Update(shipInfo);
+            }
+
+            return Task.CompletedTask;
         }
     }
 }

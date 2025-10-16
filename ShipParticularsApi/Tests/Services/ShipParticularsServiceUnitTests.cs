@@ -44,7 +44,7 @@ namespace ShipParticularsApi.Tests.Services
             ShipInfo? capturedEntity = null;
             _mockShipInfoRepository.Setup(e => e.UpsertAsync(It.IsAny<ShipInfo>()))
                 .Callback<ShipInfo>(arg => capturedEntity = arg)
-                .ReturnsAsync((ShipInfo entity) => entity);
+                .Returns(Task.CompletedTask);
 
             // Act
             await _sut.Process(param);
@@ -80,7 +80,7 @@ namespace ShipParticularsApi.Tests.Services
             ShipInfo? capturedEntity = null;
             _mockShipInfoRepository.Setup(e => e.UpsertAsync(It.IsAny<ShipInfo>()))
                 .Callback<ShipInfo>(arg => capturedEntity = arg)
-                .ReturnsAsync((ShipInfo entity) => entity);
+                .Returns(Task.CompletedTask);
 
             // Act
             await _sut.Process(param);
@@ -117,7 +117,7 @@ namespace ShipParticularsApi.Tests.Services
             ShipInfo? capturedEntity = null;
             _mockShipInfoRepository.Setup(e => e.UpsertAsync(It.IsAny<ShipInfo>()))
                 .Callback<ShipInfo>(arg => capturedEntity = arg)
-                .ReturnsAsync((ShipInfo entity) => entity);
+                .Returns(Task.CompletedTask);
 
             // Act
             await _sut.Process(param);
@@ -160,7 +160,7 @@ namespace ShipParticularsApi.Tests.Services
             ShipInfo? capturedEntity = null;
             _mockShipInfoRepository.Setup(e => e.UpsertAsync(It.IsAny<ShipInfo>()))
                 .Callback<ShipInfo>(arg => capturedEntity = arg)
-                .ReturnsAsync((ShipInfo entity) => entity);
+                .Returns(Task.CompletedTask);
 
             // Act
             await _sut.Process(param);
@@ -213,8 +213,8 @@ namespace ShipParticularsApi.Tests.Services
 
             ShipInfo? capturedEntity = null;
             _mockShipInfoRepository.Setup(e => e.UpsertAsync(It.IsAny<ShipInfo>()))
-                .Callback<ShipInfo>(arg => capturedEntity = arg)
-                .ReturnsAsync((ShipInfo entity) => entity);
+                 .Callback<ShipInfo>(arg => capturedEntity = arg)
+                 .Returns(Task.CompletedTask);
 
             // Act
             await _sut.Process(param);
@@ -267,8 +267,8 @@ namespace ShipParticularsApi.Tests.Services
 
             ShipInfo? capturedEntity = null;
             _mockShipInfoRepository.Setup(e => e.UpsertAsync(It.IsAny<ShipInfo>()))
-                .Callback<ShipInfo>(arg => capturedEntity = arg)
-                .ReturnsAsync((ShipInfo entity) => entity);
+                 .Callback<ShipInfo>(arg => capturedEntity = arg)
+                 .Returns(Task.CompletedTask);
 
             // Act
             await _sut.Process(param);
@@ -311,7 +311,7 @@ namespace ShipParticularsApi.Tests.Services
             ShipInfo? capturedEntity = null;
             _mockShipInfoRepository.Setup(e => e.UpsertAsync(It.IsAny<ShipInfo>()))
                 .Callback<ShipInfo>(arg => capturedEntity = arg)
-                .ReturnsAsync((ShipInfo entity) => entity);
+                .Returns(Task.CompletedTask);
 
             // Act
             await _sut.Process(param);
@@ -356,7 +356,7 @@ namespace ShipParticularsApi.Tests.Services
             ShipInfo? capturedEntity = null;
             _mockShipInfoRepository.Setup(e => e.UpsertAsync(It.IsAny<ShipInfo>()))
                 .Callback<ShipInfo>(arg => capturedEntity = arg)
-                .ReturnsAsync((ShipInfo entity) => entity);
+                .Returns(Task.CompletedTask);
 
             // Act
             await _sut.Process(param);
@@ -399,7 +399,7 @@ namespace ShipParticularsApi.Tests.Services
             ShipInfo? capturedEntity = null;
             _mockShipInfoRepository.Setup(e => e.UpsertAsync(It.IsAny<ShipInfo>()))
                 .Callback<ShipInfo>(arg => capturedEntity = arg)
-                .ReturnsAsync((ShipInfo entity) => entity);
+                .Returns(Task.CompletedTask);
 
             // Act
             await _sut.Process(param);
@@ -441,7 +441,7 @@ namespace ShipParticularsApi.Tests.Services
             ShipInfo? capturedEntity = null;
             _mockShipInfoRepository.Setup(e => e.UpsertAsync(It.IsAny<ShipInfo>()))
                 .Callback<ShipInfo>(arg => capturedEntity = arg)
-                .ReturnsAsync((ShipInfo entity) => entity);
+                .Returns(Task.CompletedTask);
 
             // Act
             await _sut.Process(param);
@@ -480,7 +480,7 @@ namespace ShipParticularsApi.Tests.Services
             ShipInfo? capturedEntity = null;
             _mockShipInfoRepository.Setup(e => e.UpsertAsync(It.IsAny<ShipInfo>()))
                 .Callback<ShipInfo>(arg => capturedEntity = arg)
-                .ReturnsAsync((ShipInfo entity) => entity);
+                .Returns(Task.CompletedTask);
 
             // Act
             await _sut.Process(param);
@@ -530,8 +530,8 @@ namespace ShipParticularsApi.Tests.Services
 
             ShipInfo? capturedEntity = null;
             _mockShipInfoRepository.Setup(e => e.UpsertAsync(It.IsAny<ShipInfo>()))
-                .Callback<ShipInfo>(arg => capturedEntity = arg)
-                .ReturnsAsync((ShipInfo entity) => entity);
+                 .Callback<ShipInfo>(arg => capturedEntity = arg)
+                 .Returns(Task.CompletedTask);
 
             // Act
             await _sut.Process(param);
@@ -582,7 +582,7 @@ namespace ShipParticularsApi.Tests.Services
             ShipInfo? capturedEntity = null;
             _mockShipInfoRepository.Setup(e => e.UpsertAsync(It.IsAny<ShipInfo>()))
                 .Callback<ShipInfo>(arg => capturedEntity = arg)
-                .ReturnsAsync((ShipInfo entity) => entity);
+                .Returns(Task.CompletedTask);
 
             // Act
             await _sut.Process(param);
@@ -639,7 +639,7 @@ namespace ShipParticularsApi.Tests.Services
             ShipInfo? capturedEntity = null;
             _mockShipInfoRepository.Setup(e => e.UpsertAsync(It.IsAny<ShipInfo>()))
                 .Callback<ShipInfo>(arg => capturedEntity = arg)
-                .ReturnsAsync((ShipInfo entity) => entity);
+                .Returns(Task.CompletedTask);
 
             // Act
             await _sut.Process(param);
@@ -700,7 +700,7 @@ namespace ShipParticularsApi.Tests.Services
             ShipInfo? capturedEntity = null;
             _mockShipInfoRepository.Setup(e => e.UpsertAsync(It.IsAny<ShipInfo>()))
                 .Callback<ShipInfo>(arg => capturedEntity = arg)
-                .ReturnsAsync((ShipInfo entity) => entity);
+                .Returns(Task.CompletedTask);
 
             // Act
             await _sut.Process(param);
@@ -758,7 +758,7 @@ namespace ShipParticularsApi.Tests.Services
             ShipInfo? capturedEntity = null;
             _mockShipInfoRepository.Setup(e => e.UpsertAsync(It.IsAny<ShipInfo>()))
                 .Callback<ShipInfo>(arg => capturedEntity = arg)
-                .ReturnsAsync((ShipInfo entity) => entity);
+                .Returns(Task.CompletedTask);
 
             // Act
             await _sut.Process(param);
@@ -820,7 +820,7 @@ namespace ShipParticularsApi.Tests.Services
             ShipInfo? capturedEntity = null;
             _mockShipInfoRepository.Setup(e => e.UpsertAsync(It.IsAny<ShipInfo>()))
                 .Callback<ShipInfo>(arg => capturedEntity = arg)
-                .ReturnsAsync((ShipInfo entity) => entity);
+                .Returns(Task.CompletedTask);
 
             // Act
             await _sut.Process(param);
@@ -876,7 +876,7 @@ namespace ShipParticularsApi.Tests.Services
             ShipInfo? capturedEntity = null;
             _mockShipInfoRepository.Setup(e => e.UpsertAsync(It.IsAny<ShipInfo>()))
                 .Callback<ShipInfo>(arg => capturedEntity = arg)
-                .ReturnsAsync((ShipInfo entity) => entity);
+                .Returns(Task.CompletedTask);
 
             // Act
             await _sut.Process(param);
