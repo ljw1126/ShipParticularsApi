@@ -1,4 +1,5 @@
 ﻿using ShipParticularsApi.Entities;
+using ShipParticularsApi.ValueObjects;
 using static ShipParticularsApi.Tests.Services.ShipParticularsServiceTests;
 
 namespace ShipParticularsApi.Services
@@ -6,24 +7,35 @@ namespace ShipParticularsApi.Services
     // TODO. IUserService 정의해서 임의 랜덤한 userId 값 반환하는 구현체 추가
     public class ShipParticularsService(IShipInfoRepository shipInfoRepository)
     {
-        /*
-         * TODO. VO 사용 여부 
-         * TODO. ReplaceShipName, ShipModelTest 처리
-         */
         public async Task Process(ShipParticularsParam param)
         {
 
             ShipInfo? shipInfo = await shipInfoRepository.GetByShipKeyAsync(param.ShipKey);
 
-            ShipInfo entityToProcess = (shipInfo == null) ? ShipInfo.From(param) : shipInfo.Update(param);
+            // TODO. VO 추가에 따른 테스트 리팩터링
+            var shipInfoDetails = ShipInfoDetails.From(param);
+            ShipInfo entityToProcess = (shipInfo == null)
+                ? ShipInfo.From(shipInfoDetails)
+                : shipInfo.UpdateDetails(shipInfoDetails);
+
 
             entityToProcess.ManageAisService(param.IsAisToggleOn);
-            entityToProcess.ManageGpsService(
-                param.IsGPSToggleOn,
+
+            var satelliteDetails = new SatelliteDetails(
                 param.ShipSatelliteParam?.SatelliteId,
                 param.ShipSatelliteParam?.SatelliteType,
-                param.SkTelinkCompanyShipParam?.CompanyName
-            );
+                param.SkTelinkCompanyShipParam?.CompanyName);
+            entityToProcess.ManageGpsService(param.IsGPSToggleOn, satelliteDetails);
+
+            if (param.ReplaceShipNameParam != null)
+            {
+                entityToProcess.ManageReplaceShipName(new ReplaceShipNameDetails(param.ReplaceShipNameParam.ReplacedShipName));
+            }
+
+            if (param.ShipModelTestParam != null)
+            {
+                entityToProcess.ManageShipModelTest(ShipModelTestDetails.From(param.ShipModelTestParam));
+            }
 
             await shipInfoRepository.UpsertAsync(entityToProcess);
         }
