@@ -1,6 +1,6 @@
 ﻿using ShipParticularsApi.Entities;
 
-namespace ShipParticularsApi.Services
+namespace ShipParticularsApi.Repositories
 {
     public interface IShipInfoRepository
     {

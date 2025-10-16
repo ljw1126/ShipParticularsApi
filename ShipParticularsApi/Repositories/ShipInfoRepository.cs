@@ -1,6 +1,5 @@
 ﻿using ShipParticularsApi.Contexts;
 using ShipParticularsApi.Entities;
-using ShipParticularsApi.Services;
 
 namespace ShipParticularsApi.Repositories
 {
