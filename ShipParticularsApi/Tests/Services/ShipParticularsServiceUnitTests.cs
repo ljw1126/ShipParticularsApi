@@ -2,6 +2,7 @@
 using Moq;
 using ShipParticularsApi.Entities;
 using ShipParticularsApi.Services;
+using ShipParticularsApi.Services.Dtos;
 using Xunit;
 using static ShipParticularsApi.Tests.Builders.ShipInfoTestBuilder;
 using static ShipParticularsApi.Tests.Builders.ShipSatelliteTestBuilder;
@@ -9,12 +10,12 @@ using static ShipParticularsApi.Tests.Builders.ShipServiceTestBuilder;
 using static ShipParticularsApi.Tests.Builders.SkTelinkCompanyShipTestBuilder;
 namespace ShipParticularsApi.Tests.Services
 {
-    public class ShipParticularsServiceTests
+    public class ShipParticularsServiceUnitTests
     {
         private readonly ShipParticularsService _sut;
         private readonly Mock<IShipInfoRepository> _mockShipInfoRepository;
 
-        public ShipParticularsServiceTests()
+        public ShipParticularsServiceUnitTests()
         {
             _mockShipInfoRepository = new Mock<IShipInfoRepository>();
             _sut = new ShipParticularsService(_mockShipInfoRepository.Object);
@@ -887,76 +888,5 @@ namespace ShipParticularsApi.Tests.Services
                 .BeEquivalentTo(SkTelinkSatellite(1L, "UNIQUE_SHIP_KEY", "SATELLITE_ID"));
         }
 
-        public class ShipParticularsParam
-        {
-            public bool IsAisToggleOn { get; set; } = false;
-            public bool IsGPSToggleOn { get; set; } = false;
-
-            public string ShipKey { get; set; }
-            public string Callsign { get; set; }
-            public string ShipName { get; set; }
-            public string ShipType { get; set; }
-            public string ShipCode { get; set; }
-
-            public ShipSatelliteParam? ShipSatelliteParam { get; set; }
-            public SkTelinkCompanyShipParam? SkTelinkCompanyShipParam { get; set; }
-            public ReplaceShipNameParam? ReplaceShipNameParam { get; set; }
-            public ShipModelTestParam? ShipModelTestParam { get; set; }
-        }
-
-        public class ShipSatelliteParam
-        {
-            public string SatelliteType { get; set; }
-            public string SatelliteId { get; set; }
-        }
-
-        public class SkTelinkCompanyShipParam
-        {
-            public string CompanyName { get; set; }
-        }
-
-        public class ReplaceShipNameParam
-        {
-            public string ReplacedShipName { get; set; }
-        }
-
-        public class ShipModelTestParam
-        {
-            public double ZaBallast { get; set; }
-
-            public double TransverseProjectionAreaBallast { get; set; }
-
-            public double TransverseProjectionAreaScantling { get; set; }
-
-            public double Kyy { get; set; }
-
-            public double DraftFore { get; set; }
-
-            public double DraftAft { get; set; }
-
-            public double CbBallast { get; set; }
-
-            public double CbScantling { get; set; }
-
-            public double SubmergedSurfaceBallast { get; set; }
-
-            public double SubmergedSurfaceScantling { get; set; }
-
-            public double MidShipSectionAreaBallast { get; set; }
-
-            public double MidShipSectionAreaScantling { get; set; }
-
-            public double DisplacementBallast { get; set; }
-
-            public double DisplacementScantling { get; set; }
-
-            public string SpeedEtaDBallast { get; set; }
-
-            public string EtaDBallast { get; set; }
-
-            public string SpeedEtaDScantling { get; set; }
-
-            public string EtaDScantling { get; set; }
-        }
     }
 }

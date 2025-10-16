@@ -1,4 +1,5 @@
-﻿using static ShipParticularsApi.Tests.Services.ShipParticularsServiceTests;
+﻿
+using ShipParticularsApi.Services.Dtos;
 
 namespace ShipParticularsApi.ValueObjects
 {
