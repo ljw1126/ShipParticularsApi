@@ -3,6 +3,7 @@ using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using ShipParticularsApi.Contexts;
 using ShipParticularsApi.Entities;
+using ShipParticularsApi.ValueObjects;
 using Xunit;
 using Xunit.Abstractions;
 using static ShipParticularsApi.Tests.Builders.ReplaceShipNameTestBuilder;
@@ -144,7 +145,7 @@ namespace ShipParticularsApi.Tests.Examples
                     .AsSplitQuery()
                     .SingleAsync(s => s.ShipKey == "UNIQUE_SHIP_KEY");
 
-                target.ManageGpsService(false, null, null, null);
+                target.ManageGpsService(false, new SatelliteDetails(null, null, null));
 
                 await actContext.SaveChangesAsync();
             }

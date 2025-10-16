@@ -1,7 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
-using ShipParticularsApi.Tests.Services;
 using ShipParticularsApi.ValueObjects;
 
 namespace ShipParticularsApi.Entities
@@ -55,20 +54,12 @@ namespace ShipParticularsApi.Entities
         public virtual ICollection<ShipService>? ShipServices { get; set; } = [];
         public virtual SkTelinkCompanyShip? SkTelinkCompanyShip { get; set; }
 
-        public static ShipInfo From(ShipParticularsServiceTests.ShipParticularsParam param)
-        {
-            return new()
-            {
-                ShipKey = param.ShipKey,
-                Callsign = param.Callsign,
-                ShipName = param.ShipName,
-                ShipType = ConvertStringToShipTypes(param.ShipType),
-                ShipCode = param.ShipCode
-            };
-        }
-
         public static ShipInfo From(ShipInfoDetails details)
         {
+            ArgumentException.ThrowIfNullOrEmpty(details.ShipKey);
+            ArgumentException.ThrowIfNullOrEmpty(details.Callsign);
+            ArgumentException.ThrowIfNullOrEmpty(details.ShipName);
+
             return new()
             {
                 ShipKey = details.ShipKey,
@@ -105,15 +96,6 @@ namespace ShipParticularsApi.Entities
                 "Tanker" => ShipTypes.Tanker,
                 _ => throw new ArgumentException($"Invalid ShipType : {value}")
             };
-        }
-
-        public ShipInfo Update(ShipParticularsServiceTests.ShipParticularsParam param)
-        {
-            Callsign = param.Callsign;
-            ShipName = param.ShipName;
-            ShipType = ConvertStringToShipTypes(param.ShipType);
-            ShipCode = param.ShipCode;
-            return this;
         }
 
         public ShipInfo UpdateDetails(ShipInfoDetails details)
@@ -165,19 +147,6 @@ namespace ShipParticularsApi.Entities
         private void DeactiveAis()
         {
             this.IsUseAis = false;
-        }
-
-        public void ManageGpsService(bool isGPSToggleOn, string? satelliteId, string? satelliteType, string? companyName)
-        {
-            if (isGPSToggleOn)
-            {
-                this.ActivateGpsService(satelliteId, satelliteType);
-                this.ManageSkTelinkCompanyShip(companyName);
-            }
-            else
-            {
-                DeactiveGpsService();
-            }
         }
 
         public void ManageGpsService(bool isGPSToggleOn, SatelliteDetails details)

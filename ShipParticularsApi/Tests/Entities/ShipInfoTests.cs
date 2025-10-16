@@ -1,11 +1,11 @@
 ﻿using FluentAssertions;
 using ShipParticularsApi.Entities;
+using ShipParticularsApi.ValueObjects;
 using Xunit;
 using static ShipParticularsApi.Tests.Builders.ShipInfoTestBuilder;
 using static ShipParticularsApi.Tests.Builders.ShipSatelliteTestBuilder;
 using static ShipParticularsApi.Tests.Builders.ShipServiceTestBuilder;
 using static ShipParticularsApi.Tests.Builders.SkTelinkCompanyShipTestBuilder;
-using static ShipParticularsApi.Tests.Services.ShipParticularsServiceTests;
 
 namespace ShipParticularsApi.Tests.Entities
 {
@@ -17,27 +17,22 @@ namespace ShipParticularsApi.Tests.Entities
             public void Case1()
             {
                 // Arrange
-                var param = new ShipParticularsParam
-                {
-                    IsAisToggleOn = false,
-                    IsGPSToggleOn = false,
-                    ShipKey = "NEW_SHIP_KEY",
-                    Callsign = "NEW_CALLSIGN",
-                    ShipName = "NEW_SHIP_NAME",
-                    ShipType = "FISHING",
-                    ShipCode = "NEW_SHIP_CODE"
-                };
-                var newShipInfo = ShipParticularsApi.Entities.ShipInfo.From(param);
+                const bool isAisToggleOn = false;
+                var shipInfoDetails = new ShipInfoDetails(
+                    "NEW_SHIP_KEY", "NEW_CALLSIGN", "NEW_SHIP_NAME", "FISHING", "NEW_SHIP_CODE"
+                );
+
+                var newShipInfo = ShipParticularsApi.Entities.ShipInfo.From(shipInfoDetails);
 
                 // Act
-                newShipInfo.ManageAisService(param.IsAisToggleOn);
+                newShipInfo.ManageAisService(isAisToggleOn);
 
                 // Assert
-                var expected = ShipInfo().WithShipKey(param.ShipKey)
-                    .WithCallsign(param.Callsign)
-                    .WithShipName(param.ShipName)
+                var expected = ShipInfo().WithShipKey(shipInfoDetails.ShipKey)
+                    .WithCallsign(shipInfoDetails.Callsign)
+                    .WithShipName(shipInfoDetails.ShipName)
                     .WithShipType(ShipTypes.Fishing)
-                    .WithShipCode(param.ShipCode)
+                    .WithShipCode(shipInfoDetails.ShipCode)
                     .WithIsUseAis(false)
                     .Build();
 
@@ -49,29 +44,23 @@ namespace ShipParticularsApi.Tests.Entities
             public void Case2()
             {
                 // Arrange
-                var param = new ShipParticularsParam
-                {
-                    IsAisToggleOn = true,
-                    IsGPSToggleOn = false,
-                    ShipKey = "NEW_SHIP_KEY",
-                    Callsign = "NEW_CALLSIGN",
-                    ShipName = "NEW_SHIP_NAME",
-                    ShipType = "FISHING",
-                    ShipCode = "NEW_SHIP_CODE"
-                };
-                var newShipInfo = ShipParticularsApi.Entities.ShipInfo.From(param);
+                const bool isAisToggleOn = true;
+                var shipInfoDetails = new ShipInfoDetails(
+                    "NEW_SHIP_KEY", "NEW_CALLSIGN", "NEW_SHIP_NAME", "FISHING", "NEW_SHIP_CODE"
+                );
+                var newShipInfo = ShipParticularsApi.Entities.ShipInfo.From(shipInfoDetails);
 
                 // Act
-                newShipInfo.ManageAisService(true);
+                newShipInfo.ManageAisService(isAisToggleOn);
 
                 // Assert
-                var expected = ShipInfo().WithShipKey(param.ShipKey)
-                    .WithCallsign(param.Callsign)
-                    .WithShipName(param.ShipName)
+                var expected = ShipInfo().WithShipKey(shipInfoDetails.ShipKey)
+                    .WithCallsign(shipInfoDetails.Callsign)
+                    .WithShipName(shipInfoDetails.ShipName)
                     .WithShipType(ShipTypes.Fishing)
-                    .WithShipCode(param.ShipCode)
+                    .WithShipCode(shipInfoDetails.ShipCode)
                     .WithIsUseAis(true)
-                    .WithShipServices(SatAisService(0L, param.ShipKey))
+                    .WithShipServices(SatAisService(0L, shipInfoDetails.ShipKey))
                     .Build();
 
                 newShipInfo.Should().NotBeNull();
@@ -82,31 +71,23 @@ namespace ShipParticularsApi.Tests.Entities
             public void Case3()
             {
                 // Arrange
-                var param = new ShipParticularsParam
-                {
-                    IsAisToggleOn = false,
-                    IsGPSToggleOn = false,
-                    ShipKey = "NEW_SHIP_KEY",
-                    Callsign = "NEW_CALLSIGN",
-                    ShipName = "NEW_SHIP_NAME",
-                    ShipType = "FISHING",
-                    ShipCode = "NEW_SHIP_CODE"
-                };
-                var newShipInfo = ShipParticularsApi.Entities.ShipInfo.From(param);
+                const bool isGpsToggleOn = false;
+                var satelliteDetails = new SatelliteDetails(null, null, null);
+
+                var shipInfoDetails = new ShipInfoDetails(
+                    "NEW_SHIP_KEY", "NEW_CALLSIGN", "NEW_SHIP_NAME", "FISHING", "NEW_SHIP_CODE"
+                );
+                var newShipInfo = ShipParticularsApi.Entities.ShipInfo.From(shipInfoDetails);
 
                 // Act
-                newShipInfo.ManageGpsService(
-                    param.IsGPSToggleOn,
-                    null,
-                    null,
-                    null);
+                newShipInfo.ManageGpsService(isGpsToggleOn, satelliteDetails);
 
                 // Assert
-                var expected = ShipInfo().WithShipKey(param.ShipKey)
-                    .WithCallsign(param.Callsign)
-                    .WithShipName(param.ShipName)
+                var expected = ShipInfo().WithShipKey(shipInfoDetails.ShipKey)
+                    .WithCallsign(shipInfoDetails.Callsign)
+                    .WithShipName(shipInfoDetails.ShipName)
                     .WithShipType(ShipTypes.Fishing)
-                    .WithShipCode(param.ShipCode)
+                    .WithShipCode(shipInfoDetails.ShipCode)
                     .Build();
 
                 newShipInfo.Should().NotBeNull();
@@ -117,39 +98,26 @@ namespace ShipParticularsApi.Tests.Entities
             public void Case4()
             {
                 // Arrange
-                var param = new ShipParticularsParam
-                {
-                    IsAisToggleOn = false,
-                    IsGPSToggleOn = true,
-                    ShipKey = "NEW_SHIP_KEY",
-                    Callsign = "NEW_CALLSIGN",
-                    ShipName = "NEW_SHIP_NAME",
-                    ShipType = "FISHING",
-                    ShipCode = "NEW_SHIP_CODE",
-                    ShipSatelliteParam = new ShipSatelliteParam
-                    {
-                        SatelliteId = "TEST_SATELLITE_ID",
-                        SatelliteType = "KT_SAT"
-                    }
-                };
-                var newShipInfo = ShipParticularsApi.Entities.ShipInfo.From(param);
+                const bool isGpsToggleOn = true;
+                var satelliteDetails = new SatelliteDetails("TEST_SATELLITE_ID", "KT_SAT", null);
+
+                var shipInfoDetails = new ShipInfoDetails(
+                    "NEW_SHIP_KEY", "NEW_CALLSIGN", "NEW_SHIP_NAME", "FISHING", "NEW_SHIP_CODE"
+                );
+                var newShipInfo = ShipParticularsApi.Entities.ShipInfo.From(shipInfoDetails);
 
                 // Act
-                newShipInfo.ManageGpsService(
-                    param.IsGPSToggleOn,
-                    param.ShipSatelliteParam.SatelliteId,
-                    param.ShipSatelliteParam.SatelliteType,
-                    null);
+                newShipInfo.ManageGpsService(isGpsToggleOn, satelliteDetails);
 
                 // Assert
-                var expected = ShipInfo().WithShipKey(param.ShipKey)
-                    .WithCallsign(param.Callsign)
-                    .WithShipName(param.ShipName)
+                var expected = ShipInfo().WithShipKey(shipInfoDetails.ShipKey)
+                    .WithCallsign(shipInfoDetails.Callsign)
+                    .WithShipName(shipInfoDetails.ShipName)
                     .WithShipType(ShipTypes.Fishing)
-                    .WithShipCode(param.ShipCode)
-                    .WithShipServices(KtSatService(0L, param.ShipKey))
-                    .WithShipSatellite(KtSatellite(param.ShipKey, param.ShipSatelliteParam.SatelliteId))
-                    .WithExternalShipId(param.ShipSatelliteParam.SatelliteId)
+                    .WithShipCode(shipInfoDetails.ShipCode)
+                    .WithShipServices(KtSatService(0L, shipInfoDetails.ShipKey))
+                    .WithShipSatellite(KtSatellite(shipInfoDetails.ShipKey, satelliteDetails.SatelliteId))
+                    .WithExternalShipId(satelliteDetails.SatelliteId)
                     .WithIsUseKtsat(true)
                     .Build();
 
@@ -162,44 +130,28 @@ namespace ShipParticularsApi.Tests.Entities
             public void Case5()
             {
                 // Arrange
-                var param = new ShipParticularsParam
-                {
-                    IsAisToggleOn = false,
-                    IsGPSToggleOn = true,
-                    ShipKey = "NEW_SHIP_KEY",
-                    Callsign = "NEW_CALLSIGN",
-                    ShipName = "NEW_SHIP_NAME",
-                    ShipType = "FISHING",
-                    ShipCode = "NEW_SHIP_CODE",
-                    ShipSatelliteParam = new ShipSatelliteParam
-                    {
-                        SatelliteId = "TEST_SATELLITE_ID",
-                        SatelliteType = "SK_TELINK"
-                    },
-                    SkTelinkCompanyShipParam = new SkTelinkCompanyShipParam
-                    {
-                        CompanyName = "TEST_COMPANY_KEY"
-                    }
-                };
-                var newShipInfo = ShipParticularsApi.Entities.ShipInfo.From(param);
+                const bool isGpsToggleOn = true;
+                var satelliteDetails = new SatelliteDetails("TEST_SATELLITE_ID", "SK_TELINK", "TEST_COMPANY_KEY");
+
+                var shipInfoDetails = new ShipInfoDetails(
+                    "NEW_SHIP_KEY", "NEW_CALLSIGN", "NEW_SHIP_NAME", "FISHING", "NEW_SHIP_CODE"
+                );
+
+                var newShipInfo = ShipParticularsApi.Entities.ShipInfo.From(shipInfoDetails);
 
                 // Act
-                newShipInfo.ManageGpsService(
-                   param.IsGPSToggleOn,
-                   param.ShipSatelliteParam.SatelliteId,
-                   param.ShipSatelliteParam.SatelliteType,
-                   param.SkTelinkCompanyShipParam.CompanyName);
+                newShipInfo.ManageGpsService(isGpsToggleOn, satelliteDetails);
 
                 // Assert
-                var expected = ShipInfo().WithShipKey(param.ShipKey)
-                    .WithCallsign(param.Callsign)
-                    .WithShipName(param.ShipName)
+                var expected = ShipInfo().WithShipKey(shipInfoDetails.ShipKey)
+                    .WithCallsign(shipInfoDetails.Callsign)
+                    .WithShipName(shipInfoDetails.ShipName)
                     .WithShipType(ShipTypes.Fishing)
-                    .WithShipCode(param.ShipCode)
-                    .WithShipServices(KtSatService(0L, param.ShipKey))
-                    .WithShipSatellite(SkTelinkSatellite(param.ShipKey, param.ShipSatelliteParam.SatelliteId))
-                    .WithSkTelinkCompanyShip(SkTelinkCompanyShip(param.ShipKey, param.SkTelinkCompanyShipParam.CompanyName))
-                    .WithExternalShipId(param.ShipSatelliteParam.SatelliteId)
+                    .WithShipCode(shipInfoDetails.ShipCode)
+                    .WithShipServices(KtSatService(0L, shipInfoDetails.ShipKey))
+                    .WithShipSatellite(SkTelinkSatellite(shipInfoDetails.ShipKey, satelliteDetails.SatelliteId))
+                    .WithSkTelinkCompanyShip(SkTelinkCompanyShip(shipInfoDetails.ShipKey, satelliteDetails.CompanyName))
+                    .WithExternalShipId(satelliteDetails.SatelliteId)
                     .WithIsUseKtsat(true)
                     .Build();
 
@@ -214,16 +166,13 @@ namespace ShipParticularsApi.Tests.Entities
             public void Case6()
             {
                 // Arrange
-                var updateParam = new ShipParticularsParam
-                {
-                    IsAisToggleOn = false,
-                    IsGPSToggleOn = false,
-                    ShipKey = "UNIQUE_SHIP_KEY",
-                    Callsign = "UPDATE_CALLSIGN",
-                    ShipName = "UPDATE_SHIP_NAME",
-                    ShipType = "PASSENGER",
-                    ShipCode = "UPDATE_SHIP_CODE"
-                };
+                var shipInfoDetails = new ShipInfoDetails(
+                    "UNIQUE_SHIP_KEY",
+                    "UPDATE_CALLSIGN",
+                    "UPDATE_SHIP_NAME",
+                    "PASSENGER",
+                    "UPDATE_SHIP_CODE"
+                );
 
                 var target = ShipInfo()
                     .WithId(1L)
@@ -235,7 +184,7 @@ namespace ShipParticularsApi.Tests.Entities
                     .Build();
 
                 // Act
-                target = target.Update(updateParam);
+                target = target.UpdateDetails(shipInfoDetails);
 
                 // Assert
                 target.Should().BeEquivalentTo(
@@ -332,13 +281,15 @@ namespace ShipParticularsApi.Tests.Entities
             {
                 // Arrange
                 const bool isGPSToggleOn = false;
+                var satelliteDetails = new SatelliteDetails(null, null, null);
+
                 var target = ShipInfo()
                     .WithId(1L)
                     .WithShipKey("UNIQUE_SHIP_KEY")
                     .Build();
 
                 // Act
-                target.ManageGpsService(isGPSToggleOn, null, null, null);
+                target.ManageGpsService(isGPSToggleOn, satelliteDetails);
 
                 // Assert
                 target.ShipServices.Should().BeEmpty();
@@ -355,6 +306,8 @@ namespace ShipParticularsApi.Tests.Entities
             {
                 // Arrange
                 const bool isGPSToggleOn = false;
+                var satelliteDetails = new SatelliteDetails(null, null, null);
+
                 var target = ShipInfo()
                     .WithId(1L)
                     .WithShipKey("UNIQUE_SHIP_KEY")
@@ -367,7 +320,7 @@ namespace ShipParticularsApi.Tests.Entities
 
                 // Act
                 // NOTE. ShipService는 고정('kt-sat'), ShipSatellite, SkTelinkCompanyShip
-                target.ManageGpsService(isGPSToggleOn, null, null, null);
+                target.ManageGpsService(isGPSToggleOn, satelliteDetails);
 
                 // Assert
                 target.ShipServices.Should().BeEmpty();
@@ -383,15 +336,16 @@ namespace ShipParticularsApi.Tests.Entities
             public void Case13()
             {
                 // Arrange
-                const bool isGPSToggleOn = true;
+                const bool isGpsToggleOn = true;
+                var satelliteDetails = new SatelliteDetails("SATELLITE_ID", "KT_SAT", null);
+
                 var target = ShipInfo()
                     .WithId(1L)
                     .WithShipKey("UNIQUE_SHIP_KEY")
                     .Build();
-                const string registeSatelliteType = "KT_SAT";
 
                 // Act
-                target.ManageGpsService(isGPSToggleOn, "SATELLITE_ID", registeSatelliteType, null);
+                target.ManageGpsService(isGpsToggleOn, satelliteDetails);
 
                 // Assert
                 target.ShipServices.Should().ContainEquivalentOf(KtSatService("UNIQUE_SHIP_KEY"));
@@ -408,15 +362,16 @@ namespace ShipParticularsApi.Tests.Entities
             public void Case14()
             {
                 // Arrange
-                const bool isGPSToggleOn = true;
+                const bool isGpsToggleOn = true;
+                var satelliteDetails = new SatelliteDetails("SATELLITE_ID", "SK_TELINK", "UNIQUE_COMPANY_NAME");
+
                 var target = ShipInfo()
                     .WithId(1L)
                     .WithShipKey("UNIQUE_SHIP_KEY")
                     .Build();
-                const string registeSatelliteType = "SK_TELINK";
 
                 // Act
-                target.ManageGpsService(isGPSToggleOn, "SATELLITE_ID", registeSatelliteType, "UNIQUE_COMPANY_NAME");
+                target.ManageGpsService(isGpsToggleOn, satelliteDetails);
 
                 // Assert
                 target.ShipServices.Should().ContainEquivalentOf(KtSatService("UNIQUE_SHIP_KEY"));
@@ -431,7 +386,9 @@ namespace ShipParticularsApi.Tests.Entities
             [Fact(DisplayName = "KT_SAT에서 SK_TELINK로 서비스 변경하는 경우, ShipSatellite가 업데이트되고, SKTelinkCompanyShip이 추가된다")]
             public void Case15()
             {
-                const bool isGPSToggleOn = true;
+                const bool isGpsToggleOn = true;
+                var satelliteDetails = new SatelliteDetails("SATELLITE_ID", "SK_TELINK", "UNIQUE_COMPANY_NAME");
+
                 var target = ShipInfo()
                     .WithId(1L)
                     .WithShipKey("UNIQUE_SHIP_KEY")
@@ -440,10 +397,9 @@ namespace ShipParticularsApi.Tests.Entities
                     .WithExternalShipId("SATELLITE_ID")
                     .WithIsUseKtsat(true)
                     .Build();
-                const string updateSatelliteType = "SK_TELINK";
 
                 // Act
-                target.ManageGpsService(isGPSToggleOn, "SATELLITE_ID", updateSatelliteType, "UNIQUE_COMPANY_NAME");
+                target.ManageGpsService(isGpsToggleOn, satelliteDetails);
 
                 // Assert
                 target.ShipServices.Should().ContainEquivalentOf(KtSatService(1L, "UNIQUE_SHIP_KEY"));
@@ -457,7 +413,9 @@ namespace ShipParticularsApi.Tests.Entities
             [Fact(DisplayName = "SK_TELINK에서 KT_SAT로 서비스 변경하는 경우, ShipSatellite가 업데이트되고, SKTelinkCompanyShip이 제거된다")]
             public void Case16()
             {
-                const bool isGPSToggleOn = true;
+                const bool isGpsToggleOn = true;
+                var satelliteDetails = new SatelliteDetails("SATELLITE_ID", "KT_SAT", null);
+
                 var target = ShipInfo()
                     .WithId(1L)
                     .WithShipKey("UNIQUE_SHIP_KEY")
@@ -467,10 +425,9 @@ namespace ShipParticularsApi.Tests.Entities
                     .WithIsUseKtsat(true)
                     .WithSkTelinkCompanyShip(SkTelinkCompanyShip(1L, "UNIQUE_SHIP_KEY", "UNIQUE_COMPANY_NAME"))
                     .Build();
-                const string updateSatelliteType = "KT_SAT";
 
                 // Act
-                target.ManageGpsService(isGPSToggleOn, "SATELLITE_ID", updateSatelliteType, null);
+                target.ManageGpsService(isGpsToggleOn, satelliteDetails);
 
                 // Assert
                 target.ShipServices.Should().ContainEquivalentOf(KtSatService(1L, "UNIQUE_SHIP_KEY"));
@@ -486,7 +443,9 @@ namespace ShipParticularsApi.Tests.Entities
             [Fact(DisplayName = "SK TELINK의 CompanyName을 업데이트 한다")]
             public void Case17()
             {
-                const bool isGPSToggleOn = true;
+                const bool isGpsToggleOn = true;
+                var satelliteDetails = new SatelliteDetails("SATELLITE_ID", "SK_TELINK", "UPDATE_COMPANY_NAME");
+
                 var target = ShipInfo()
                     .WithId(1L)
                     .WithShipKey("UNIQUE_SHIP_KEY")
@@ -498,7 +457,7 @@ namespace ShipParticularsApi.Tests.Entities
                     .Build();
 
                 // Act
-                target.ManageGpsService(isGPSToggleOn, "SATELLITE_ID", "SK_TELINK", "UPDATE_COMPANY_NAME");
+                target.ManageGpsService(isGpsToggleOn, satelliteDetails);
 
                 // Assert
                 target.SkTelinkCompanyShip.Should()
@@ -508,7 +467,9 @@ namespace ShipParticularsApi.Tests.Entities
             [Fact(DisplayName = "SK TELINK의 CompanyName 업데이트시 다른 엔티티는 변경되지 않는다")]
             public void Case18()
             {
-                const bool isGPSToggleOn = true;
+                const bool isGpsToggleOn = true;
+                var satelliteDetails = new SatelliteDetails("SATELLITE_ID", "SK_TELINK", "UPDATE_COMPANY_NAME");
+
                 var shipService = KtSatService(1L, "UNIQUE_SHIP_KEY");
                 var skTelinkSatellite = SkTelinkSatellite(1L, "UNIQUE_SHIP_KEY", "SATELLITE_ID");
                 var target = ShipInfo()
@@ -522,7 +483,7 @@ namespace ShipParticularsApi.Tests.Entities
                     .Build();
 
                 // Act
-                target.ManageGpsService(isGPSToggleOn, "SATELLITE_ID", "SK_TELINK", "UPDATE_COMPANY_NAME");
+                target.ManageGpsService(isGpsToggleOn, satelliteDetails);
 
                 // Assert
                 target.ShipServices.Should().ContainEquivalentOf(shipService);

@@ -12,7 +12,6 @@ namespace ShipParticularsApi.Services
 
             ShipInfo? shipInfo = await shipInfoRepository.GetByShipKeyAsync(param.ShipKey);
 
-            // TODO. VO 추가에 따른 테스트 리팩터링
             var shipInfoDetails = ShipInfoDetails.From(param);
             ShipInfo entityToProcess = (shipInfo == null)
                 ? ShipInfo.From(shipInfoDetails)
