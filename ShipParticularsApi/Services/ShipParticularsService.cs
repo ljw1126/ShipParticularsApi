@@ -1,6 +1,6 @@
 ﻿using ShipParticularsApi.Entities;
+using ShipParticularsApi.Services.Dtos;
 using ShipParticularsApi.ValueObjects;
-using static ShipParticularsApi.Tests.Services.ShipParticularsServiceTests;
 
 namespace ShipParticularsApi.Services
 {
