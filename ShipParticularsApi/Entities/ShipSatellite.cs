@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace ShipParticularsApi.Entities
 {
     [Table("SHIP_SATELLITE")]
-    public class ShipSatellite
+    public class ShipSatellite : BaseEntity
     {
         [Key]
         [Column("ID")]
@@ -33,15 +33,9 @@ namespace ShipParticularsApi.Entities
         [MaxLength(200)]
         public string? CreateUserId { get; set; }
 
-        [Column("CREATE_DATE_TIME")]
-        public DateTime CreateDateTime { get; set; }
-
         [Column("UPDATE_USER_ID")]
         [MaxLength(200)]
         public string? UpdateUserId { get; set; }
-
-        [Column("UPDATE_DATE_TIME")]
-        public DateTime? UpdateDateTime { get; set; }
 
         public static ShipSatellite Of(string shipKey, string satelliteId, string satelliteType)
         {
