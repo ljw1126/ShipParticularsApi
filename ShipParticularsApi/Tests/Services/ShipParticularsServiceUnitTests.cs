@@ -11,6 +11,7 @@ using static ShipParticularsApi.Tests.Builders.ShipServiceTestBuilder;
 using static ShipParticularsApi.Tests.Builders.SkTelinkCompanyShipTestBuilder;
 namespace ShipParticularsApi.Tests.Services
 {
+    // TODO. Test Fixture 중복 제거
     public class ShipParticularsServiceUnitTests
     {
         private readonly ShipParticularsService _sut;
