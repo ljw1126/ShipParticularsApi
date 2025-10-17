@@ -86,7 +86,28 @@ namespace ShipParticularsApi.Contexts
                 .HasForeignKey<SkTelinkCompanyShip>(child => child.ShipKey)
                 .HasPrincipalKey<ShipInfo>(parent => parent.ShipKey);
             });
+        }
 
+        // 참고. https://www.entityframeworktutorial.net/faq/set-created-and-modified-date-in-efcore.aspx
+        public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+        {
+            var entries = ChangeTracker.Entries()
+                .Where(e => e.Entity is BaseEntity
+                && (e.State == EntityState.Added || e.State == EntityState.Modified));
+
+            foreach (var entryEntity in entries)
+            {
+                if (entryEntity.State == EntityState.Added)
+                {
+                    ((BaseEntity)entryEntity.Entity).CreateDateTime = DateTime.UtcNow;
+                }
+                else
+                {
+                    ((BaseEntity)entryEntity.Entity).UpdateDateTime = DateTime.UtcNow;
+                }
+            }
+
+            return base.SaveChangesAsync(cancellationToken);
         }
     }
 }
