@@ -1,4 +1,5 @@
 ﻿using ShipParticularsApi.Contexts;
+using ShipParticularsApi.Entities;
 
 namespace ShipParticularsApi.Tests.Helper
 {
@@ -13,6 +14,15 @@ namespace ShipParticularsApi.Tests.Helper
 
             await context.Database.EnsureDeletedAsync();
             await context.Database.EnsureCreatedAsync();
+        }
+
+        public static async Task SeedDataAsync(this IServiceProvider services, ShipInfo initData)
+        {
+            using var scope = services.CreateScope();
+            var context = scope.ServiceProvider.GetRequiredService<ShipParticularsContext>();
+
+            context.ShipInfos.Add(initData);
+            await context.SaveChangesAsync();
         }
     }
 }
