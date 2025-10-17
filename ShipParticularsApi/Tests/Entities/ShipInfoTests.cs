@@ -9,6 +9,7 @@ using static ShipParticularsApi.Tests.Builders.SkTelinkCompanyShipTestBuilder;
 
 namespace ShipParticularsApi.Tests.Entities
 {
+    // TODO. Test Fixture 중복 제거
     public class ShipInfoTests
     {
         public class When_shipInfo_is_new
