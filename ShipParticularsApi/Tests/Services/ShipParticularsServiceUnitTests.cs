@@ -4,7 +4,7 @@ using ShipParticularsApi.Entities;
 using ShipParticularsApi.Entities.Enums;
 using ShipParticularsApi.Repositories;
 using ShipParticularsApi.Services;
-using ShipParticularsApi.Services.Dtos;
+using ShipParticularsApi.Services.Dtos.Params;
 using Xunit;
 using static ShipParticularsApi.Tests.Builders.ShipInfoTestBuilder;
 using static ShipParticularsApi.Tests.Builders.ShipSatelliteTestBuilder;

@@ -3,7 +3,7 @@ using ShipParticularsApi.Contexts;
 using ShipParticularsApi.Entities.Enums;
 using ShipParticularsApi.Repositories;
 using ShipParticularsApi.Services;
-using ShipParticularsApi.Services.Dtos;
+using ShipParticularsApi.Services.Dtos.Params;
 using ShipParticularsApi.Tests.Helper;
 using Xunit;
 using Xunit.Abstractions;
