@@ -1,4 +1,4 @@
-﻿namespace ShipParticularsApi.Services.Dtos
+﻿namespace ShipParticularsApi.Services.Dtos.Params
 {
     public class ReplaceShipNameParam
     {
