@@ -1,6 +1,6 @@
 ﻿using FluentAssertions;
 using ShipParticularsApi.Contexts;
-using ShipParticularsApi.Entities;
+using ShipParticularsApi.Entities.Enums;
 using ShipParticularsApi.Repositories;
 using ShipParticularsApi.Services;
 using ShipParticularsApi.Services.Dtos;

@@ -1,4 +1,4 @@
-﻿namespace ShipParticularsApi.Entities
+﻿namespace ShipParticularsApi.Entities.Enums
 {
     // 파스칼 표기법 사용
     public enum ShipTypes

@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using ShipParticularsApi.Entities.Enums;
 
 namespace ShipParticularsApi.Entities
 {
@@ -45,22 +46,10 @@ namespace ShipParticularsApi.Entities
             {
                 ShipKey = shipKey,
                 SatelliteId = satelliteId,
-                SatelliteType = ConvertStringToSatelliteType(satelliteType),
+                SatelliteType = SatelliteTypesConverter.ToSatelliteTypes(satelliteType),
                 IsUseSatellite = true,
                 UpdateUserId = null,
                 UpdateDateTime = null
-            };
-        }
-
-        private static SatelliteTypes ConvertStringToSatelliteType(string value)
-        {
-            return value switch
-            {
-                "NONE" => SatelliteTypes.None,
-                "KT_SAT" => SatelliteTypes.KtSat,
-                "SK_TELINK" => SatelliteTypes.SkTelink,
-                "SYNER_SAT" => SatelliteTypes.SynerSat,
-                _ => throw new ArgumentException($"Invalid string value '{value}' for SatelliteTypes enum")
             };
         }
 
@@ -75,7 +64,7 @@ namespace ShipParticularsApi.Entities
             ArgumentException.ThrowIfNullOrWhiteSpace(satelliteType);
 
             this.SatelliteId = satelliteId;
-            this.SatelliteType = ConvertStringToSatelliteType(satelliteType);
+            this.SatelliteType = SatelliteTypesConverter.ToSatelliteTypes(satelliteType);
         }
     }
 }
