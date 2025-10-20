@@ -1,5 +1,6 @@
 ﻿using ShipParticularsApi.Contexts;
-using ShipParticularsApi.Services.Dtos;
+using ShipParticularsApi.Services.Dtos.Params;
+using ShipParticularsApi.Services.Dtos.Results;
 
 namespace ShipParticularsApi.Services
 {
@@ -30,6 +31,11 @@ namespace ShipParticularsApi.Services
                 await transaction.RollbackAsync();
                 throw;
             }
+        }
+
+        public Task<ShipParticularsResult> GetShipParticulars(string shipKey)
+        {
+            return _target.GetShipParticulars(shipKey);
         }
     }
 }

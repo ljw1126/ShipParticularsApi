@@ -1,6 +1,8 @@
 ﻿using ShipParticularsApi.Entities;
 using ShipParticularsApi.Repositories;
-using ShipParticularsApi.Services.Dtos;
+using ShipParticularsApi.Services.Dtos.Mapper;
+using ShipParticularsApi.Services.Dtos.Params;
+using ShipParticularsApi.Services.Dtos.Results;
 using ShipParticularsApi.ValueObjects;
 
 namespace ShipParticularsApi.Services
@@ -38,6 +40,19 @@ namespace ShipParticularsApi.Services
             }
 
             await shipInfoRepository.UpsertAsync(entityToProcess);
+        }
+
+        public async Task<ShipParticularsResult> GetShipParticulars(string shipKey)
+        {
+            ShipInfo? shipInfo = await shipInfoRepository.GetByShipKeyAsync(shipKey);
+
+            if (shipInfo == null)
+            {
+                // TODO. 비즈니스적인 예와와 메시지 
+                throw new Exception();
+            }
+
+            return ShipParticularsResultMapper.ToResult(shipInfo);
         }
     }
 }
