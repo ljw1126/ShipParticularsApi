@@ -56,12 +56,7 @@ namespace ShipParticularsApi.Contexts
                 .HasForeignKey<ShipSatellite>(child => child.ShipKey)
                 .HasPrincipalKey<ShipInfo>(parent => parent.ShipKey);
 
-                //entity.Property(p => p.CreateDateTime)
-                //    .HasDefaultValueSql("SYSDATETIME()");
-
-                // TODO. NONE은 default value가 아니다. NONE은 입력값 자체가 안오도록 한다고 함
                 entity.Property(p => p.SatelliteType)
-                    .HasDefaultValue(SatelliteTypes.None)
                     .HasConversion<SatelliteTypesToStringConverter>();
             });
 
