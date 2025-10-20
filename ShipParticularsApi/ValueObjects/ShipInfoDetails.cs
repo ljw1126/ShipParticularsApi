@@ -1,5 +1,4 @@
-﻿
-using ShipParticularsApi.Services.Dtos;
+﻿using ShipParticularsApi.Services.Dtos.Params;
 
 namespace ShipParticularsApi.ValueObjects
 {
