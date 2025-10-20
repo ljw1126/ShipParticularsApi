@@ -6,7 +6,6 @@ using ShipParticularsApi.ValueObjects;
 namespace ShipParticularsApi.Services
 {
     // TODO. IUserService 정의해서 임의 랜덤한 userId 값 반환하는 구현체 추가
-    // TODO. 작성일, 수정일 자동 추가 설정 (EF Core)
     public class ShipParticularsService(IShipInfoRepository shipInfoRepository) : IShipParticularsService
     {
         public async Task Process(ShipParticularsParam param)
