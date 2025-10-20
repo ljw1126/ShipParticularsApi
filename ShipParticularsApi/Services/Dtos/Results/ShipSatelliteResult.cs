@@ -1,6 +1,6 @@
-﻿namespace ShipParticularsApi.Services.Dtos
+﻿namespace ShipParticularsApi.Services.Dtos.Results
 {
-    public class ShipSatelliteParam
+    public class ShipSatelliteResult
     {
         public string SatelliteType { get; set; }
         public string SatelliteId { get; set; }
