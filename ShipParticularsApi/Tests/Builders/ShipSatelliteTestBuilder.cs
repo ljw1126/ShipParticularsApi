@@ -1,4 +1,5 @@
 ﻿using ShipParticularsApi.Entities;
+using ShipParticularsApi.Entities.Enums;
 
 namespace ShipParticularsApi.Tests.Builders
 {

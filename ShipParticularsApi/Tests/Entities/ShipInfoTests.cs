@@ -1,5 +1,5 @@
 ﻿using FluentAssertions;
-using ShipParticularsApi.Entities;
+using ShipParticularsApi.Entities.Enums;
 using ShipParticularsApi.ValueObjects;
 using Xunit;
 using static ShipParticularsApi.Tests.Builders.ShipInfoTestBuilder;

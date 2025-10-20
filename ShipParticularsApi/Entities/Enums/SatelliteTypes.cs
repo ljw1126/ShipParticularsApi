@@ -1,4 +1,4 @@
-﻿namespace ShipParticularsApi.Entities
+﻿namespace ShipParticularsApi.Entities.Enums
 {
     public enum SatelliteTypes
     {

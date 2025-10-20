@@ -3,6 +3,7 @@ using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using ShipParticularsApi.Contexts;
 using ShipParticularsApi.Entities;
+using ShipParticularsApi.Entities.Enums;
 using Xunit;
 using Xunit.Abstractions;
 

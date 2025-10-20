@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
+using ShipParticularsApi.Entities.Enums;
 using ShipParticularsApi.ValueObjects;
 
 namespace ShipParticularsApi.Entities
@@ -65,36 +66,8 @@ namespace ShipParticularsApi.Entities
                 ShipKey = details.ShipKey,
                 Callsign = details.Callsign,
                 ShipName = details.ShipName,
-                ShipType = ConvertStringToShipTypes(details.ShipType),
+                ShipType = ShipTypesConverter.ToShipTypes(details.ShipType),
                 ShipCode = details.ShipCode
-            };
-        }
-
-        private static ShipTypes ConvertStringToShipTypes(string value)
-        {
-            return value switch
-            {
-                "-" => ShipTypes.Default,
-                "RORO" => ShipTypes.Roro,
-                "ROPAX" => ShipTypes.Ropax,
-                "CRUISE_PASSENGER" => ShipTypes.CruisePassenger,
-                "FISHING" => ShipTypes.Fishing,
-                "REFRIGERATED_CARGO" => ShipTypes.RefrigeratedCargo,
-                "GENERAL_CARGO" => ShipTypes.GeneralCargo,
-                "PASSENGER" => ShipTypes.Passenger,
-                "VEHICLE" => ShipTypes.Vehicle,
-                "LNG_CARRIER" => ShipTypes.LngCarrier,
-                "BULK_CARRIER" => ShipTypes.BulkCarrier,
-                "COMBINATION" => ShipTypes.Combination,
-                "CHEMICAL" => ShipTypes.Chemical,
-                "CONTAINER" => ShipTypes.Container,
-                "SPECIAL_CRAFT" => ShipTypes.SpecialCraft,
-                "Cargo" => ShipTypes.Cargo,
-                "OTHER" => ShipTypes.Other,
-                "GAS_CARRIER" => ShipTypes.GasCarrier,
-                "OIL_TANKER" => ShipTypes.OilTanker,
-                "Tanker" => ShipTypes.Tanker,
-                _ => throw new ArgumentException($"Invalid ShipType : {value}")
             };
         }
 
@@ -102,7 +75,7 @@ namespace ShipParticularsApi.Entities
         {
             this.Callsign = details.Callsign;
             this.ShipName = details.ShipName;
-            this.ShipType = ConvertStringToShipTypes(details.ShipType);
+            this.ShipType = ShipTypesConverter.ToShipTypes(details.ShipType);
             this.ShipCode = details.ShipCode;
             return this;
         }
@@ -134,7 +107,7 @@ namespace ShipParticularsApi.Entities
             return !isAisToggleOn && this.HasSatAisService();
         }
 
-        private bool HasSatAisService()
+        public bool HasSatAisService()
         {
             return this.ShipServices.Any(s => s.ServiceName == ServiceNameTypes.SatAis);
         }
@@ -221,7 +194,7 @@ namespace ShipParticularsApi.Entities
             this.ShipServices.Remove(existingService);
         }
 
-        private bool HasKtSatService()
+        public bool HasKtSatService()
         {
             return this.ShipServices.Any(s => s.ServiceName == ServiceNameTypes.KtSat);
         }
