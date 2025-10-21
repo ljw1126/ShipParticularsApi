@@ -53,6 +53,20 @@ namespace ShipParticularsApi.Entities
             };
         }
 
+        public static ShipSatellite Of(string shipKey, string satelliteId, string satelliteType, string userId)
+        {
+            // TODO. 유효성 검사
+
+            return new()
+            {
+                ShipKey = shipKey,
+                SatelliteId = satelliteId,
+                SatelliteType = SatelliteTypesConverter.ToSatelliteTypes(satelliteType),
+                IsUseSatellite = true,
+                CreateUserId = userId
+            };
+        }
+
         public bool IsSkTelink()
         {
             return SatelliteType == SatelliteTypes.SkTelink;
@@ -65,6 +79,16 @@ namespace ShipParticularsApi.Entities
 
             this.SatelliteId = satelliteId;
             this.SatelliteType = SatelliteTypesConverter.ToSatelliteTypes(satelliteType);
+        }
+
+        public void Update(string satelliteId, string satelliteType, string userId)
+        {
+            ArgumentException.ThrowIfNullOrWhiteSpace(satelliteId);
+            ArgumentException.ThrowIfNullOrWhiteSpace(satelliteType);
+
+            this.SatelliteId = satelliteId;
+            this.SatelliteType = SatelliteTypesConverter.ToSatelliteTypes(satelliteType);
+            this.UpdateUserId = userId;
         }
     }
 }
