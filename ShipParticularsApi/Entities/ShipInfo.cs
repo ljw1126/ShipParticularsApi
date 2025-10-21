@@ -67,7 +67,8 @@ namespace ShipParticularsApi.Entities
                 Callsign = details.Callsign,
                 ShipName = details.ShipName,
                 ShipType = ShipTypesConverter.ToShipTypes(details.ShipType),
-                ShipCode = details.ShipCode
+                ShipCode = details.ShipCode,
+                IsService = true
             };
         }
 
