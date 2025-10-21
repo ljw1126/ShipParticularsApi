@@ -12,6 +12,8 @@ namespace ShipParticularsApi.Tests.Entities
     // TODO. Test Fixture 중복 제거
     public class ShipInfoTests
     {
+        private const string FixedUserId = "TEST_USER_01";
+
         public class When_shipInfo_is_new
         {
             [Fact(DisplayName = "AIS 토글이 Off인 경우 ShipServices가 비어있다.")]
@@ -81,7 +83,7 @@ namespace ShipParticularsApi.Tests.Entities
                 var newShipInfo = ShipParticularsApi.Entities.ShipInfo.From(shipInfoDetails);
 
                 // Act
-                newShipInfo.ManageGpsService(isGpsToggleOn, satelliteDetails);
+                newShipInfo.ManageGpsService(isGpsToggleOn, satelliteDetails, null);
 
                 // Assert
                 var expected = ShipInfo().WithShipKey(shipInfoDetails.ShipKey)
@@ -108,7 +110,7 @@ namespace ShipParticularsApi.Tests.Entities
                 var newShipInfo = ShipParticularsApi.Entities.ShipInfo.From(shipInfoDetails);
 
                 // Act
-                newShipInfo.ManageGpsService(isGpsToggleOn, satelliteDetails);
+                newShipInfo.ManageGpsService(isGpsToggleOn, satelliteDetails, FixedUserId);
 
                 // Assert
                 var expected = ShipInfo().WithShipKey(shipInfoDetails.ShipKey)
@@ -117,7 +119,13 @@ namespace ShipParticularsApi.Tests.Entities
                     .WithShipType(ShipTypes.Fishing)
                     .WithShipCode(shipInfoDetails.ShipCode)
                     .WithShipServices(KtSatService(0L, shipInfoDetails.ShipKey))
-                    .WithShipSatellite(KtSatellite(shipInfoDetails.ShipKey, satelliteDetails.SatelliteId))
+                    .WithShipSatellite(ShipSatellite()
+                        .WithShipKey(shipInfoDetails.ShipKey)
+                        .WithSatelliteType(SatelliteTypes.KtSat)
+                        .WithSatelliteId(satelliteDetails.SatelliteId)
+                        .WithIsUseSatellite(true)
+                        .WithCreateUserId(FixedUserId)
+                        .Build())
                     .WithExternalShipId(satelliteDetails.SatelliteId)
                     .WithIsUseKtsat(true)
                     .Build();
@@ -141,7 +149,7 @@ namespace ShipParticularsApi.Tests.Entities
                 var newShipInfo = ShipParticularsApi.Entities.ShipInfo.From(shipInfoDetails);
 
                 // Act
-                newShipInfo.ManageGpsService(isGpsToggleOn, satelliteDetails);
+                newShipInfo.ManageGpsService(isGpsToggleOn, satelliteDetails, FixedUserId);
 
                 // Assert
                 var expected = ShipInfo().WithShipKey(shipInfoDetails.ShipKey)
@@ -150,7 +158,14 @@ namespace ShipParticularsApi.Tests.Entities
                     .WithShipType(ShipTypes.Fishing)
                     .WithShipCode(shipInfoDetails.ShipCode)
                     .WithShipServices(KtSatService(0L, shipInfoDetails.ShipKey))
-                    .WithShipSatellite(SkTelinkSatellite(shipInfoDetails.ShipKey, satelliteDetails.SatelliteId))
+                    .WithShipSatellite(
+                        ShipSatellite()
+                        .WithShipKey(shipInfoDetails.ShipKey)
+                        .WithSatelliteType(SatelliteTypes.SkTelink)
+                        .WithSatelliteId(satelliteDetails.SatelliteId)
+                        .WithIsUseSatellite(true)
+                        .WithCreateUserId(FixedUserId)
+                        .Build())
                     .WithSkTelinkCompanyShip(SkTelinkCompanyShip(shipInfoDetails.ShipKey, satelliteDetails.CompanyName))
                     .WithExternalShipId(satelliteDetails.SatelliteId)
                     .WithIsUseKtsat(true)
@@ -290,7 +305,7 @@ namespace ShipParticularsApi.Tests.Entities
                     .Build();
 
                 // Act
-                target.ManageGpsService(isGPSToggleOn, satelliteDetails);
+                target.ManageGpsService(isGPSToggleOn, satelliteDetails, FixedUserId);
 
                 // Assert
                 target.ShipServices.Should().BeEmpty();
@@ -321,7 +336,7 @@ namespace ShipParticularsApi.Tests.Entities
 
                 // Act
                 // NOTE. ShipService는 고정('kt-sat'), ShipSatellite, SkTelinkCompanyShip
-                target.ManageGpsService(isGPSToggleOn, satelliteDetails);
+                target.ManageGpsService(isGPSToggleOn, satelliteDetails, FixedUserId);
 
                 // Assert
                 target.ShipServices.Should().BeEmpty();
@@ -346,12 +361,19 @@ namespace ShipParticularsApi.Tests.Entities
                     .Build();
 
                 // Act
-                target.ManageGpsService(isGpsToggleOn, satelliteDetails);
+                target.ManageGpsService(isGpsToggleOn, satelliteDetails, FixedUserId);
 
                 // Assert
                 target.ShipServices.Should().ContainEquivalentOf(KtSatService("UNIQUE_SHIP_KEY"));
 
-                target.ShipSatellite.Should().BeEquivalentTo(KtSatellite("UNIQUE_SHIP_KEY", "SATELLITE_ID"),
+                target.ShipSatellite.Should().BeEquivalentTo(
+                     ShipSatellite()
+                        .WithShipKey("UNIQUE_SHIP_KEY")
+                        .WithSatelliteType(SatelliteTypes.KtSat)
+                        .WithSatelliteId("SATELLITE_ID")
+                        .WithIsUseSatellite(true)
+                        .WithCreateUserId(FixedUserId)
+                        .Build(),
                     options => options.Excluding(s => s.UpdateDateTime));
                 target.ExternalShipId.Should().Be("SATELLITE_ID");
                 target.IsUseKtsat.Should().BeTrue();
@@ -372,11 +394,18 @@ namespace ShipParticularsApi.Tests.Entities
                     .Build();
 
                 // Act
-                target.ManageGpsService(isGpsToggleOn, satelliteDetails);
+                target.ManageGpsService(isGpsToggleOn, satelliteDetails, FixedUserId);
 
                 // Assert
                 target.ShipServices.Should().ContainEquivalentOf(KtSatService("UNIQUE_SHIP_KEY"));
-                target.ShipSatellite.Should().BeEquivalentTo(SkTelinkSatellite("UNIQUE_SHIP_KEY", "SATELLITE_ID"),
+                target.ShipSatellite.Should().BeEquivalentTo(
+                    ShipSatellite()
+                        .WithShipKey("UNIQUE_SHIP_KEY")
+                        .WithSatelliteType(SatelliteTypes.SkTelink)
+                        .WithSatelliteId("SATELLITE_ID")
+                        .WithIsUseSatellite(true)
+                        .WithCreateUserId(FixedUserId)
+                        .Build(),
                     options => options.Excluding(s => s.UpdateDateTime));
                 target.SkTelinkCompanyShip.Should().BeEquivalentTo(SkTelinkCompanyShip("UNIQUE_SHIP_KEY", "UNIQUE_COMPANY_NAME"));
 
@@ -394,17 +423,34 @@ namespace ShipParticularsApi.Tests.Entities
                     .WithId(1L)
                     .WithShipKey("UNIQUE_SHIP_KEY")
                     .WithShipServices(KtSatService(1L, "UNIQUE_SHIP_KEY"))
-                    .WithShipSatellite(KtSatellite(1L, "UNIQUE_SHIP_KEY", "SATELLITE_ID"))
+                    .WithShipSatellite(ShipSatellite()
+                        .WithId(1L)
+                        .WithShipKey("UNIQUE_SHIP_KEY")
+                        .WithSatelliteType(SatelliteTypes.KtSat)
+                        .WithSatelliteId("SATELLITE_ID")
+                        .WithIsUseSatellite(true)
+                        .WithCreateUserId(FixedUserId)
+                        .Build())
                     .WithExternalShipId("SATELLITE_ID")
                     .WithIsUseKtsat(true)
                     .Build();
 
                 // Act
-                target.ManageGpsService(isGpsToggleOn, satelliteDetails);
+                target.ManageGpsService(isGpsToggleOn, satelliteDetails, FixedUserId);
 
                 // Assert
                 target.ShipServices.Should().ContainEquivalentOf(KtSatService(1L, "UNIQUE_SHIP_KEY"));
-                target.ShipSatellite.Should().BeEquivalentTo(SkTelinkSatellite(1L, "UNIQUE_SHIP_KEY", "SATELLITE_ID"));
+                target.ShipSatellite.Should().BeEquivalentTo(
+                    ShipSatellite()
+                        .WithId(1L)
+                        .WithShipKey("UNIQUE_SHIP_KEY")
+                        .WithSatelliteType(SatelliteTypes.SkTelink)
+                        .WithSatelliteId("SATELLITE_ID")
+                        .WithIsUseSatellite(true)
+                        .WithCreateUserId(FixedUserId)
+                        .WithUpdateUserId(FixedUserId)
+                        .Build()
+                );
                 target.SkTelinkCompanyShip.Should().BeEquivalentTo(SkTelinkCompanyShip("UNIQUE_SHIP_KEY", "UNIQUE_COMPANY_NAME"));
 
                 target.ExternalShipId.Should().Be("SATELLITE_ID");
@@ -421,18 +467,36 @@ namespace ShipParticularsApi.Tests.Entities
                     .WithId(1L)
                     .WithShipKey("UNIQUE_SHIP_KEY")
                     .WithShipServices(KtSatService(1L, "UNIQUE_SHIP_KEY"))
-                    .WithShipSatellite(SkTelinkSatellite(1L, "UNIQUE_SHIP_KEY", "SATELLITE_ID"))
+                    .WithShipSatellite(
+                        ShipSatellite()
+                        .WithId(1L)
+                        .WithShipKey("UNIQUE_SHIP_KEY")
+                        .WithSatelliteType(SatelliteTypes.SkTelink)
+                        .WithSatelliteId("SATELLITE_ID")
+                        .WithIsUseSatellite(true)
+                        .WithCreateUserId(FixedUserId)
+                        .Build()
+                    )
                     .WithExternalShipId("SATELLITE_ID")
                     .WithIsUseKtsat(true)
                     .WithSkTelinkCompanyShip(SkTelinkCompanyShip(1L, "UNIQUE_SHIP_KEY", "UNIQUE_COMPANY_NAME"))
                     .Build();
 
                 // Act
-                target.ManageGpsService(isGpsToggleOn, satelliteDetails);
+                target.ManageGpsService(isGpsToggleOn, satelliteDetails, FixedUserId);
 
                 // Assert
                 target.ShipServices.Should().ContainEquivalentOf(KtSatService(1L, "UNIQUE_SHIP_KEY"));
-                target.ShipSatellite.Should().BeEquivalentTo(KtSatellite(1L, "UNIQUE_SHIP_KEY", "SATELLITE_ID"),
+                target.ShipSatellite.Should().BeEquivalentTo(
+                    ShipSatellite()
+                        .WithId(1L)
+                        .WithShipKey("UNIQUE_SHIP_KEY")
+                        .WithSatelliteType(SatelliteTypes.KtSat)
+                        .WithSatelliteId("SATELLITE_ID")
+                        .WithIsUseSatellite(true)
+                        .WithCreateUserId(FixedUserId)
+                        .WithUpdateUserId(FixedUserId)
+                        .Build(),
                     options => options.Excluding(s => s.UpdateDateTime));
                 target.SkTelinkCompanyShip.Should().BeNull();
 
@@ -458,7 +522,7 @@ namespace ShipParticularsApi.Tests.Entities
                     .Build();
 
                 // Act
-                target.ManageGpsService(isGpsToggleOn, satelliteDetails);
+                target.ManageGpsService(isGpsToggleOn, satelliteDetails, FixedUserId);
 
                 // Assert
                 target.SkTelinkCompanyShip.Should()
@@ -484,7 +548,7 @@ namespace ShipParticularsApi.Tests.Entities
                     .Build();
 
                 // Act
-                target.ManageGpsService(isGpsToggleOn, satelliteDetails);
+                target.ManageGpsService(isGpsToggleOn, satelliteDetails, FixedUserId);
 
                 // Assert
                 target.ShipServices.Should().ContainEquivalentOf(shipService);
