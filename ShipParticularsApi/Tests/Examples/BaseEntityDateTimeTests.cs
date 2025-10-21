@@ -17,6 +17,7 @@ namespace ShipParticularsApi.Tests.Examples
         private readonly SqliteConnection _connection;
         private readonly DbContextOptions<ShipParticularsContext> _options;
         private readonly ITestOutputHelper _output;
+        private const string FixedUserId = "TEST_USER_01";
 
         // NOTE: beforeEach
         public BaseEntityDateTimeTests(ITestOutputHelper output)
@@ -100,7 +101,15 @@ namespace ShipParticularsApi.Tests.Examples
                    .WithShipType(ShipTypes.Fishing)
                    .WithShipCode("TEST_SHIP_CODE")
                    .WithShipServices(KtSatService(shipKey))
-                   .WithShipSatellite(KtSatellite(shipKey, "SATELLITE_ID"))
+                   .WithShipSatellite(
+                        ShipSatellite()
+                        .WithShipKey("UNIQUE_SHIP_KEY")
+                        .WithSatelliteType(SatelliteTypes.KtSat)
+                        .WithSatelliteId("SATELLITE_ID")
+                        .WithIsUseSatellite(true)
+                        .WithCreateUserId(FixedUserId)
+                        .Build()
+                   )
                    .WithExternalShipId("SATELLITE_ID")
                    .WithIsUseKtsat(true)
                    .Build();
@@ -121,7 +130,7 @@ namespace ShipParticularsApi.Tests.Examples
                     .AsSplitQuery()
                     .SingleOrDefaultAsync(s => s.ShipKey == shipKey);
 
-                shipInfo.ManageGpsService(true, new SatelliteDetails("SATELLITE_ID", "SK_TELINK", "COMPANY_NAME"));
+                shipInfo.ManageGpsService(true, new SatelliteDetails("SATELLITE_ID", "SK_TELINK", "COMPANY_NAME"), FixedUserId);
                 await actConext.SaveChangesAsync();
             }
 

@@ -3,6 +3,7 @@ using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using ShipParticularsApi.Contexts;
 using ShipParticularsApi.Entities;
+using ShipParticularsApi.Entities.Enums;
 using ShipParticularsApi.ValueObjects;
 using Xunit;
 using Xunit.Abstractions;
@@ -19,6 +20,7 @@ namespace ShipParticularsApi.Tests.Examples
         private readonly SqliteConnection _connection;
         private readonly DbContextOptions<ShipParticularsContext> _options;
         private readonly ITestOutputHelper _output;
+        private const string FixedUserId = "TEST_USER_01";
 
         // NOTE: beforeEach
         public NavigationPropertyTests(ITestOutputHelper output)
@@ -128,7 +130,15 @@ namespace ShipParticularsApi.Tests.Examples
                 arrangeContext.ShipInfos.Add(ShipInfo()
                       .WithShipKey("UNIQUE_SHIP_KEY")
                       .WithShipServices(KtSatService("UNIQUE_SHIP_KEY"))
-                      .WithShipSatellite(SkTelinkSatellite("UNIQUE_SHIP_KEY", "SATELLITE_ID"))
+                      .WithShipSatellite(
+                            ShipSatellite()
+                                .WithShipKey("UNIQUE_SHIP_KEY")
+                                .WithSatelliteType(SatelliteTypes.SkTelink)
+                                .WithSatelliteId("SATELLITE_ID")
+                                .WithIsUseSatellite(true)
+                                .WithCreateUserId(FixedUserId)
+                                .Build()
+                       )
                       .WithExternalShipId("SATELLITE_ID")
                       .WithIsUseKtsat(true)
                       .WithSkTelinkCompanyShip(SkTelinkCompanyShip("UNIQUE_SHIP_KEY", "UNIQUE_COMPANY_NAME"))
@@ -145,7 +155,7 @@ namespace ShipParticularsApi.Tests.Examples
                     .AsSplitQuery()
                     .SingleAsync(s => s.ShipKey == "UNIQUE_SHIP_KEY");
 
-                target.ManageGpsService(false, new SatelliteDetails(null, null, null));
+                target.ManageGpsService(false, new SatelliteDetails(null, null, null), FixedUserId);
 
                 await actContext.SaveChangesAsync();
             }

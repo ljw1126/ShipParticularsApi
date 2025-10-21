@@ -122,19 +122,6 @@ namespace ShipParticularsApi.Entities
             this.IsUseAis = false;
         }
 
-        public void ManageGpsService(bool isGPSToggleOn, SatelliteDetails details)
-        {
-            if (isGPSToggleOn)
-            {
-                this.ActivateGpsService(details.SatelliteId, details.SatelliteType);
-                this.ManageSkTelinkCompanyShip(details.CompanyName);
-            }
-            else
-            {
-                DeactiveGpsService();
-            }
-        }
-
         public void ManageGpsService(bool isGPSToggleOn, SatelliteDetails details, string userId)
         {
             if (isGPSToggleOn)
@@ -146,22 +133,6 @@ namespace ShipParticularsApi.Entities
             {
                 DeactiveGpsService();
             }
-        }
-
-        private void ActivateGpsService(string? satelliteId, string? satelliteType)
-        {
-            if (HasKtSatService())
-            {
-                this.ShipSatellite.Update(satelliteId, satelliteType);
-            }
-            else
-            {
-                this.ShipServices.Add(ShipService.Of(this.ShipKey, ServiceNameTypes.KtSat));
-                this.ShipSatellite = ShipSatellite.Of(this.ShipKey, satelliteId, satelliteType);
-            }
-
-            this.ExternalShipId = satelliteId;
-            this.IsUseKtsat = true;
         }
 
         private void ActivateGpsService(string? satelliteId, string? satelliteType, string userId)
