@@ -6,9 +6,15 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllers();
-builder.Services.AddDbContext<ShipParticularsContext>(options
-    => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddControllers(options =>
+{
+    // Async 접미사 제거 비활성화
+    options.SuppressAsyncSuffixInActionNames = false;
+});
+builder.Services.AddDbContext<ShipParticularsContext>(
+    options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
+      .UseLazyLoadingProxies()
+);
 
 builder.Services.AddApplicationServices();
 
