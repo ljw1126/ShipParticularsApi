@@ -1,6 +1,6 @@
 ﻿using ShipParticularsApi.Entities;
 
-namespace ShipParticularsApi.Tests.Builders
+namespace ShipParticularsApi.Tests.Builders.Entities
 {
     public class ShipServiceTestBuilder
     {

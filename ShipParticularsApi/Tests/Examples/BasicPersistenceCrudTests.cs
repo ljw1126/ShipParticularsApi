@@ -7,7 +7,7 @@ using ShipParticularsApi.Entities.Enums;
 using Xunit;
 using Xunit.Abstractions;
 
-using static ShipParticularsApi.Tests.Builders.ShipInfoTestBuilder;
+using static ShipParticularsApi.Tests.Builders.Entities.ShipInfoTestBuilder;
 
 namespace ShipParticularsApi.Tests.Examples
 {
