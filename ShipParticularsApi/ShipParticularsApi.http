@@ -1,3 +1,129 @@
-@ShipParticularsApi_HostAddress = http://localhost:5222
+# For more info on HTTP files go to https://aka.ms/vs/httpfile
 
-###
+@ShipParticularsApi_HostAddress = http://localhost:5222/api/ship-particulars
+@ShipKey = SHIP_KEY3
+@OtherShipKey = SHIP_KEY99
+
+### 신규 추가 (only ShipInfo)
+POST {{ShipParticularsApi_HostAddress}}
+Content-Type: application/json
+
+{
+  "isAisToggleOn": false,
+  "isGPSToggleOn": false,
+  "shipKey": "{{ShipKey}}",
+  "callsign": "CALLSIGN",
+  "shipName": "SHIP_NAME",
+  "shipType": "PASSENGER",
+  "shipCode": "TEST_SHIP_CODE"
+}
+
+### 조회 : {shipKey}
+GET {{ShipParticularsApi_HostAddress}}/{{ShipKey}}
+
+
+### isAisToggleOn on/off
+PUT {{ShipParticularsApi_HostAddress}}/{{ShipKey}}
+Content-Type: application/json
+
+{
+  "isAisToggleOn": false,
+  "isGPSToggleOn": false,
+  "shipKey": "{{ShipKey}}",
+  "callsign": "CALLSIGN",
+  "shipName": "SHIP_NAME",
+  "shipType": "VEHICLE",
+  "shipCode": "TEST_SHIP_CODE"
+}
+
+### isGPSToggleOn on/off (SK TELINK 사용하지 않는 경우)
+PUT {{ShipParticularsApi_HostAddress}}/{{ShipKey}}
+Content-Type: application/json
+
+{
+  "isAisToggleOn": false,
+  "isGPSToggleOn": true,
+  "shipKey": "{{ShipKey}}",
+  "callsign": "CALLSIGN",
+  "shipName": "SHIP_NAME",
+  "shipType": "VEHICLE",
+  "shipCode": "TEST_SHIP_CODE"
+}
+
+### isGPSToggleOn on (using KT_SAT)
+PUT {{ShipParticularsApi_HostAddress}}/{{ShipKey}}
+Content-Type: application/json
+
+{
+  "isAisToggleOn": false,
+  "isGPSToggleOn": true,
+  "shipKey": "{{ShipKey}}",
+  "callsign": "CALLSIGN",
+  "shipName": "SHIP_NAME",
+  "shipType": "VEHICLE",
+  "shipCode": "TEST_SHIP_CODE",
+  "shipSatelliteReq": {
+    "satelliteType": "KT_SAT",
+    "satelliteId": "SATELLITE_ID"
+  }
+}
+
+
+### isGPSToggle On & Change to SK_TELINK
+### SHIP_SATELLITE에 수정일이 반영되는지도 확인
+PUT {{ShipParticularsApi_HostAddress}}/{{ShipKey}}
+Content-Type: application/json
+
+{
+  "isAisToggleOn": false,
+  "isGPSToggleOn": true,
+  "shipKey": "{{ShipKey}}",
+  "callsign": "CALLSIGN",
+  "shipName": "SHIP_NAME",
+  "shipType": "VEHICLE",
+  "shipCode": "TEST_SHIP_CODE",
+  "shipSatelliteReq": {
+    "satelliteType": "SK_TELINK",
+    "satelliteId": "SATELLITE_ID"
+  },
+  "skTelinkCompanyShipReq": {
+    "companyName": "TEST_COMPANY_NAME"
+  }
+}
+
+
+### isGPSToggleOn off
+PUT {{ShipParticularsApi_HostAddress}}/{{ShipKey}}
+Content-Type: application/json
+
+{
+  "isAisToggleOn": false,
+  "isGPSToggleOn": false,
+  "shipKey": "{{ShipKey}}",
+  "callsign": "CALLSIGN",
+  "shipName": "SHIP_NAME",
+  "shipType": "VEHICLE",
+  "shipCode": "TEST_SHIP_CODE"
+}
+
+### 신규 추가 & 전체 서비스 On
+### isAisToggleOn On & isGPSToggleOn On (using SK_TELINK)
+POST {{ShipParticularsApi_HostAddress}}
+Content-Type: application/json
+
+{
+  "isAisToggleOn": true,
+  "isGPSToggleOn": true,
+  "shipKey": "{{OtherShipKey}}",
+  "callsign": "CALLSIGN",
+  "shipName": "SHIP_NAME",
+  "shipType": "VEHICLE",
+  "shipCode": "TEST_SHIP_CODE",
+  "shipSatelliteReq": {
+    "satelliteType": "SK_TELINK",
+    "satelliteId": "SATELLITE_ID"
+  },
+  "skTelinkCompanyShipReq": {
+    "companyName": "TEST_COMPANY_NAME"
+  }
+}
