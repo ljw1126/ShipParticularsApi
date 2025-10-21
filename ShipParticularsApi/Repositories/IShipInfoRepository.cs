@@ -6,5 +6,6 @@ namespace ShipParticularsApi.Repositories
     {
         Task<ShipInfo?> GetByShipKeyAsync(string shipKey);
         Task UpsertAsync(ShipInfo shipInfo);
+        Task<ShipInfo?> GetReadOnlyByShipKeyAsync(string shipKey);
     }
 }
