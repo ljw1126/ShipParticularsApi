@@ -3,14 +3,15 @@ using ShipParticularsApi.Contexts;
 using ShipParticularsApi.Entities.Enums;
 using ShipParticularsApi.Repositories;
 using ShipParticularsApi.Services;
-using ShipParticularsApi.Services.Dtos.Params;
 using ShipParticularsApi.Tests.Helper;
 using Xunit;
 using Xunit.Abstractions;
 using static ShipParticularsApi.Tests.Builders.Entities.ShipInfoTestBuilder;
 using static ShipParticularsApi.Tests.Builders.Entities.ShipSatelliteTestBuilder;
 using static ShipParticularsApi.Tests.Builders.Entities.ShipServiceTestBuilder;
-using static ShipParticularsApi.Tests.Builders.Entities.SkTelinkCompanyShipTestBuilder;
+using static ShipParticularsApi.Tests.Builders.Params.ShipParticularParamTestBuilder;
+using static ShipParticularsApi.Tests.Builders.Params.ShipSatelliteParamTestBuilder;
+using static ShipParticularsApi.Tests.Builders.Params.SkTelinkCompanyShipParamTestBuilder;
 
 // TODO. TransactionDecorator (sut) 획득하는 코드 중복
 // TODO. 검증 부분 중복
@@ -72,7 +73,7 @@ namespace ShipParticularsApi.Tests.Services
             innerService.Should().NotBeNull("ShipParticularsService 구현체도 DI 컨테이너에서 해결되어야 합니다.");
         }
 
-        [Fact(DisplayName = "신규 ShipInfo (AIS/GPS Toggle off)")]
+        [Fact(DisplayName = "신규 ShipInfo (AIS/GPS Toggle off) 생성")]
         public async Task Case1()
         {
             // Arrange
@@ -80,28 +81,18 @@ namespace ShipParticularsApi.Tests.Services
             var serviceProvider = scope.ServiceProvider;
             var sut = serviceProvider.GetRequiredService<IShipParticularsService>();
 
-            var testShipKey = "TEST_SHIP_KEY";
-            var param = new ShipParticularsParam
-            {
-                IsAisToggleOn = false,
-                IsGPSToggleOn = false,
-                ShipKey = testShipKey,
-                Callsign = "NEW_CALLSIGN",
-                ShipName = "NEW_SHIP_NAME",
-                ShipType = "FISHING",
-                ShipCode = "NEW_SHIP_CODE"
-            };
+            const string shipKey = "UNIQUE_SHIP_KEY";
+            var param = ShipParticularsParam().WithShipKey(shipKey).Build();
 
             // Act
             await sut.Process(param);
 
             // Assert
             var repository = serviceProvider.GetRequiredService<IShipInfoRepository>();
-            var actual = await repository.GetByShipKeyAsync(testShipKey);
+            var actual = await repository.GetByShipKeyAsync(shipKey);
 
             actual.Should().NotBeNull();
-            actual.ShipName.Should().Be("NEW_SHIP_NAME");
-            actual.ShipType.Should().Be(ShipTypes.Fishing);
+            actual.ShipType.Should().Be(ShipTypes.Default);
         }
 
         [Fact(DisplayName = "신규 ShipInfo이고, AIS 토글이 On인 경우 ShipServices의 길이는 1이다")]
@@ -110,18 +101,9 @@ namespace ShipParticularsApi.Tests.Services
             // Arrange
             using var scope = _factory.Services.CreateScope();
             var serviceProvider = scope.ServiceProvider;
-            var sut = serviceProvider.GetRequiredService<IShipParticularsService>(); // TransactionDecorator
+            var sut = serviceProvider.GetRequiredService<IShipParticularsService>();
 
-            var param = new ShipParticularsParam
-            {
-                IsAisToggleOn = true,
-                IsGPSToggleOn = false,
-                ShipKey = "NEW_SHIP_KEY",
-                Callsign = "NEW_CALLSIGN",
-                ShipName = "NEW_SHIP_NAME",
-                ShipType = "FISHING",
-                ShipCode = "NEW_SHIP_CODE"
-            };
+            var param = ShipParticularsParam().WithIsAisToggleOn(true).Build();
 
             // Act
             await sut.Process(param);
@@ -132,10 +114,11 @@ namespace ShipParticularsApi.Tests.Services
 
             actual.Should().NotBeNull();
             actual.IsUseAis.Should().BeTrue();
+
             actual.ShipServices.Should().ContainSingle();
-            actual.ShipServices.Should().ContainEquivalentOf(SatAisService(param.ShipKey), options =>
-                options.Including(s => s.ShipKey)
-                        .Including(s => s.ServiceName)
+            actual.ShipServices.Should().ContainEquivalentOf(
+                SatAisService().WithShipKey(param.ShipKey).Build(),
+                options => options.Including(s => s.ShipKey).Including(s => s.ServiceName)
             );
         }
 
@@ -147,16 +130,7 @@ namespace ShipParticularsApi.Tests.Services
             var serviceProvider = scope.ServiceProvider;
             var sut = serviceProvider.GetRequiredService<IShipParticularsService>();
 
-            var param = new ShipParticularsParam
-            {
-                IsAisToggleOn = false,
-                IsGPSToggleOn = false,
-                ShipKey = "NEW_SHIP_KEY",
-                Callsign = "NEW_CALLSIGN",
-                ShipName = "NEW_SHIP_NAME",
-                ShipType = "FISHING",
-                ShipCode = "NEW_SHIP_CODE"
-            };
+            var param = ShipParticularsParam().Build();
 
             // Act
             await sut.Process(param);
@@ -178,21 +152,13 @@ namespace ShipParticularsApi.Tests.Services
             var serviceProvider = scope.ServiceProvider;
             var sut = serviceProvider.GetRequiredService<IShipParticularsService>();
 
-            var param = new ShipParticularsParam
-            {
-                IsAisToggleOn = false,
-                IsGPSToggleOn = true,
-                ShipKey = "NEW_SHIP_KEY",
-                Callsign = "NEW_CALLSIGN",
-                ShipName = "NEW_SHIP_NAME",
-                ShipType = "FISHING",
-                ShipCode = "NEW_SHIP_CODE",
-                ShipSatelliteParam = new ShipSatelliteParam
-                {
-                    SatelliteId = "TEST_SATELLITE_ID",
-                    SatelliteType = "KT_SAT"
-                }
-            };
+            const string shipKey = "UNIQUE_SHIP_KEY";
+            const string satelliteId = "SATELLITE_ID";
+            var param = ShipParticularsParam()
+                .WithShipKey(shipKey)
+                .WithIsGPSToggleOn(true)
+                .WithShipSatelliteParam(KtSatelliteParam().WithSatelliteId(satelliteId))
+                .Build();
 
             // Act
             await sut.Process(param);
@@ -204,13 +170,14 @@ namespace ShipParticularsApi.Tests.Services
             actual.Should().NotBeNull();
             actual.IsUseKtsat.Should().BeTrue();
             actual.ShipServices.Should().ContainSingle();
-            actual.ShipServices.Should().ContainEquivalentOf(KtSatService(param.ShipKey),
-                options => options.Including(s => s.ShipKey)
-                                  .Including(s => s.ServiceName)
+            actual.ShipServices.Should().ContainEquivalentOf(
+                KtSatService().WithShipKey(shipKey).Build(),
+                options => options.Including(s => s.ShipKey).Including(s => s.ServiceName)
             );
 
             actual.ShipSatellite.Should().NotBeNull();
-            actual.ShipSatellite.Should().BeEquivalentTo(KtSatellite(1L, param.ShipKey, param.ShipSatelliteParam.SatelliteId),
+            actual.ShipSatellite.Should().BeEquivalentTo(
+                KtSatellite().WithShipKey(shipKey).WithSatelliteId(satelliteId).Build(),
                 options => options.Including(s => s.ShipKey)
                                   .Including(s => s.SatelliteId)
                                   .Including(s => s.SatelliteType)
@@ -225,25 +192,15 @@ namespace ShipParticularsApi.Tests.Services
             var serviceProvider = scope.ServiceProvider;
             var sut = serviceProvider.GetRequiredService<IShipParticularsService>();
 
-            var param = new ShipParticularsParam
-            {
-                IsAisToggleOn = false,
-                IsGPSToggleOn = true,
-                ShipKey = "NEW_SHIP_KEY",
-                Callsign = "NEW_CALLSIGN",
-                ShipName = "NEW_SHIP_NAME",
-                ShipType = "FISHING",
-                ShipCode = "NEW_SHIP_CODE",
-                ShipSatelliteParam = new ShipSatelliteParam
-                {
-                    SatelliteId = "TEST_SATELLITE_ID",
-                    SatelliteType = "SK_TELINK"
-                },
-                SkTelinkCompanyShipParam = new SkTelinkCompanyShipParam
-                {
-                    CompanyName = "TEST_COMPANY_KEY"
-                }
-            };
+            const string shipKey = "UNIQUE_SHIP_KEY";
+            const string satelliteId = "SATELLITE_ID";
+
+            var param = ShipParticularsParam()
+                .WithShipKey(shipKey)
+                .WithIsGPSToggleOn(true)
+                .WithShipSatelliteParam(SkTelinkSatelliteParam().WithSatelliteId(satelliteId))
+                .WithSkTelinkCompanyShipParam(SkTelinkCompanyShipParam())
+                .Build();
 
             // Act
             await sut.Process(param);
@@ -254,23 +211,25 @@ namespace ShipParticularsApi.Tests.Services
 
             actual.Should().NotBeNull();
             actual.IsUseKtsat.Should().BeTrue();
-            actual.ExternalShipId.Should().Be(param.ShipSatelliteParam.SatelliteId);
+            actual.ExternalShipId.Should().Be(satelliteId);
 
             actual.ShipServices.Should().ContainSingle();
-            actual.ShipServices.Should().ContainEquivalentOf(KtSatService(param.ShipKey),
-                options => options.Including(s => s.ShipKey)
-                                  .Including(s => s.ServiceName)
+            actual.ShipServices.Should().ContainEquivalentOf(
+                KtSatService().WithShipKey(shipKey).Build(),
+                options => options.Including(s => s.ShipKey).Including(s => s.ServiceName)
             );
 
             actual.ShipSatellite.Should().NotBeNull();
-            actual.ShipSatellite.Should().BeEquivalentTo(SkTelinkSatellite(1L, param.ShipKey, param.ShipSatelliteParam.SatelliteId),
+            actual.ShipSatellite.Should().BeEquivalentTo(
+                SkTelinkSatellite().WithShipKey(shipKey).WithSatelliteId(satelliteId).Build(),
                 options => options.Including(s => s.ShipKey)
                                   .Including(s => s.SatelliteId)
                                   .Including(s => s.SatelliteType)
             );
 
             actual.SkTelinkCompanyShip.Should().NotBeNull();
-            actual.SkTelinkCompanyShip.CompanyName.Should().Be(param.SkTelinkCompanyShipParam.CompanyName);
+            actual.SkTelinkCompanyShip.CompanyName.Should()
+                .Be(param.SkTelinkCompanyShipParam.CompanyName);
         }
 
         [Fact(DisplayName = "기존 ShipInfo 컬럼 정보를 업데이트한다.")]
@@ -279,26 +238,17 @@ namespace ShipParticularsApi.Tests.Services
             // Arrange
             using var scope = _factory.Services.CreateScope();
             var serviceProvider = scope.ServiceProvider;
+            const string shipKey = "UNIQUE_SHIP_KEY";
 
-            await serviceProvider.SeedDataAsync(ShipInfo()
-                    .WithId(1L)
-                    .WithShipKey("UNIQUE_SHIP_KEY")
-                    .WithCallsign("OLD_CALLSIGN")
-                    .WithShipName("OLD_SHIP_NAME")
-                    .WithShipType(ShipTypes.Fishing)
-                    .WithShipCode("OLD_SHIP_CODE")
-                    .Build());
+            await serviceProvider.SeedDataAsync(NoService(shipKey, 1L).Build());
 
-            var param = new ShipParticularsParam
-            {
-                IsAisToggleOn = false,
-                IsGPSToggleOn = false,
-                ShipKey = "UNIQUE_SHIP_KEY",
-                Callsign = "UPDATE_CALLSIGN",
-                ShipName = "UPDATE_SHIP_NAME",
-                ShipType = "PASSENGER",
-                ShipCode = "UPDATE_SHIP_CODE"
-            };
+            var param = ShipParticularsParam()
+                .WithShipKey(shipKey)
+                .WithCallsign("UPDATE_CALLSIGN")
+                .WithShipName("UPDATE_SHIP_NAME")
+                .WithShipType("PASSENGER")
+                .WithShipCode("UPDATE_SHIP_CDE")
+                .Build();
 
             var sut = serviceProvider.GetRequiredService<IShipParticularsService>();
 
@@ -310,7 +260,6 @@ namespace ShipParticularsApi.Tests.Services
             var actual = await repository.GetByShipKeyAsync(param.ShipKey);
 
             actual.Should().NotBeNull();
-            actual.ShipKey.Should().Be(param.ShipKey);
             actual.Callsign.Should().Be(param.Callsign);
             actual.ShipName.Should().Be(param.ShipName);
             actual.ShipType.Should().Be(ShipTypes.Passenger);
@@ -330,27 +279,14 @@ namespace ShipParticularsApi.Tests.Services
             // Arrange
             using var scope = _factory.Services.CreateScope();
             var serviceProvider = scope.ServiceProvider;
+            const string shipKey = "UNIQUE_SHIP_KEY";
 
-            var param = new ShipParticularsParam
-            {
-                IsAisToggleOn = true,
-                IsGPSToggleOn = false,
-                ShipKey = "UNIQUE_SHIP_KEY",
-                Callsign = "TEST_CALLSIGN",
-                ShipName = "TEST_SHIP_NAME",
-                ShipType = "FISHING",
-                ShipCode = "TEST_SHIP_CODE",
-            };
+            await serviceProvider.SeedDataAsync(AisOnly(shipKey, 1L).Build());
 
-            await serviceProvider.SeedDataAsync(ShipInfo()
-                   .WithShipKey(param.ShipKey)
-                   .WithCallsign(param.Callsign)
-                   .WithShipName(param.ShipName)
-                   .WithShipType(ShipTypes.Fishing)
-                   .WithShipCode(param.ShipCode)
-                   .WithShipServices(SatAisService(param.ShipKey))
-                   .WithIsUseAis(true)
-                   .Build());
+            var param = ShipParticularsParam()
+                .WithShipKey(shipKey)
+                .WithIsAisToggleOn(true)
+                .Build();
 
             var sut = serviceProvider.GetRequiredService<IShipParticularsService>();
 
@@ -362,17 +298,12 @@ namespace ShipParticularsApi.Tests.Services
             var actual = await repository.GetByShipKeyAsync(param.ShipKey);
 
             actual.Should().NotBeNull();
-            actual.ShipKey.Should().Be(param.ShipKey);
-            actual.Callsign.Should().Be(param.Callsign);
-            actual.ShipName.Should().Be(param.ShipName);
-            actual.ShipType.Should().Be(ShipTypes.Fishing);
-            actual.ShipCode.Should().Be(param.ShipCode);
+            actual.ShipType.Should().Be(ShipTypes.Default);
 
-            actual.ShipServices.Should().ContainSingle()
-                .And.ContainEquivalentOf(
-                    SatAisService(param.ShipKey),
-                    options => options.Including(s => s.ShipKey)
-                                      .Including(s => s.ServiceName)
+            actual.ShipServices.Should().ContainSingle();
+            actual.ShipServices.Should().ContainEquivalentOf(
+                    SatAisService().WithShipKey(shipKey).Build(),
+                    options => options.Including(s => s.ShipKey).Including(s => s.ServiceName)
             );
         }
 
@@ -382,27 +313,14 @@ namespace ShipParticularsApi.Tests.Services
             // Arrange
             using var scope = _factory.Services.CreateScope();
             var serviceProvider = scope.ServiceProvider;
+            const string shipKey = "UNIQUE_SHIP_KEY";
 
-            var param = new ShipParticularsParam
-            {
-                IsAisToggleOn = false,
-                IsGPSToggleOn = false,
-                ShipKey = "UNIQUE_SHIP_KEY",
-                Callsign = "TEST_CALLSIGN",
-                ShipName = "TEST_SHIP_NAME",
-                ShipType = "FISHING",
-                ShipCode = "TEST_SHIP_CODE",
-            };
+            await serviceProvider.SeedDataAsync(AisOnly(shipKey, 1L).Build());
 
-            await serviceProvider.SeedDataAsync(ShipInfo()
-                   .WithShipKey(param.ShipKey)
-                   .WithCallsign(param.Callsign)
-                   .WithShipName(param.ShipName)
-                   .WithShipType(ShipTypes.Fishing)
-                   .WithShipCode(param.ShipCode)
-                   .WithShipServices(SatAisService(param.ShipKey))
-                   .WithIsUseAis(true)
-                   .Build());
+            var param = ShipParticularsParam()
+                .WithShipKey(shipKey)
+                .WithIsAisToggleOn(false)
+                .Build();
 
             var sut = serviceProvider.GetRequiredService<IShipParticularsService>();
 
@@ -426,25 +344,14 @@ namespace ShipParticularsApi.Tests.Services
             // Arrange
             using var scope = _factory.Services.CreateScope();
             var serviceProvider = scope.ServiceProvider;
+            const string shipKey = "UNIQUE_SHIP_KEY";
 
-            var param = new ShipParticularsParam
-            {
-                IsAisToggleOn = false,
-                IsGPSToggleOn = false,
-                ShipKey = "UNIQUE_SHIP_KEY",
-                Callsign = "TEST_CALLSIGN",
-                ShipName = "TEST_SHIP_NAME",
-                ShipType = "FISHING",
-                ShipCode = "TEST_SHIP_CODE",
-            };
+            await serviceProvider.SeedDataAsync(NoService(shipKey, 1L).Build());
 
-            await serviceProvider.SeedDataAsync(ShipInfo()
-                   .WithShipKey(param.ShipKey)
-                   .WithCallsign(param.Callsign)
-                   .WithShipName(param.ShipName)
-                   .WithShipType(ShipTypes.Fishing)
-                   .WithShipCode(param.ShipCode)
-                   .Build());
+            var param = ShipParticularsParam()
+                .WithShipKey(shipKey)
+                .WithIsAisToggleOn(false)
+                .Build();
 
             var sut = serviceProvider.GetRequiredService<IShipParticularsService>();
 
@@ -457,7 +364,7 @@ namespace ShipParticularsApi.Tests.Services
 
             actual.Should().NotBeNull();
             actual.ShipKey.Should().Be(param.ShipKey);
-            actual.ShipType.Should().Be(ShipTypes.Fishing);
+            actual.ShipType.Should().Be(ShipTypes.Default);
             actual.IsUseAis.Should().BeFalse();
 
             actual.ShipServices.Should().BeEmpty();
@@ -470,25 +377,14 @@ namespace ShipParticularsApi.Tests.Services
             // Arrange
             using var scope = _factory.Services.CreateScope();
             var serviceProvider = scope.ServiceProvider;
+            const string shipKey = "UNIQUE_SHIP_KEY";
 
-            var param = new ShipParticularsParam
-            {
-                IsAisToggleOn = false,
-                IsGPSToggleOn = false,
-                ShipKey = "UNIQUE_SHIP_KEY",
-                Callsign = "TEST_CALLSIGN",
-                ShipName = "TEST_SHIP_NAME",
-                ShipType = "FISHING",
-                ShipCode = "TEST_SHIP_CODE",
-            };
+            await serviceProvider.SeedDataAsync(NoService(shipKey, 1L).Build());
 
-            await serviceProvider.SeedDataAsync(ShipInfo()
-                   .WithShipKey(param.ShipKey)
-                   .WithCallsign(param.Callsign)
-                   .WithShipName(param.ShipName)
-                   .WithShipType(ShipTypes.Fishing)
-                   .WithShipCode(param.ShipCode)
-                   .Build());
+            var param = ShipParticularsParam()
+                .WithShipKey(shipKey)
+                .WithIsGPSToggleOn(false)
+                .Build();
 
             var sut = serviceProvider.GetRequiredService<IShipParticularsService>();
 
@@ -500,8 +396,7 @@ namespace ShipParticularsApi.Tests.Services
             var actual = await repository.GetByShipKeyAsync(param.ShipKey);
 
             actual.Should().NotBeNull();
-            actual.ShipKey.Should().Be(param.ShipKey);
-            actual.ShipType.Should().Be(ShipTypes.Fishing);
+            actual.ShipType.Should().Be(ShipTypes.Default);
             actual.IsUseKtsat.Should().BeFalse();
 
             actual.ShipServices.Should().BeEmpty();
@@ -518,30 +413,14 @@ namespace ShipParticularsApi.Tests.Services
             // Arrange
             using var scope = _factory.Services.CreateScope();
             var serviceProvider = scope.ServiceProvider;
+            const string shipKey = "UNIQUE_SHIP_KEY";
 
-            var param = new ShipParticularsParam
-            {
-                IsAisToggleOn = false,
-                IsGPSToggleOn = false,
-                ShipKey = "UNIQUE_SHIP_KEY",
-                Callsign = "TEST_CALLSIGN",
-                ShipName = "TEST_SHIP_NAME",
-                ShipType = "FISHING",
-                ShipCode = "TEST_SHIP_CODE",
-            };
+            await serviceProvider.SeedDataAsync(UsingSkTelink(shipKey, "TEST_USER_01", 1L).Build());
 
-            await serviceProvider.SeedDataAsync(ShipInfo()
-                   .WithShipKey(param.ShipKey)
-                   .WithCallsign(param.Callsign)
-                   .WithShipName(param.ShipName)
-                   .WithShipType(ShipTypes.Fishing)
-                   .WithShipCode(param.ShipCode)
-                   .WithShipServices(KtSatService(param.ShipKey))
-                   .WithShipSatellite(SkTelinkSatellite(param.ShipKey, "SATELLITE_ID"))
-                   .WithExternalShipId("SATELLITE_ID")
-                   .WithIsUseKtsat(true)
-                   .WithSkTelinkCompanyShip(SkTelinkCompanyShip(param.ShipKey, "UNIQUE_COMPANY_NAME"))
-                   .Build());
+            var param = ShipParticularsParam()
+                .WithShipKey(shipKey)
+                .WithIsGPSToggleOn(false)
+                .Build();
 
             var sut = serviceProvider.GetRequiredService<IShipParticularsService>();
 
@@ -571,29 +450,16 @@ namespace ShipParticularsApi.Tests.Services
             using var scope = _factory.Services.CreateScope();
             var serviceProvider = scope.ServiceProvider;
 
-            var param = new ShipParticularsParam
-            {
-                IsAisToggleOn = false,
-                IsGPSToggleOn = true,
-                ShipKey = "UNIQUE_SHIP_KEY",
-                Callsign = "TEST_CALLSIGN",
-                ShipName = "TEST_SHIP_NAME",
-                ShipType = "FISHING",
-                ShipCode = "TEST_SHIP_CODE",
-                ShipSatelliteParam = new ShipSatelliteParam
-                {
-                    SatelliteId = "SATELLITE_ID",
-                    SatelliteType = "KT_SAT"
-                },
-            };
+            const string shipKey = "UNIQUE_SHIP_KEY";
+            const string satelliteId = "SATELLITE_ID";
 
-            await serviceProvider.SeedDataAsync(ShipInfo()
-                   .WithShipKey(param.ShipKey)
-                   .WithCallsign(param.Callsign)
-                   .WithShipName(param.ShipName)
-                   .WithShipType(ShipTypes.Fishing)
-                   .WithShipCode(param.ShipCode)
-                   .Build());
+            await serviceProvider.SeedDataAsync(NoService(shipKey, 1L).Build());
+
+            var param = ShipParticularsParam()
+                .WithShipKey(shipKey)
+                .WithIsGPSToggleOn(true)
+                .WithShipSatelliteParam(KtSatelliteParam().WithSatelliteId(satelliteId))
+                .Build();
 
             var sut = serviceProvider.GetRequiredService<IShipParticularsService>();
 
@@ -602,22 +468,21 @@ namespace ShipParticularsApi.Tests.Services
 
             // Assert
             var repository = serviceProvider.GetRequiredService<IShipInfoRepository>();
-            var actual = await repository.GetByShipKeyAsync(param.ShipKey);
+            var actual = await repository.GetByShipKeyAsync(shipKey);
 
             actual.Should().NotBeNull();
             actual.IsUseKtsat.Should().BeTrue();
-            actual.ExternalShipId.Should().Be(param.ShipSatelliteParam.SatelliteId);
+            actual.ExternalShipId.Should().Be(satelliteId);
 
             actual.ShipServices.Should().ContainSingle()
                 .And.ContainEquivalentOf(
-                    KtSatService(param.ShipKey),
-                    options => options.Including(s => s.ShipKey)
-                                      .Including(s => s.ServiceName)
+                    KtSatService().WithShipKey(shipKey).Build(),
+                    options => options.Including(s => s.ShipKey).Including(s => s.ServiceName)
             );
 
             actual.ShipSatellite.Should().NotBeNull();
             actual.ShipSatellite.Should().BeEquivalentTo(
-                KtSatellite(param.ShipKey, param.ShipSatelliteParam.SatelliteId),
+                KtSatellite().WithShipKey(shipKey).WithSatelliteId(satelliteId).Build(),
                 options => options.Including(s => s.ShipKey)
                                   .Including(s => s.SatelliteId)
                                   .Including(s => s.SatelliteType)
@@ -632,34 +497,17 @@ namespace ShipParticularsApi.Tests.Services
             // Arrange
             using var scope = _factory.Services.CreateScope();
             var serviceProvider = scope.ServiceProvider;
+            const string shipKey = "UNIQUE_SHIP_KEY";
+            const string satelliteId = "SATELLITE_ID";
 
-            var param = new ShipParticularsParam
-            {
-                IsAisToggleOn = false,
-                IsGPSToggleOn = true,
-                ShipKey = "UNIQUE_SHIP_KEY",
-                Callsign = "TEST_CALLSIGN",
-                ShipName = "TEST_SHIP_NAME",
-                ShipType = "FISHING",
-                ShipCode = "TEST_SHIP_CODE",
-                ShipSatelliteParam = new ShipSatelliteParam
-                {
-                    SatelliteId = "SATELLITE_ID",
-                    SatelliteType = "SK_TELINK"
-                },
-                SkTelinkCompanyShipParam = new SkTelinkCompanyShipParam
-                {
-                    CompanyName = "UNIQUE_COMPANY_NAME"
-                }
-            };
+            await serviceProvider.SeedDataAsync(NoService(shipKey, 1L).Build());
 
-            await serviceProvider.SeedDataAsync(ShipInfo()
-                   .WithShipKey(param.ShipKey)
-                   .WithCallsign(param.Callsign)
-                   .WithShipName(param.ShipName)
-                   .WithShipType(ShipTypes.Fishing)
-                   .WithShipCode(param.ShipCode)
-                   .Build());
+            var param = ShipParticularsParam()
+                .WithShipKey(shipKey)
+                .WithIsGPSToggleOn(true)
+                .WithShipSatelliteParam(SkTelinkSatelliteParam().WithSatelliteId(satelliteId))
+                .WithSkTelinkCompanyShipParam(SkTelinkCompanyShipParam())
+                .Build();
 
             var sut = serviceProvider.GetRequiredService<IShipParticularsService>();
 
@@ -672,18 +520,17 @@ namespace ShipParticularsApi.Tests.Services
 
             actual.Should().NotBeNull();
             actual.IsUseKtsat.Should().BeTrue();
-            actual.ExternalShipId.Should().Be(param.ShipSatelliteParam.SatelliteId);
+            actual.ExternalShipId.Should().Be(satelliteId);
 
             actual.ShipServices.Should().ContainSingle()
                 .And.ContainEquivalentOf(
-                    KtSatService(param.ShipKey),
-                    options => options.Including(s => s.ShipKey)
-                                      .Including(s => s.ServiceName)
+                    KtSatService().WithShipKey(shipKey).Build(),
+                    options => options.Including(s => s.ShipKey).Including(s => s.ServiceName)
             );
 
             actual.ShipSatellite.Should().NotBeNull();
             actual.ShipSatellite.Should().BeEquivalentTo(
-                SkTelinkSatellite(param.ShipKey, param.ShipSatelliteParam.SatelliteId),
+                SkTelinkSatellite().WithShipKey(shipKey).WithSatelliteId(satelliteId).Build(),
                 options => options.Including(s => s.ShipKey)
                                   .Including(s => s.SatelliteId)
                                   .Including(s => s.SatelliteType)
@@ -701,37 +548,18 @@ namespace ShipParticularsApi.Tests.Services
             using var scope = _factory.Services.CreateScope();
             var serviceProvider = scope.ServiceProvider;
 
-            var param = new ShipParticularsParam
-            {
-                IsAisToggleOn = false,
-                IsGPSToggleOn = true,
-                ShipKey = "UNIQUE_SHIP_KEY",
-                Callsign = "TEST_CALLSIGN",
-                ShipName = "TEST_SHIP_NAME",
-                ShipType = "FISHING",
-                ShipCode = "TEST_SHIP_CODE",
-                ShipSatelliteParam = new ShipSatelliteParam
-                {
-                    SatelliteId = "SATELLITE_ID",
-                    SatelliteType = "SK_TELINK"
-                },
-                SkTelinkCompanyShipParam = new SkTelinkCompanyShipParam
-                {
-                    CompanyName = "UNIQUE_COMPANY_NAME"
-                }
-            };
+            const string shipKey = "UNIQUE_SHIP_KEY";
+            const string satelliteId = "SATELLITE_ID";
+            const string userId = "TEST_USER_01";
 
-            await serviceProvider.SeedDataAsync(ShipInfo()
-                   .WithShipKey(param.ShipKey)
-                   .WithCallsign(param.Callsign)
-                   .WithShipName(param.ShipName)
-                   .WithShipType(ShipTypes.Fishing)
-                   .WithShipCode(param.ShipCode)
-                   .WithShipServices(KtSatService(param.ShipKey))
-                   .WithShipSatellite(KtSatellite(param.ShipKey, "SATELLITE_ID"))
-                   .WithExternalShipId("SATELLITE_ID")
-                   .WithIsUseKtsat(true)
-                   .Build());
+            await serviceProvider.SeedDataAsync(UsingKtSat(shipKey, userId, 1L).Build());
+
+            var param = ShipParticularsParam()
+                .WithShipKey(shipKey)
+                .WithIsGPSToggleOn(true)
+                .WithShipSatelliteParam(SkTelinkSatelliteParam().WithSatelliteId(satelliteId))
+                .WithSkTelinkCompanyShipParam(SkTelinkCompanyShipParam())
+                .Build();
 
             var sut = serviceProvider.GetRequiredService<IShipParticularsService>();
 
@@ -744,18 +572,17 @@ namespace ShipParticularsApi.Tests.Services
 
             actual.Should().NotBeNull();
             actual.IsUseKtsat.Should().BeTrue();
-            actual.ExternalShipId.Should().Be(param.ShipSatelliteParam.SatelliteId);
+            actual.ExternalShipId.Should().Be(satelliteId);
 
             actual.ShipServices.Should().ContainSingle()
                 .And.ContainEquivalentOf(
-                    KtSatService(param.ShipKey),
-                    options => options.Including(s => s.ShipKey)
-                                      .Including(s => s.ServiceName)
+                    KtSatService().WithShipKey(shipKey).Build(),
+                    options => options.Including(s => s.ShipKey).Including(s => s.ServiceName)
             );
 
             actual.ShipSatellite.Should().NotBeNull();
             actual.ShipSatellite.Should().BeEquivalentTo(
-                SkTelinkSatellite(param.ShipKey, param.ShipSatelliteParam.SatelliteId),
+                SkTelinkSatellite().WithShipKey(shipKey).WithSatelliteId(satelliteId).Build(),
                 options => options.Including(s => s.ShipKey)
                                   .Including(s => s.SatelliteId)
                                   .Including(s => s.SatelliteType)
@@ -774,34 +601,17 @@ namespace ShipParticularsApi.Tests.Services
             using var scope = _factory.Services.CreateScope();
             var serviceProvider = scope.ServiceProvider;
 
-            var param = new ShipParticularsParam
-            {
-                IsAisToggleOn = false,
-                IsGPSToggleOn = true,
-                ShipKey = "UNIQUE_SHIP_KEY",
-                Callsign = "TEST_CALLSIGN",
-                ShipName = "TEST_SHIP_NAME",
-                ShipType = "FISHING",
-                ShipCode = "TEST_SHIP_CODE",
-                ShipSatelliteParam = new ShipSatelliteParam
-                {
-                    SatelliteId = "SATELLITE_ID",
-                    SatelliteType = "KT_SAT"
-                }
-            };
+            const string shipKey = "UNIQUE_SHIP_KEY";
+            const string satelliteId = "SATELLITE_ID";
+            const string userId = "TEST_USER_01";
 
-            await serviceProvider.SeedDataAsync(ShipInfo()
-                   .WithShipKey(param.ShipKey)
-                   .WithCallsign(param.Callsign)
-                   .WithShipName(param.ShipName)
-                   .WithShipType(ShipTypes.Fishing)
-                   .WithShipCode(param.ShipCode)
-                   .WithShipServices(KtSatService(param.ShipKey))
-                   .WithShipSatellite(SkTelinkSatellite(param.ShipKey, "SATELLITE_ID"))
-                   .WithExternalShipId("SATELLITE_ID")
-                   .WithIsUseKtsat(true)
-                   .WithSkTelinkCompanyShip(SkTelinkCompanyShip(param.ShipKey, "UNIQUE_COMPANY_NAME"))
-                   .Build());
+            await serviceProvider.SeedDataAsync(UsingSkTelink(shipKey, userId, 1L).Build());
+
+            var param = ShipParticularsParam()
+               .WithShipKey(shipKey)
+               .WithIsGPSToggleOn(true)
+               .WithShipSatelliteParam(KtSatelliteParam().WithSatelliteId(satelliteId))
+               .Build();
 
             var sut = serviceProvider.GetRequiredService<IShipParticularsService>();
 
@@ -814,18 +624,18 @@ namespace ShipParticularsApi.Tests.Services
 
             actual.Should().NotBeNull();
             actual.IsUseKtsat.Should().BeTrue();
-            actual.ExternalShipId.Should().Be(param.ShipSatelliteParam.SatelliteId);
+            actual.ExternalShipId.Should().Be(satelliteId);
 
             actual.ShipServices.Should().ContainSingle()
                 .And.ContainEquivalentOf(
-                    KtSatService(param.ShipKey),
+                    KtSatService().WithShipKey(shipKey).Build(),
                     options => options.Including(s => s.ShipKey)
                                       .Including(s => s.ServiceName)
             );
 
             actual.ShipSatellite.Should().NotBeNull();
             actual.ShipSatellite.Should().BeEquivalentTo(
-                KtSatellite(param.ShipKey, param.ShipSatelliteParam.SatelliteId),
+                KtSatellite().WithShipKey(shipKey).WithSatelliteId(satelliteId).Build(),
                 options => options.Including(s => s.ShipKey)
                                   .Including(s => s.SatelliteId)
                                   .Including(s => s.SatelliteType)
@@ -841,38 +651,19 @@ namespace ShipParticularsApi.Tests.Services
             using var scope = _factory.Services.CreateScope();
             var serviceProvider = scope.ServiceProvider;
 
-            var param = new ShipParticularsParam
-            {
-                IsAisToggleOn = false,
-                IsGPSToggleOn = true,
-                ShipKey = "UNIQUE_SHIP_KEY",
-                Callsign = "TEST_CALLSIGN",
-                ShipName = "TEST_SHIP_NAME",
-                ShipType = "FISHING",
-                ShipCode = "TEST_SHIP_CODE",
-                ShipSatelliteParam = new ShipSatelliteParam
-                {
-                    SatelliteId = "SATELLITE_ID",
-                    SatelliteType = "SK_TELINK"
-                },
-                SkTelinkCompanyShipParam = new SkTelinkCompanyShipParam
-                {
-                    CompanyName = "UPDATE_COMPANY_NAME"
-                }
-            };
+            const string shipKey = "UNIQUE_SHIP_KEY";
+            const string satelliteId = "SATELLITE_ID";
+            const string updateCompanyName = "UPDATE_COMPANY_NAME";
+            const string userId = "TEST_USER_01";
 
-            await serviceProvider.SeedDataAsync(ShipInfo()
-                   .WithShipKey(param.ShipKey)
-                   .WithCallsign(param.Callsign)
-                   .WithShipName(param.ShipName)
-                   .WithShipType(ShipTypes.Fishing)
-                   .WithShipCode(param.ShipCode)
-                   .WithShipServices(KtSatService(param.ShipKey))
-                   .WithShipSatellite(SkTelinkSatellite(param.ShipKey, "SATELLITE_ID"))
-                   .WithExternalShipId("SATELLITE_ID")
-                   .WithIsUseKtsat(true)
-                   .WithSkTelinkCompanyShip(SkTelinkCompanyShip(param.ShipKey, "UNIQUE_COMPANY_NAME"))
-                   .Build());
+            await serviceProvider.SeedDataAsync(UsingSkTelink(shipKey, userId, 1L).Build());
+
+            var param = ShipParticularsParam()
+                .WithShipKey(shipKey)
+                .WithIsGPSToggleOn(true)
+                .WithShipSatelliteParam(SkTelinkSatelliteParam().WithSatelliteId(satelliteId))
+                .WithSkTelinkCompanyShipParam(SkTelinkCompanyShipParam().WithCompanyName(updateCompanyName))
+                .Build();
 
             var sut = serviceProvider.GetRequiredService<IShipParticularsService>();
 
@@ -884,75 +675,18 @@ namespace ShipParticularsApi.Tests.Services
             var actual = await repository.GetByShipKeyAsync(param.ShipKey);
 
             actual.Should().NotBeNull();
+
+            actual.ShipServices.Should().HaveCount(1);
+
+            actual.ShipSatellite.Should().NotBeNull();
+
+            var satellite = actual.ShipSatellite;
+            satellite.UpdateUserId.Should().NotBeNull();
+            satellite.UpdateDateTime.Should().NotBeNull();
 
             actual.SkTelinkCompanyShip.Should().NotBeNull();
             actual.SkTelinkCompanyShip.CompanyName.Should()
-                .Be(param.SkTelinkCompanyShipParam.CompanyName);
-        }
-
-        [Fact(DisplayName = "SK TELINK의 CompanyName 업데이트시 다른 엔티티는 변경되지 않는다")]
-        public async Task Case18()
-        {
-            // Arrange
-            using var scope = _factory.Services.CreateScope();
-            var serviceProvider = scope.ServiceProvider;
-
-            var param = new ShipParticularsParam
-            {
-                IsAisToggleOn = false,
-                IsGPSToggleOn = true,
-                ShipKey = "UNIQUE_SHIP_KEY",
-                Callsign = "TEST_CALLSIGN",
-                ShipName = "TEST_SHIP_NAME",
-                ShipType = "FISHING",
-                ShipCode = "TEST_SHIP_CODE",
-                ShipSatelliteParam = new ShipSatelliteParam
-                {
-                    SatelliteId = "SATELLITE_ID",
-                    SatelliteType = "SK_TELINK"
-                },
-                SkTelinkCompanyShipParam = new SkTelinkCompanyShipParam
-                {
-                    CompanyName = "UPDATE_COMPANY_NAME"
-                }
-            };
-
-            await serviceProvider.SeedDataAsync(ShipInfo()
-                   .WithShipKey(param.ShipKey)
-                   .WithCallsign(param.Callsign)
-                   .WithShipName(param.ShipName)
-                   .WithShipType(ShipTypes.Fishing)
-                   .WithShipCode(param.ShipCode)
-                   .WithShipServices(KtSatService(param.ShipKey))
-                   .WithShipSatellite(SkTelinkSatellite(param.ShipKey, "SATELLITE_ID"))
-                   .WithExternalShipId("SATELLITE_ID")
-                   .WithIsUseKtsat(true)
-                   .WithSkTelinkCompanyShip(SkTelinkCompanyShip(param.ShipKey, "UNIQUE_COMPANY_NAME"))
-                   .Build());
-
-            var sut = serviceProvider.GetRequiredService<IShipParticularsService>();
-
-            // Act
-            await sut.Process(param);
-
-            // Assert
-            var repository = serviceProvider.GetRequiredService<IShipInfoRepository>();
-            var actual = await repository.GetByShipKeyAsync(param.ShipKey);
-
-            actual.Should().NotBeNull();
-
-            actual.ShipServices.Should()
-               .ContainEquivalentOf(
-                    KtSatService(param.ShipKey),
-                    options => options.Including(s => s.ShipKey).Including(s => s.ServiceName)
-               );
-            actual.ShipSatellite.Should()
-                .BeEquivalentTo(
-                    SkTelinkSatellite(param.ShipKey, param.ShipSatelliteParam.SatelliteId),
-                    options => options.Including(s => s.ShipKey)
-                                      .Including(s => s.SatelliteId)
-                                      .Including(s => s.SatelliteType)
-                );
+                .Be(updateCompanyName);
         }
     }
 }
