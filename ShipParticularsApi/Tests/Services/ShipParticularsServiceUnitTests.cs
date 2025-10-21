@@ -6,10 +6,10 @@ using ShipParticularsApi.Repositories;
 using ShipParticularsApi.Services;
 using ShipParticularsApi.Services.Dtos.Params;
 using Xunit;
-using static ShipParticularsApi.Tests.Builders.ShipInfoTestBuilder;
-using static ShipParticularsApi.Tests.Builders.ShipSatelliteTestBuilder;
-using static ShipParticularsApi.Tests.Builders.ShipServiceTestBuilder;
-using static ShipParticularsApi.Tests.Builders.SkTelinkCompanyShipTestBuilder;
+using static ShipParticularsApi.Tests.Builders.Entities.ShipInfoTestBuilder;
+using static ShipParticularsApi.Tests.Builders.Entities.ShipSatelliteTestBuilder;
+using static ShipParticularsApi.Tests.Builders.Entities.ShipServiceTestBuilder;
+using static ShipParticularsApi.Tests.Builders.Entities.SkTelinkCompanyShipTestBuilder;
 namespace ShipParticularsApi.Tests.Services
 {
     // TODO. Test Fixture 중복 제거

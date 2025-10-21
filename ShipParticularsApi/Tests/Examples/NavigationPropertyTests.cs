@@ -7,11 +7,11 @@ using ShipParticularsApi.Entities.Enums;
 using ShipParticularsApi.ValueObjects;
 using Xunit;
 using Xunit.Abstractions;
-using static ShipParticularsApi.Tests.Builders.ReplaceShipNameTestBuilder;
-using static ShipParticularsApi.Tests.Builders.ShipInfoTestBuilder;
-using static ShipParticularsApi.Tests.Builders.ShipSatelliteTestBuilder;
-using static ShipParticularsApi.Tests.Builders.ShipServiceTestBuilder;
-using static ShipParticularsApi.Tests.Builders.SkTelinkCompanyShipTestBuilder;
+using static ShipParticularsApi.Tests.Builders.Entities.ReplaceShipNameTestBuilder;
+using static ShipParticularsApi.Tests.Builders.Entities.ShipInfoTestBuilder;
+using static ShipParticularsApi.Tests.Builders.Entities.ShipSatelliteTestBuilder;
+using static ShipParticularsApi.Tests.Builders.Entities.ShipServiceTestBuilder;
+using static ShipParticularsApi.Tests.Builders.Entities.SkTelinkCompanyShipTestBuilder;
 
 namespace ShipParticularsApi.Tests.Examples
 {

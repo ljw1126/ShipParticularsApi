@@ -7,10 +7,10 @@ using ShipParticularsApi.Services.Dtos.Params;
 using ShipParticularsApi.Tests.Helper;
 using Xunit;
 using Xunit.Abstractions;
-using static ShipParticularsApi.Tests.Builders.ShipInfoTestBuilder;
-using static ShipParticularsApi.Tests.Builders.ShipSatelliteTestBuilder;
-using static ShipParticularsApi.Tests.Builders.ShipServiceTestBuilder;
-using static ShipParticularsApi.Tests.Builders.SkTelinkCompanyShipTestBuilder;
+using static ShipParticularsApi.Tests.Builders.Entities.ShipInfoTestBuilder;
+using static ShipParticularsApi.Tests.Builders.Entities.ShipSatelliteTestBuilder;
+using static ShipParticularsApi.Tests.Builders.Entities.ShipServiceTestBuilder;
+using static ShipParticularsApi.Tests.Builders.Entities.SkTelinkCompanyShipTestBuilder;
 
 // TODO. TransactionDecorator (sut) 획득하는 코드 중복
 // TODO. 검증 부분 중복

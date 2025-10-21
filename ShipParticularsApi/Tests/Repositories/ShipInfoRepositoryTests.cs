@@ -7,9 +7,9 @@ using ShipParticularsApi.Repositories;
 using Xunit;
 using Xunit.Abstractions;
 
-using static ShipParticularsApi.Tests.Builders.ShipInfoTestBuilder;
-using static ShipParticularsApi.Tests.Builders.ShipSatelliteTestBuilder;
-using static ShipParticularsApi.Tests.Builders.ShipServiceTestBuilder;
+using static ShipParticularsApi.Tests.Builders.Entities.ShipInfoTestBuilder;
+using static ShipParticularsApi.Tests.Builders.Entities.ShipSatelliteTestBuilder;
+using static ShipParticularsApi.Tests.Builders.Entities.ShipServiceTestBuilder;
 
 
 namespace ShipParticularsApi.Tests.Repositories

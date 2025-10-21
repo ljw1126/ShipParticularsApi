@@ -5,8 +5,8 @@ using ShipParticularsApi.Contexts;
 using ShipParticularsApi.Entities;
 using Xunit;
 
-using static ShipParticularsApi.Tests.Builders.ShipInfoTestBuilder;
-using static ShipParticularsApi.Tests.Builders.ShipServiceTestBuilder;
+using static ShipParticularsApi.Tests.Builders.Entities.ShipInfoTestBuilder;
+using static ShipParticularsApi.Tests.Builders.Entities.ShipServiceTestBuilder;
 
 namespace ShipParticularsApi.Tests.Entities
 {
