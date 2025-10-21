@@ -8,19 +8,41 @@ namespace ShipParticularsApi.Tests.Builders.Entities
         private const long NEW_ID = 0L;
 
         private long _Id;
-        private string _ShipKey;
-        private SatelliteTypes _SatelliteType;
-        private string? _SatelliteId;
-        private bool _IsUseSatellite;
+        private string _ShipKey = "SHIP_KEY";
+        private SatelliteTypes _SatelliteType = SatelliteTypes.KtSat;
+        private string? _SatelliteId = "SATELIITE_ID";
+        private bool _IsUseSatellite = true;
         private string? _CreateUserId;
         private DateTime _CreateDateTime;
-        private string _UpdateUserId;
+        private string? _UpdateUserId;
         private DateTime _UpdateDateTime;
 
         public static ShipSatelliteTestBuilder ShipSatellite()
         {
             return new ShipSatelliteTestBuilder();
         }
+
+        public static ShipSatelliteTestBuilder KtSatellite2(string shipKey, string satelliteId)
+        {
+            return KtSatellite()
+                .WithShipKey(shipKey)
+                .WithSatelliteId(satelliteId);
+        }
+
+        public static ShipSatelliteTestBuilder KtSatellite()
+        {
+            return ShipSatellite()
+                .WithSatelliteType(SatelliteTypes.KtSat)
+                .WithIsUseSatellite(true);
+        }
+
+        public static ShipSatelliteTestBuilder SkTelinkSatellite()
+        {
+            return ShipSatellite()
+                .WithSatelliteType(SatelliteTypes.SkTelink)
+                .WithIsUseSatellite(true);
+        }
+
 
         public static ShipSatellite KtSatellite(string shipKey, string satelliteId)
         {
@@ -36,7 +58,6 @@ namespace ShipParticularsApi.Tests.Builders.Entities
                 .WithSatelliteId(satelliteId)
                 .WithIsUseSatellite(true)
                 .Build();
-
         }
 
         public static ShipSatellite SkTelinkSatellite(string shipKey, string satelliteId)
