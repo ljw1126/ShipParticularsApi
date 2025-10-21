@@ -15,7 +15,7 @@ namespace ShipParticularsApi.Repositories
                  .Include(s => s.ReplaceShipName)
                  .Include(s => s.ShipModelTest)
                  .AsSplitQuery()
-                 .SingleOrDefaultAsync(s => s.ShipKey == shipKey);
+                 .SingleOrDefaultAsync(s => s.ShipKey == shipKey && s.IsService == true);
         }
 
         public Task UpsertAsync(ShipInfo shipInfo)
@@ -31,5 +31,19 @@ namespace ShipParticularsApi.Repositories
 
             return Task.CompletedTask;
         }
+
+        public async Task<ShipInfo?> GetReadOnlyByShipKeyAsync(string shipKey)
+        {
+            return await context.ShipInfos
+                 .AsNoTracking()
+                 .Include(s => s.ShipServices)
+                 .Include(s => s.ShipSatellite)
+                 .Include(s => s.SkTelinkCompanyShip)
+                 .Include(s => s.ReplaceShipName)
+                 .Include(s => s.ShipModelTest)
+                 .AsSplitQuery()
+                 .SingleOrDefaultAsync(s => s.ShipKey == shipKey && s.IsService == true);
+        }
+
     }
 }

@@ -44,7 +44,7 @@ namespace ShipParticularsApi.Services
 
         public async Task<ShipParticularsResult> GetShipParticulars(string shipKey)
         {
-            ShipInfo? shipInfo = await shipInfoRepository.GetByShipKeyAsync(shipKey);
+            ShipInfo? shipInfo = await shipInfoRepository.GetReadOnlyByShipKeyAsync(shipKey);
 
             if (shipInfo == null)
             {
