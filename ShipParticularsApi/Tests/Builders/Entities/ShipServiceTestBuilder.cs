@@ -16,34 +16,42 @@ namespace ShipParticularsApi.Tests.Builders.Entities
             return new ShipServiceTestBuilder();
         }
 
-        public static ShipService SatAisService(string shipKey)
+        public static ShipServiceTestBuilder SatAisService(string shipKey)
         {
             return SatAisService(NEW_ID, shipKey);
         }
 
-        public static ShipService SatAisService(long id, string shipKey)
+        public static ShipServiceTestBuilder SatAisService(long id, string shipKey)
         {
-            return ShipService()
+            return SatAisService()
                 .WithId(id)
-                .WithShipKey(shipKey)
-                .WithServiceName(ServiceNameTypes.SatAis)
-                .WithIsCompleted(true)
-                .Build();
+                .WithShipKey(shipKey);
         }
 
-        public static ShipService KtSatService(string shipKey)
+        public static ShipServiceTestBuilder SatAisService()
+        {
+            return ShipService()
+                .WithServiceName(ServiceNameTypes.SatAis)
+                .WithIsCompleted(true);
+        }
+
+        public static ShipServiceTestBuilder KtSatService(string shipKey)
         {
             return KtSatService(NEW_ID, shipKey);
         }
 
-        public static ShipService KtSatService(long id, string shipKey)
+        public static ShipServiceTestBuilder KtSatService(long id, string shipKey)
+        {
+            return KtSatService()
+                .WithId(id)
+                .WithShipKey(shipKey);
+        }
+
+        public static ShipServiceTestBuilder KtSatService()
         {
             return ShipService()
-                .WithId(id)
-                .WithShipKey(shipKey)
                 .WithServiceName(ServiceNameTypes.KtSat)
-                .WithIsCompleted(true)
-                .Build();
+                .WithIsCompleted(true);
         }
 
         public ShipServiceTestBuilder WithId(long id)

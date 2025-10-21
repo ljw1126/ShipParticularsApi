@@ -6,14 +6,14 @@ namespace ShipParticularsApi.Tests.Builders.Entities
     public class ShipInfoTestBuilder
     {
         private long _Id;
-        private string _ShipKey;
-        private string _Callsign = "TEST_CALLSIGN";
-        private string _ShipName = "TEST_SHIPNAME";
-        private ShipTypes? _ShipType;
+        private string _ShipKey = "SHIP_KEY";
+        private string _Callsign = "CALLSIGN";
+        private string _ShipName = "SHIP_NAME";
+        private ShipTypes? _ShipType = ShipTypes.Default;
         private string? _ShipCode;
         private string? _ExternalShipId;
         private bool? _IsUseKtsat;
-        private bool? _IsService;
+        private bool _IsService = true;
         private bool _IsUseAis;
 
         private ReplaceShipName _ReplaceShipName = null;
@@ -21,6 +21,64 @@ namespace ShipParticularsApi.Tests.Builders.Entities
         private ShipSatellite _ShipSatellite = null;
         private ICollection<ShipService> _ShipServices = [];
         private SkTelinkCompanyShip _SkTelinkCompanyShip = null;
+
+        public static ShipInfoTestBuilder UsingKtSat(string shipKey, string userId, long id = 1L)
+        {
+            const string satelliteId = "SATELITE_ID";
+
+            return NoService(shipKey, id)
+                .WithShipServices(ShipServiceTestBuilder.KtSatService(id, shipKey))
+                .WithShipSatellite(ShipSatelliteTestBuilder.KtSatellite()
+                    .WithId(id)
+                    .WithShipKey(shipKey)
+                    .WithSatelliteId(satelliteId)
+                    .WithCreateUserId(userId)
+                    .Build()
+                )
+                .WithIsUseKtsat(true)
+                .WithExternalShipId(satelliteId)
+                .WithIsUseAis(false);
+        }
+
+        public static ShipInfoTestBuilder UsingSkTelink(string shipKey, string userId, long id = 1L)
+        {
+            const string satelliteId = "SATELITE_ID";
+
+            return NoService(shipKey, id)
+                .WithShipServices(ShipServiceTestBuilder.KtSatService(id, shipKey))
+                .WithShipSatellite(ShipSatelliteTestBuilder.SkTelinkSatellite()
+                        .WithId(id)
+                        .WithShipKey(shipKey)
+                        .WithSatelliteId(satelliteId)
+                        .WithCreateUserId(userId)
+                        .Build())
+                .WithSkTelinkCompanyShip(SkTelinkCompanyShipTestBuilder.SkTelinkCompanyShip(id, shipKey))
+                .WithIsUseKtsat(true)
+                .WithExternalShipId(satelliteId)
+                .WithIsUseAis(false);
+        }
+
+        public static ShipInfoTestBuilder AisOnly(string shipKey, long id = 1L)
+        {
+            return NoService(shipKey, id)
+                .WithIsUseAis(true)
+                .WithShipServices(ShipServiceTestBuilder.SatAisService(id, shipKey));
+        }
+
+        public static ShipInfoTestBuilder NoService(string shipKey, long id = 1L)
+        {
+            return ExsitingBase(id, shipKey)
+                .WithIsService(true)
+                .WithIsUseAis(false)
+                .WithIsUseKtsat(false);
+        }
+
+        private static ShipInfoTestBuilder ExsitingBase(long id, string shipKey)
+        {
+            return ShipInfo()
+                .WithId(id)
+                .WithShipKey(shipKey);
+        }
 
         public static ShipInfoTestBuilder ShipInfo()
         {
@@ -87,13 +145,6 @@ namespace ShipParticularsApi.Tests.Builders.Entities
             return this;
         }
 
-        // NOTE : deprecated
-        public ShipInfoTestBuilder WithReplaceShipName(ReplaceShipName replaceShipName)
-        {
-            _ReplaceShipName = replaceShipName;
-            return this;
-        }
-
         public ShipInfoTestBuilder WithReplaceShipName(ReplaceShipNameTestBuilder builder)
         {
             _ReplaceShipName = builder.Build();
@@ -112,16 +163,6 @@ namespace ShipParticularsApi.Tests.Builders.Entities
             return this;
         }
 
-        // NOTE : deprecated
-        public ShipInfoTestBuilder WithShipServices(params ShipService[] shipServices)
-        {
-            foreach (var item in shipServices)
-            {
-                _ShipServices.Add(item);
-            }
-
-            return this;
-        }
 
         public ShipInfoTestBuilder WithShipServices(params ShipServiceTestBuilder[] builders)
         {
