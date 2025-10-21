@@ -8,7 +8,10 @@ using ShipParticularsApi.ValueObjects;
 namespace ShipParticularsApi.Services
 {
     // TODO. IUserService 정의해서 임의 랜덤한 userId 값 반환하는 구현체 추가
-    public class ShipParticularsService(IShipInfoRepository shipInfoRepository) : IShipParticularsService
+    public class ShipParticularsService(
+        IShipInfoRepository shipInfoRepository,
+        IUserService userService
+    ) : IShipParticularsService
     {
         public async Task Process(ShipParticularsParam param)
         {
@@ -27,7 +30,7 @@ namespace ShipParticularsApi.Services
                 param.ShipSatelliteParam?.SatelliteId,
                 param.ShipSatelliteParam?.SatelliteType,
                 param.SkTelinkCompanyShipParam?.CompanyName);
-            entityToProcess.ManageGpsService(param.IsGPSToggleOn, satelliteDetails);
+            entityToProcess.ManageGpsService(param.IsGPSToggleOn, satelliteDetails, userService.GetCurrentUserId());
 
             if (param.ReplaceShipNameParam != null)
             {

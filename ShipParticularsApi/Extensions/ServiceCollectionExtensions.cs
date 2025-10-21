@@ -10,6 +10,7 @@ namespace ShipParticularsApi.Extensions
         public static IServiceCollection AddApplicationServices(this IServiceCollection services)
         {
             services.AddScoped<IShipInfoRepository, ShipInfoRepository>();
+            services.AddScoped<IUserService, DummyUserService>();
             services.AddScoped<ShipParticularsService>();
             services.AddScoped<IShipParticularsService>(
                 s => new TransactionDecorator(

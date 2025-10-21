@@ -17,11 +17,21 @@ namespace ShipParticularsApi.Tests.Services
     {
         private readonly ShipParticularsService _sut;
         private readonly Mock<IShipInfoRepository> _mockShipInfoRepository;
+        private readonly Mock<IUserService> _mockUserService;
+        private const string FixedUserId = "TEST_USER_01";
 
         public ShipParticularsServiceUnitTests()
         {
             _mockShipInfoRepository = new Mock<IShipInfoRepository>();
-            _sut = new ShipParticularsService(_mockShipInfoRepository.Object);
+            _mockUserService = new Mock<IUserService>();
+
+            _mockUserService.Setup(s => s.GetCurrentUserId())
+                .Returns(FixedUserId);
+
+            _sut = new ShipParticularsService(
+                _mockShipInfoRepository.Object,
+                _mockUserService.Object
+            );
         }
 
         [Fact(DisplayName = "신규 ShipInfo이고, AIS 토글이 Off인 경우 ShipServices가 비어있다.")]
@@ -179,7 +189,13 @@ namespace ShipParticularsApi.Tests.Services
                 .And.ContainEquivalentOf(KtSatService(param.ShipKey));
 
             capturedEntity.ShipSatellite.Should().NotBeNull()
-                .And.BeEquivalentTo(KtSatellite(param.ShipKey, param.ShipSatelliteParam.SatelliteId),
+                .And.BeEquivalentTo(ShipSatellite()
+                    .WithShipKey("NEW_SHIP_KEY")
+                    .WithSatelliteType(SatelliteTypes.KtSat)
+                    .WithSatelliteId("TEST_SATELLITE_ID")
+                    .WithIsUseSatellite(true)
+                    .WithCreateUserId(FixedUserId)
+                    .Build(),
                 options => options.Excluding(s => s.UpdateDateTime));
 
             capturedEntity.SkTelinkCompanyShip.Should().BeNull();
@@ -233,7 +249,13 @@ namespace ShipParticularsApi.Tests.Services
                 .And.ContainEquivalentOf(KtSatService(param.ShipKey));
 
             capturedEntity.ShipSatellite.Should().NotBeNull()
-                .And.BeEquivalentTo(SkTelinkSatellite(param.ShipKey, param.ShipSatelliteParam.SatelliteId),
+                .And.BeEquivalentTo(ShipSatellite()
+                    .WithShipKey(param.ShipKey)
+                    .WithSatelliteType(SatelliteTypes.SkTelink)
+                    .WithSatelliteId(param.ShipSatelliteParam.SatelliteId)
+                    .WithIsUseSatellite(true)
+                    .WithCreateUserId(FixedUserId)
+                    .Build(),
                 options => options.Excluding(s => s.UpdateDateTime));
 
             capturedEntity.SkTelinkCompanyShip.Should().NotBeNull()
@@ -594,8 +616,14 @@ namespace ShipParticularsApi.Tests.Services
 
             capturedEntity.ShipServices.Should().ContainEquivalentOf(KtSatService("UNIQUE_SHIP_KEY"));
 
-            capturedEntity.ShipSatellite.Should().BeEquivalentTo(KtSatellite("UNIQUE_SHIP_KEY", "SATELLITE_ID"),
-                options => options.Excluding(s => s.UpdateDateTime));
+            capturedEntity.ShipSatellite.Should().BeEquivalentTo(ShipSatellite()
+                .WithShipKey("UNIQUE_SHIP_KEY")
+                .WithSatelliteType(SatelliteTypes.KtSat)
+                .WithSatelliteId("SATELLITE_ID")
+                .WithIsUseSatellite(true)
+                .WithCreateUserId(FixedUserId)
+                .Build()
+                , options => options.Excluding(s => s.UpdateDateTime));
             capturedEntity.ExternalShipId.Should().Be("SATELLITE_ID");
             capturedEntity.IsUseKtsat.Should().BeTrue();
 
@@ -651,7 +679,14 @@ namespace ShipParticularsApi.Tests.Services
 
             capturedEntity.ShipServices.Should().ContainEquivalentOf(KtSatService("UNIQUE_SHIP_KEY"));
 
-            capturedEntity.ShipSatellite.Should().BeEquivalentTo(SkTelinkSatellite("UNIQUE_SHIP_KEY", "SATELLITE_ID"),
+            capturedEntity.ShipSatellite.Should().BeEquivalentTo(
+                ShipSatellite()
+                    .WithShipKey(param.ShipKey)
+                    .WithSatelliteType(SatelliteTypes.SkTelink)
+                    .WithSatelliteId(param.ShipSatelliteParam.SatelliteId)
+                    .WithIsUseSatellite(true)
+                    .WithCreateUserId(FixedUserId)
+                    .Build(),
                 options => options.Excluding(s => s.UpdateDateTime));
             capturedEntity.ExternalShipId.Should().Be("SATELLITE_ID");
             capturedEntity.IsUseKtsat.Should().BeTrue();
@@ -691,7 +726,14 @@ namespace ShipParticularsApi.Tests.Services
                    .WithShipType(ShipTypes.Fishing)
                    .WithShipCode(param.ShipCode)
                    .WithShipServices(KtSatService(1L, "UNIQUE_SHIP_KEY"))
-                   .WithShipSatellite(KtSatellite(1L, "UNIQUE_SHIP_KEY", "SATELLITE_ID"))
+                   .WithShipSatellite(ShipSatellite()
+                    .WithId(1L)
+                    .WithShipKey("UNIQUE_SHIP_KEY")
+                    .WithSatelliteType(SatelliteTypes.KtSat)
+                    .WithSatelliteId("SATELLITE_ID")
+                    .WithIsUseSatellite(true)
+                    .WithCreateUserId(FixedUserId)
+                    .Build())
                    .WithExternalShipId("SATELLITE_ID")
                    .WithIsUseKtsat(true)
                    .Build();
@@ -712,7 +754,16 @@ namespace ShipParticularsApi.Tests.Services
 
             capturedEntity.ShipServices.Should().ContainEquivalentOf(KtSatService(1L, "UNIQUE_SHIP_KEY"));
 
-            capturedEntity.ShipSatellite.Should().BeEquivalentTo(SkTelinkSatellite(1L, "UNIQUE_SHIP_KEY", "SATELLITE_ID"),
+            capturedEntity.ShipSatellite.Should().BeEquivalentTo(
+                ShipSatellite()
+                    .WithId(1L)
+                    .WithShipKey("UNIQUE_SHIP_KEY")
+                    .WithSatelliteType(SatelliteTypes.SkTelink)
+                    .WithSatelliteId("SATELLITE_ID")
+                    .WithIsUseSatellite(true)
+                    .WithCreateUserId(FixedUserId)
+                    .WithUpdateUserId(FixedUserId)
+                    .Build(),
                 options => options.Excluding(s => s.UpdateDateTime));
             capturedEntity.ExternalShipId.Should().Be("SATELLITE_ID");
             capturedEntity.IsUseKtsat.Should().BeTrue();
@@ -748,7 +799,14 @@ namespace ShipParticularsApi.Tests.Services
                    .WithShipType(ShipTypes.Fishing)
                    .WithShipCode(param.ShipCode)
                    .WithShipServices(KtSatService(1L, "UNIQUE_SHIP_KEY"))
-                   .WithShipSatellite(SkTelinkSatellite(1L, "UNIQUE_SHIP_KEY", "SATELLITE_ID"))
+                   .WithShipSatellite(ShipSatellite()
+                    .WithId(1L)
+                    .WithShipKey("UNIQUE_SHIP_KEY")
+                    .WithSatelliteType(SatelliteTypes.SkTelink)
+                    .WithSatelliteId("SATELLITE_ID")
+                    .WithIsUseSatellite(true)
+                    .WithCreateUserId(FixedUserId)
+                    .Build())
                    .WithExternalShipId("SATELLITE_ID")
                    .WithIsUseKtsat(true)
                    .WithSkTelinkCompanyShip(SkTelinkCompanyShip(1L, "UNIQUE_SHIP_KEY", "UNIQUE_COMPANY_NAME"))
@@ -770,7 +828,15 @@ namespace ShipParticularsApi.Tests.Services
 
             capturedEntity.ShipServices.Should().ContainEquivalentOf(KtSatService(1L, "UNIQUE_SHIP_KEY"));
 
-            capturedEntity.ShipSatellite.Should().BeEquivalentTo(KtSatellite(1L, "UNIQUE_SHIP_KEY", "SATELLITE_ID"),
+            capturedEntity.ShipSatellite.Should().BeEquivalentTo(ShipSatellite()
+                    .WithId(1L)
+                    .WithShipKey("UNIQUE_SHIP_KEY")
+                    .WithSatelliteType(SatelliteTypes.KtSat)
+                    .WithSatelliteId("SATELLITE_ID")
+                    .WithIsUseSatellite(true)
+                    .WithCreateUserId(FixedUserId)
+                    .WithUpdateUserId(FixedUserId)
+                    .Build(),
                 options => options.Excluding(s => s.UpdateDateTime));
             capturedEntity.ExternalShipId.Should().Be("SATELLITE_ID");
             capturedEntity.IsUseKtsat.Should().BeTrue();
@@ -866,7 +932,14 @@ namespace ShipParticularsApi.Tests.Services
                    .WithShipType(ShipTypes.Fishing)
                    .WithShipCode(param.ShipCode)
                    .WithShipServices(KtSatService(1L, "UNIQUE_SHIP_KEY"))
-                   .WithShipSatellite(SkTelinkSatellite(1L, "UNIQUE_SHIP_KEY", "SATELLITE_ID"))
+                   .WithShipSatellite(ShipSatellite()
+                    .WithId(1L)
+                    .WithShipKey("UNIQUE_SHIP_KEY")
+                    .WithSatelliteType(SatelliteTypes.SkTelink)
+                    .WithSatelliteId("SATELLITE_ID")
+                    .WithIsUseSatellite(true)
+                    .WithCreateUserId(FixedUserId)
+                    .Build())
                    .WithExternalShipId("SATELLITE_ID")
                    .WithIsUseKtsat(true)
                    .WithSkTelinkCompanyShip(SkTelinkCompanyShip(1L, "UNIQUE_SHIP_KEY", "OLD_COMPANY_NAME"))
@@ -888,7 +961,15 @@ namespace ShipParticularsApi.Tests.Services
             capturedEntity.ShipServices.Should()
                 .ContainEquivalentOf(KtSatService(1L, "UNIQUE_SHIP_KEY"));
             capturedEntity.ShipSatellite.Should()
-                .BeEquivalentTo(SkTelinkSatellite(1L, "UNIQUE_SHIP_KEY", "SATELLITE_ID"));
+                .BeEquivalentTo(ShipSatellite()
+                    .WithId(1L)
+                    .WithShipKey("UNIQUE_SHIP_KEY")
+                    .WithSatelliteType(SatelliteTypes.SkTelink)
+                    .WithSatelliteId("SATELLITE_ID")
+                    .WithIsUseSatellite(true)
+                    .WithCreateUserId(FixedUserId)
+                    .WithUpdateUserId(FixedUserId)
+                    .Build());
         }
 
     }
