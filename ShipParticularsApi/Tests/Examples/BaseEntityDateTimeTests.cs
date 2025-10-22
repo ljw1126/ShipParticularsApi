@@ -2,13 +2,10 @@
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using ShipParticularsApi.Contexts;
-using ShipParticularsApi.Entities.Enums;
 using ShipParticularsApi.ValueObjects;
 using Xunit;
 using Xunit.Abstractions;
 using static ShipParticularsApi.Tests.Builders.Entities.ShipInfoTestBuilder;
-using static ShipParticularsApi.Tests.Builders.Entities.ShipSatelliteTestBuilder;
-using static ShipParticularsApi.Tests.Builders.Entities.ShipServiceTestBuilder;
 
 namespace ShipParticularsApi.Tests.Examples
 {
@@ -51,23 +48,12 @@ namespace ShipParticularsApi.Tests.Examples
         {
             // Arrange
             const string shipKey = "UNIQUE_SHIP_KEY";
-            var newShipInfo = ShipInfo()
-                   .WithShipKey(shipKey)
-                   .WithCallsign("TEST_CALLSIGN")
-                   .WithShipName("TEST_SHIP_NAMME")
-                   .WithShipType(ShipTypes.Fishing)
-                   .WithShipCode("TEST_SHIP_CODE")
-                   .WithShipServices(KtSatService(shipKey))
-                   .WithShipSatellite(KtSatellite(shipKey, "SATELLITE_ID"))
-                   .WithExternalShipId("SATELLITE_ID")
-                   .WithIsUseKtsat(true)
-                   .Build();
 
             var startTime = DateTime.UtcNow;
 
             await using (var arrangeContext = CreateContext())
             {
-                arrangeContext.ShipInfos.Add(newShipInfo);
+                arrangeContext.ShipInfos.Add(UsingKtSat(shipKey, FixedUserId, 1L).Build());
                 await arrangeContext.SaveChangesAsync();
             }
 
@@ -94,29 +80,10 @@ namespace ShipParticularsApi.Tests.Examples
             // Arrange
             var startTime = DateTime.UtcNow;
             const string shipKey = "UNIQUE_SHIP_KEY";
-            var newShipInfo = ShipInfo()
-                   .WithShipKey(shipKey)
-                   .WithCallsign("TEST_CALLSIGN")
-                   .WithShipName("TEST_SHIP_NAMME")
-                   .WithShipType(ShipTypes.Fishing)
-                   .WithShipCode("TEST_SHIP_CODE")
-                   .WithShipServices(KtSatService(shipKey))
-                   .WithShipSatellite(
-                        ShipSatellite()
-                        .WithShipKey("UNIQUE_SHIP_KEY")
-                        .WithSatelliteType(SatelliteTypes.KtSat)
-                        .WithSatelliteId("SATELLITE_ID")
-                        .WithIsUseSatellite(true)
-                        .WithCreateUserId(FixedUserId)
-                        .Build()
-                   )
-                   .WithExternalShipId("SATELLITE_ID")
-                   .WithIsUseKtsat(true)
-                   .Build();
 
             await using (var arrangeContext = CreateContext())
             {
-                arrangeContext.ShipInfos.Add(newShipInfo);
+                arrangeContext.ShipInfos.Add(UsingKtSat(shipKey, FixedUserId, 1L).Build());
                 await arrangeContext.SaveChangesAsync();
             }
 
@@ -128,7 +95,7 @@ namespace ShipParticularsApi.Tests.Examples
                     .Include(s => s.ShipServices)
                     .Include(s => s.SkTelinkCompanyShip)
                     .AsSplitQuery()
-                    .SingleOrDefaultAsync(s => s.ShipKey == shipKey);
+                    .SingleAsync(s => s.ShipKey == shipKey && s.IsService == true);
 
                 shipInfo.ManageGpsService(true, new SatelliteDetails("SATELLITE_ID", "SK_TELINK", "COMPANY_NAME"), FixedUserId);
                 await actConext.SaveChangesAsync();
@@ -141,7 +108,7 @@ namespace ShipParticularsApi.Tests.Examples
             {
                 var actual = await assertContext.ShipInfos
                     .Include(s => s.ShipSatellite)
-                    .SingleOrDefaultAsync(s => s.ShipKey == shipKey);
+                    .SingleAsync(s => s.ShipKey == shipKey && s.IsService == true);
 
                 actual.Should().NotBeNull();
                 actual.ShipSatellite.Should().NotBeNull();

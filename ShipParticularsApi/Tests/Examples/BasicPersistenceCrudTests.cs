@@ -5,7 +5,6 @@ using ShipParticularsApi.Contexts;
 using ShipParticularsApi.Entities;
 using ShipParticularsApi.Entities.Enums;
 using Xunit;
-using Xunit.Abstractions;
 
 using static ShipParticularsApi.Tests.Builders.Entities.ShipInfoTestBuilder;
 
@@ -15,13 +14,10 @@ namespace ShipParticularsApi.Tests.Examples
     {
         private readonly SqliteConnection _connection;
         private readonly DbContextOptions<ShipParticularsContext> _options;
-        private readonly ITestOutputHelper _output;
 
         // NOTE: beforeEach
-        public BasicPersistenceCrudTests(ITestOutputHelper output)
+        public BasicPersistenceCrudTests()
         {
-            _output = output;
-
             _connection = new SqliteConnection("DataSource=:memory:");
             _connection.Open();
 
