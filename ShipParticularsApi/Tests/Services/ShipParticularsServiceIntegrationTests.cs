@@ -28,7 +28,7 @@ namespace ShipParticularsApi.Tests.Services
 
         private void DbInit()
         {
-            var scope = _factory.Services.CreateScope();
+            using var scope = _factory.Services.CreateScope();
             var dbContext = scope.ServiceProvider.GetRequiredService<ShipParticularsContext>();
             dbContext.Database.EnsureDeleted();
             dbContext.Database.EnsureCreated();
