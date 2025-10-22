@@ -389,9 +389,16 @@ namespace ShipParticularsApi.Tests.Services
             actual.IsUseKtsat.Should().BeTrue();
             actual.ExternalShipId.Should().Be(satelliteId);
 
+<<<<<<< HEAD
+            actual.ShipServices.Should().ContainSingle()
+                .And.ContainEquivalentOf(
+                    KtSatService(shipKey).Build(),
+                    options => options.Including(s => s.ShipKey).Including(s => s.ServiceName)
+=======
             actual.ShipServices.Should().ContainSingle().And.ContainEquivalentOf(
                 KtSatService(shipKey).Build(),
                 options => options.Including(s => s.ShipKey).Including(s => s.ServiceName)
+>>>>>>> caf3734 (Test Data Builder 팩터리 메서드 수정, 테스트 전체 리팩터링)
             );
 
             actual.ShipSatellite.Should().NotBeNull();
@@ -435,9 +442,16 @@ namespace ShipParticularsApi.Tests.Services
             actual.IsUseKtsat.Should().BeTrue();
             actual.ExternalShipId.Should().Be(satelliteId);
 
+<<<<<<< HEAD
+            actual.ShipServices.Should().ContainSingle()
+                .And.ContainEquivalentOf(
+                    KtSatService(shipKey).Build(),
+                    options => options.Including(s => s.ShipKey).Including(s => s.ServiceName)
+=======
             actual.ShipServices.Should().ContainSingle().And.ContainEquivalentOf(
                 KtSatService(shipKey).Build(),
                 options => options.Including(s => s.ShipKey).Including(s => s.ServiceName)
+>>>>>>> caf3734 (Test Data Builder 팩터리 메서드 수정, 테스트 전체 리팩터링)
             );
 
             actual.ShipSatellite.Should().NotBeNull();
@@ -484,9 +498,16 @@ namespace ShipParticularsApi.Tests.Services
             actual.IsUseKtsat.Should().BeTrue();
             actual.ExternalShipId.Should().Be(satelliteId);
 
+<<<<<<< HEAD
+            actual.ShipServices.Should().ContainSingle()
+                .And.ContainEquivalentOf(
+                    KtSatService(shipKey).Build(),
+                    options => options.Including(s => s.ShipKey).Including(s => s.ServiceName)
+=======
             actual.ShipServices.Should().ContainSingle().And.ContainEquivalentOf(
                 KtSatService(shipKey).Build(),
                 options => options.Including(s => s.ShipKey).Including(s => s.ServiceName)
+>>>>>>> caf3734 (Test Data Builder 팩터리 메서드 수정, 테스트 전체 리팩터링)
             );
 
             actual.ShipSatellite.Should().NotBeNull();
@@ -533,10 +554,18 @@ namespace ShipParticularsApi.Tests.Services
             actual.IsUseKtsat.Should().BeTrue();
             actual.ExternalShipId.Should().Be(satelliteId);
 
+<<<<<<< HEAD
+            actual.ShipServices.Should().ContainSingle()
+                .And.ContainEquivalentOf(
+                    KtSatService(shipKey).Build(),
+                    options => options.Including(s => s.ShipKey)
+                                      .Including(s => s.ServiceName)
+=======
             actual.ShipServices.Should().ContainSingle().And.ContainEquivalentOf(
                 KtSatService(shipKey).Build(),
                 options => options.Including(s => s.ShipKey)
                                     .Including(s => s.ServiceName)
+>>>>>>> caf3734 (Test Data Builder 팩터리 메서드 수정, 테스트 전체 리팩터링)
             );
 
             actual.ShipSatellite.Should().NotBeNull();

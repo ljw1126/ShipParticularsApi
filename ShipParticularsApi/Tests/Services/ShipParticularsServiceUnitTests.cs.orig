@@ -535,8 +535,13 @@ namespace ShipParticularsApi.Tests.Services
             capturedEntity.ShipServices.Should()
                 .ContainEquivalentOf(KtSatService(shipKey, 1L).Build());
 
+<<<<<<< HEAD
+            capturedEntity.ShipSatellite.Should().NotBeNull()
+                .And.BeEquivalentTo(KtSatellite(shipKey, 1L)
+=======
             capturedEntity.ShipSatellite.Should().NotBeNull().And.BeEquivalentTo(
                 KtSatellite(shipKey, 1L)
+>>>>>>> caf3734 (Test Data Builder 팩터리 메서드 수정, 테스트 전체 리팩터링)
                     .WithSatelliteId(satelliteId)
                     .WithCreateUserId(FixedUserId)
                     .WithUpdateUserId(FixedUserId)

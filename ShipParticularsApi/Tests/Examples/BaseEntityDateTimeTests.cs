@@ -63,6 +63,7 @@ namespace ShipParticularsApi.Tests.Examples
             await using (var assertContext = CreateContext())
             {
                 var actual = await assertContext.ShipInfos
+                    .AsNoTracking()
                     .Include(s => s.ShipSatellite)
                     .SingleOrDefaultAsync(s => s.ShipKey == shipKey);
 
@@ -107,6 +108,7 @@ namespace ShipParticularsApi.Tests.Examples
             await using (var assertContext = CreateContext())
             {
                 var actual = await assertContext.ShipInfos
+                    .AsNoTracking()
                     .Include(s => s.ShipSatellite)
                     .SingleAsync(s => s.ShipKey == shipKey && s.IsService == true);
 
