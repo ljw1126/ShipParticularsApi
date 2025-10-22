@@ -4,28 +4,22 @@ namespace ShipParticularsApi.Tests.Builders.Entities
 {
     public class ShipServiceTestBuilder
     {
-        private const long NEW_ID = 0L;
-
         private long _Id;
         private string _ShipKey;
         private ServiceNameTypes? _ServiceName;
-        private bool _IsCompleted;
+        private bool _IsCompleted = true;
 
         public static ShipServiceTestBuilder ShipService()
         {
             return new ShipServiceTestBuilder();
         }
 
-        public static ShipServiceTestBuilder SatAisService(string shipKey)
-        {
-            return SatAisService(NEW_ID, shipKey);
-        }
-
-        public static ShipServiceTestBuilder SatAisService(long id, string shipKey)
+        public static ShipServiceTestBuilder SatAisService(string shipKey, long id = 0L)
         {
             return SatAisService()
                 .WithId(id)
-                .WithShipKey(shipKey);
+                .WithShipKey(shipKey)
+                .WithIsCompleted(true);
         }
 
         public static ShipServiceTestBuilder SatAisService()
@@ -35,12 +29,7 @@ namespace ShipParticularsApi.Tests.Builders.Entities
                 .WithIsCompleted(true);
         }
 
-        public static ShipServiceTestBuilder KtSatService(string shipKey)
-        {
-            return KtSatService(NEW_ID, shipKey);
-        }
-
-        public static ShipServiceTestBuilder KtSatService(long id, string shipKey)
+        public static ShipServiceTestBuilder KtSatService(string shipKey, long id = 0L)
         {
             return KtSatService()
                 .WithId(id)

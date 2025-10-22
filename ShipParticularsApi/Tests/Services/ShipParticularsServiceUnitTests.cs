@@ -133,14 +133,9 @@ namespace ShipParticularsApi.Tests.Services
                 .And.ContainEquivalentOf(KtSatService(shipKey).Build());
 
             capturedEntity.ShipSatellite.Should().NotBeNull()
-                .And.BeEquivalentTo(KtSatellite()
-                    .WithShipKey(shipKey)
-                    .WithSatelliteId(satelliteId)
-                    .WithCreateUserId(FixedUserId)
-                    .Build(),
-                options => options
-                    .Excluding(s => s.CreateDateTime)
-                    .Excluding(s => s.UpdateDateTime));
+                .And.BeEquivalentTo(
+                    KtSatellite(shipKey).WithSatelliteId(satelliteId).WithCreateUserId(FixedUserId).Build(),
+                    options => options.Excluding(s => s.CreateDateTime).Excluding(s => s.UpdateDateTime));
 
             capturedEntity.SkTelinkCompanyShip.Should().BeNull();
         }
@@ -182,9 +177,8 @@ namespace ShipParticularsApi.Tests.Services
             capturedEntity.ShipServices.Should().HaveCount(1)
                 .And.ContainEquivalentOf(KtSatService(shipKey).Build());
 
-            capturedEntity.ShipSatellite.Should().NotBeNull()
-                .And.BeEquivalentTo(SkTelinkSatellite()
-                    .WithShipKey(shipKey)
+            capturedEntity.ShipSatellite.Should().NotBeNull().And.BeEquivalentTo(
+                SkTelinkSatellite(shipKey)
                     .WithSatelliteId(satelliteId)
                     .WithCreateUserId(FixedUserId)
                     .Build(),
@@ -193,7 +187,7 @@ namespace ShipParticularsApi.Tests.Services
                     .Excluding(s => s.UpdateDateTime));
 
             capturedEntity.SkTelinkCompanyShip.Should().NotBeNull()
-                .And.BeEquivalentTo(SkTelinkCompanyShip(shipKey, param.SkTelinkCompanyShipParam.CompanyName));
+                .And.BeEquivalentTo(SkTelinkCompanyShip(shipKey, 0L).Build());
         }
 
         [Fact(DisplayName = "기존 ShipInfo 컬럼 정보를 업데이트한다.")]
@@ -409,13 +403,10 @@ namespace ShipParticularsApi.Tests.Services
 
             capturedEntity.ShipServices.Should().ContainEquivalentOf(KtSatService(shipKey).Build());
 
-            capturedEntity.ShipSatellite.Should()
-                .BeEquivalentTo(KtSatellite()
-                    .WithShipKey(shipKey)
-                    .WithSatelliteId(satelliteId)
-                    .WithCreateUserId(FixedUserId)
-                    .Build(),
-                options => options.Excluding(s => s.UpdateDateTime));
+            capturedEntity.ShipSatellite.Should().BeEquivalentTo(
+                KtSatellite(shipKey).WithSatelliteId(satelliteId).WithCreateUserId(FixedUserId).Build(),
+                options => options.Excluding(s => s.UpdateDateTime)
+            );
             capturedEntity.ExternalShipId.Should().Be(satelliteId);
             capturedEntity.IsUseKtsat.Should().BeTrue();
 
@@ -453,9 +444,8 @@ namespace ShipParticularsApi.Tests.Services
             capturedEntity.ShipServices.Should()
                 .ContainEquivalentOf(KtSatService(shipKey).Build());
 
-            capturedEntity.ShipSatellite.Should()
-                .BeEquivalentTo(SkTelinkSatellite()
-                    .WithShipKey(shipKey)
+            capturedEntity.ShipSatellite.Should().BeEquivalentTo(
+                SkTelinkSatellite(shipKey)
                     .WithSatelliteId(satelliteId)
                     .WithCreateUserId(FixedUserId)
                     .Build(),
@@ -463,7 +453,8 @@ namespace ShipParticularsApi.Tests.Services
             capturedEntity.ExternalShipId.Should().Be(satelliteId);
             capturedEntity.IsUseKtsat.Should().BeTrue();
 
-            capturedEntity.SkTelinkCompanyShip.Should().BeEquivalentTo(SkTelinkCompanyShip(shipKey));
+            capturedEntity.SkTelinkCompanyShip.Should()
+                .BeEquivalentTo(SkTelinkCompanyShip(shipKey).Build());
         }
 
         [Fact(DisplayName = "KT_SAT에서 SK_TELINK로 서비스 변경하는 경우, ShipSatellite가 업데이트되고, SKTelinkCompanyShip이 추가된다")]
@@ -495,12 +486,10 @@ namespace ShipParticularsApi.Tests.Services
             capturedEntity.Should().NotBeNull();
 
             capturedEntity.ShipServices.Should()
-                .ContainEquivalentOf(KtSatService(1L, shipKey).Build());
+                .ContainEquivalentOf(KtSatService(shipKey, 1L).Build());
 
-            capturedEntity.ShipSatellite.Should().NotBeNull()
-                .And.BeEquivalentTo(SkTelinkSatellite()
-                    .WithId(1L)
-                    .WithShipKey(shipKey)
+            capturedEntity.ShipSatellite.Should().NotBeNull().And.BeEquivalentTo(
+                SkTelinkSatellite(shipKey, 1L)
                     .WithSatelliteId(satelliteId)
                     .WithCreateUserId(FixedUserId)
                     .WithUpdateUserId(FixedUserId)
@@ -509,7 +498,8 @@ namespace ShipParticularsApi.Tests.Services
             capturedEntity.ExternalShipId.Should().Be(satelliteId);
             capturedEntity.IsUseKtsat.Should().BeTrue();
 
-            capturedEntity.SkTelinkCompanyShip.Should().BeEquivalentTo(SkTelinkCompanyShip(shipKey));
+            capturedEntity.SkTelinkCompanyShip.Should()
+                .BeEquivalentTo(SkTelinkCompanyShip(shipKey).Build());
         }
 
         [Fact(DisplayName = "SK_TELINK에서 KT_SAT로 서비스 변경하는 경우, ShipSatellite가 업데이트되고, SKTelinkCompanyShip이 제거된다")]
@@ -542,12 +532,10 @@ namespace ShipParticularsApi.Tests.Services
             capturedEntity.IsUseKtsat.Should().BeTrue();
 
             capturedEntity.ShipServices.Should()
-                .ContainEquivalentOf(KtSatService(1L, shipKey).Build());
+                .ContainEquivalentOf(KtSatService(shipKey, 1L).Build());
 
             capturedEntity.ShipSatellite.Should().NotBeNull()
-                .And.BeEquivalentTo(KtSatellite()
-                    .WithId(1L)
-                    .WithShipKey(shipKey)
+                .And.BeEquivalentTo(KtSatellite(shipKey, 1L)
                     .WithSatelliteId(satelliteId)
                     .WithCreateUserId(FixedUserId)
                     .WithUpdateUserId(FixedUserId)
