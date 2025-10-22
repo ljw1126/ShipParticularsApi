@@ -202,8 +202,6 @@ namespace ShipParticularsApi.Tests.Services
             // Arrange
             const string shipKey = "UNIQUE_SHIP_KEY";
 
-            var oldShipInfo = NoService(shipKey, 1L).Build();
-
             var param = ShipParticularsParam()
                 .WithShipKey(shipKey)
                 .WithCallsign("UPDATE_CALLSIGN")
@@ -214,7 +212,7 @@ namespace ShipParticularsApi.Tests.Services
 
             _mockShipInfoRepository
                 .Setup(e => e.GetByShipKeyAsync(param.ShipKey))
-                .ReturnsAsync(oldShipInfo);
+                .ReturnsAsync(NoService(shipKey, 1L).Build());
 
             ShipInfo? capturedEntity = null;
             _mockShipInfoRepository.Setup(e => e.UpsertAsync(It.IsAny<ShipInfo>()))
@@ -245,10 +243,9 @@ namespace ShipParticularsApi.Tests.Services
                .WithIsAisToggleOn(true)
                .Build();
 
-            var oldShipInfo = NoService(shipKey, 1L).Build();
             _mockShipInfoRepository
                 .Setup(e => e.GetByShipKeyAsync(param.ShipKey))
-                .ReturnsAsync(oldShipInfo);
+                .ReturnsAsync(NoService(shipKey, 1L).Build());
 
             ShipInfo? capturedEntity = null;
             _mockShipInfoRepository.Setup(e => e.UpsertAsync(It.IsAny<ShipInfo>()))
@@ -276,10 +273,9 @@ namespace ShipParticularsApi.Tests.Services
                  .WithIsAisToggleOn(true)
                  .Build();
 
-            var oldShipInfo = AisOnly(shipKey, 1L).Build();
             _mockShipInfoRepository
                 .Setup(e => e.GetByShipKeyAsync(param.ShipKey))
-                .ReturnsAsync(oldShipInfo);
+                .ReturnsAsync(AisOnly(shipKey, 1L).Build());
 
             ShipInfo? capturedEntity = null;
             _mockShipInfoRepository.Setup(e => e.UpsertAsync(It.IsAny<ShipInfo>()))
@@ -305,10 +301,9 @@ namespace ShipParticularsApi.Tests.Services
                  .WithIsAisToggleOn(false)
                  .Build();
 
-            var oldShipInfo = AisOnly(shipKey, 1L).Build();
             _mockShipInfoRepository
                 .Setup(e => e.GetByShipKeyAsync(param.ShipKey))
-                .ReturnsAsync(oldShipInfo);
+                .ReturnsAsync(AisOnly(shipKey, 1L).Build());
 
             ShipInfo? capturedEntity = null;
             _mockShipInfoRepository.Setup(e => e.UpsertAsync(It.IsAny<ShipInfo>()))
@@ -335,10 +330,9 @@ namespace ShipParticularsApi.Tests.Services
                  .WithIsGPSToggleOn(false)
                  .Build();
 
-            var oldShipInfo = NoService(shipKey, 1L).Build();
             _mockShipInfoRepository
                 .Setup(e => e.GetByShipKeyAsync(param.ShipKey))
-                .ReturnsAsync(oldShipInfo);
+                .ReturnsAsync(NoService(shipKey, 1L).Build());
 
             ShipInfo? capturedEntity = null;
             _mockShipInfoRepository.Setup(e => e.UpsertAsync(It.IsAny<ShipInfo>()))
@@ -363,10 +357,9 @@ namespace ShipParticularsApi.Tests.Services
                 .WithIsGPSToggleOn(false)
                 .Build();
 
-            var oldShipInfo = UsingSkTelink(shipKey, FixedUserId, 1L).Build();
             _mockShipInfoRepository
                 .Setup(e => e.GetByShipKeyAsync(param.ShipKey))
-                .ReturnsAsync(oldShipInfo);
+                .ReturnsAsync(UsingSkTelink(shipKey, FixedUserId, 1L).Build());
 
             ShipInfo? capturedEntity = null;
             _mockShipInfoRepository.Setup(e => e.UpsertAsync(It.IsAny<ShipInfo>()))
@@ -399,10 +392,9 @@ namespace ShipParticularsApi.Tests.Services
                 .WithShipSatelliteParam(KtSatelliteParam().WithSatelliteId(satelliteId))
                 .Build();
 
-            var oldShipInfo = NoService(shipKey, 1L).Build();
             _mockShipInfoRepository
                 .Setup(e => e.GetByShipKeyAsync(param.ShipKey))
-                .ReturnsAsync(oldShipInfo);
+                .ReturnsAsync(NoService(shipKey, 1L).Build());
 
             ShipInfo? capturedEntity = null;
             _mockShipInfoRepository.Setup(e => e.UpsertAsync(It.IsAny<ShipInfo>()))
@@ -443,10 +435,9 @@ namespace ShipParticularsApi.Tests.Services
                 .WithSkTelinkCompanyShipParam(SkTelinkCompanyShipParam())
                 .Build();
 
-            var oldShipInfo = NoService(shipKey, 1L).Build();
             _mockShipInfoRepository
                 .Setup(e => e.GetByShipKeyAsync(param.ShipKey))
-                .ReturnsAsync(oldShipInfo);
+                .ReturnsAsync(NoService(shipKey, 1L).Build());
 
             ShipInfo? capturedEntity = null;
             _mockShipInfoRepository.Setup(e => e.UpsertAsync(It.IsAny<ShipInfo>()))
@@ -488,10 +479,9 @@ namespace ShipParticularsApi.Tests.Services
                 .WithSkTelinkCompanyShipParam(SkTelinkCompanyShipParam())
                 .Build();
 
-            var oldShipInfo = UsingKtSat(shipKey, FixedUserId, 1L).Build();
             _mockShipInfoRepository
                 .Setup(e => e.GetByShipKeyAsync(param.ShipKey))
-                .ReturnsAsync(oldShipInfo);
+                .ReturnsAsync(UsingKtSat(shipKey, FixedUserId, 1L).Build());
 
             ShipInfo? capturedEntity = null;
             _mockShipInfoRepository.Setup(e => e.UpsertAsync(It.IsAny<ShipInfo>()))
@@ -534,10 +524,9 @@ namespace ShipParticularsApi.Tests.Services
                 .WithShipSatelliteParam(KtSatelliteParam().WithSatelliteId(satelliteId))
                 .Build();
 
-            var oldShipInfo = UsingSkTelink(shipKey, FixedUserId, 1L).Build();
             _mockShipInfoRepository
                 .Setup(e => e.GetByShipKeyAsync(param.ShipKey))
-                .ReturnsAsync(oldShipInfo);
+                .ReturnsAsync(UsingSkTelink(shipKey, FixedUserId, 1L).Build());
 
             ShipInfo? capturedEntity = null;
             _mockShipInfoRepository.Setup(e => e.UpsertAsync(It.IsAny<ShipInfo>()))
@@ -583,10 +572,9 @@ namespace ShipParticularsApi.Tests.Services
                .WithSkTelinkCompanyShipParam(SkTelinkCompanyShipParam().WithCompanyName(updateCompanyName))
                .Build();
 
-            var oldShipInfo = UsingSkTelink(shipKey, FixedUserId, 1L).Build();
             _mockShipInfoRepository
                 .Setup(e => e.GetByShipKeyAsync(param.ShipKey))
-                .ReturnsAsync(oldShipInfo);
+                .ReturnsAsync(UsingSkTelink(shipKey, FixedUserId, 1L).Build());
 
             ShipInfo? capturedEntity = null;
             _mockShipInfoRepository.Setup(e => e.UpsertAsync(It.IsAny<ShipInfo>()))
