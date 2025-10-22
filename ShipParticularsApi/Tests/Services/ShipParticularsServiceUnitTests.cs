@@ -15,7 +15,6 @@ using static ShipParticularsApi.Tests.Builders.Params.SkTelinkCompanyShipParamTe
 
 namespace ShipParticularsApi.Tests.Services
 {
-    // TODO. Test Fixture 중복 제거
     public class ShipParticularsServiceUnitTests
     {
         private readonly ShipParticularsService _sut;
@@ -37,12 +36,16 @@ namespace ShipParticularsApi.Tests.Services
             );
         }
 
-        [Fact(DisplayName = "신규 ShipInfo이고, AIS 토글이 Off인 경우 ShipServices가 비어있다.")]
+        [Fact(DisplayName = "신규 ShipInfo 생성 시, AIS와 GPS가 Off면 서비스가 추가되지 않는다.")]
         public async Task Case1()
         {
             // Arrange
             const string shipKey = "UNIQUE_SHIP_KEY";
-            var param = ShipParticularsParam().WithShipKey(shipKey).Build();
+            var param = ShipParticularsParam()
+                .WithShipKey(shipKey)
+                .WithIsAisToggleOn(false)
+                .WithIsGPSToggleOn(false)
+                .Build();
 
             _mockShipInfoRepository
                 .Setup(e => e.GetByShipKeyAsync(param.ShipKey))
@@ -93,36 +96,7 @@ namespace ShipParticularsApi.Tests.Services
             capturedEntity.ShipServices.Should().ContainEquivalentOf(SatAisService(param.ShipKey).Build());
         }
 
-        [Fact(DisplayName = "신규 ShipInfo이고, GPS Toggle Off인 경우 ShipServices가 비어있다.")]
-        public async Task Case3()
-        {
-            // Arrange
-            var param = ShipParticularsParam().WithIsAisToggleOn(false).Build();
-
-            _mockShipInfoRepository
-                .Setup(e => e.GetByShipKeyAsync(param.ShipKey))
-                .ReturnsAsync((ShipInfo?)null);
-
-            ShipInfo? capturedEntity = null;
-            _mockShipInfoRepository.Setup(e => e.UpsertAsync(It.IsAny<ShipInfo>()))
-                .Callback<ShipInfo>(arg => capturedEntity = arg)
-                .Returns(Task.CompletedTask);
-
-            // Act
-            await _sut.Process(param);
-
-            // Assert
-            _mockShipInfoRepository.Verify(e => e.UpsertAsync(It.IsAny<ShipInfo>()), Times.Once);
-
-            capturedEntity.Should().NotBeNull();
-            capturedEntity.Id.Should().Be(0L);
-
-            capturedEntity.ShipServices.Should().BeEmpty();
-            capturedEntity.ShipSatellite.Should().BeNull();
-            capturedEntity.SkTelinkCompanyShip.Should().BeNull();
-        }
-
-        [Fact(DisplayName = "신규 ShipInfo이고, GPS Toggle On & SatelliteType이 SK가 아닌 경우 ShipService, ShipSatellite만 추가된다")]
+        [Fact(DisplayName = "신규 ShipInfo이고, GPS Toggle On한 경우 ShipService, ShipSatellite가 추가된다")]
         public async Task Case4()
         {
             // Arrange
@@ -171,7 +145,7 @@ namespace ShipParticularsApi.Tests.Services
             capturedEntity.SkTelinkCompanyShip.Should().BeNull();
         }
 
-        [Fact(DisplayName = "신규 ShipInfo이고, GPS Toggle On & SatelliteType이 SK인 경우 ShipService, ShipSatellite, SkTelinkCompanyShip이 추가된다")]
+        [Fact(DisplayName = "신규 ShipInfo이고, SK Telink를 사용하는 경우 ShipService, ShipSatellite, SkTelinkCompanyShip이 추가된다")]
         public async Task Case5()
         {
             // Arrange
@@ -350,8 +324,7 @@ namespace ShipParticularsApi.Tests.Services
             capturedEntity.IsUseAis.Should().BeFalse();
         }
 
-        // NOTE. Case6에서 검증되는 부분이 아닌가 싶다.
-        [Fact(DisplayName = "등록된 ShipService가 없는 경우, AIS Toggle Off해도 아무것도 하지 않는다")]
+        [Fact(DisplayName = "서비스 없는 기존 ShipInfo에 Off 토글 시 상태 변화가 없어야 한다.")]
         public async Task Case10()
         {
             // Arrange
@@ -359,6 +332,7 @@ namespace ShipParticularsApi.Tests.Services
             var param = ShipParticularsParam()
                  .WithShipKey(shipKey)
                  .WithIsAisToggleOn(false)
+                 .WithIsGPSToggleOn(false)
                  .Build();
 
             var oldShipInfo = NoService(shipKey, 1L).Build();
@@ -377,40 +351,6 @@ namespace ShipParticularsApi.Tests.Services
             capturedEntity.Should().NotBeNull();
             capturedEntity.IsUseAis.Should().BeFalse();
             capturedEntity.ShipServices.Should().BeEmpty();
-        }
-
-        // TODO. 중복 아닌가 싶다..
-        [Fact(DisplayName = "등록된 ShipService가 없는 경우, GPS Toggle Off 해도 아무것도 하지 않는다")]
-        public async Task Case11()
-        {
-            // Arrange
-            const string shipKey = "UNIQUE_SHIP_KEY";
-            var param = ShipParticularsParam()
-                .WithShipKey(shipKey)
-                .WithIsGPSToggleOn(false)
-                .Build();
-
-            var oldShipInfo = NoService(shipKey, 1L).Build();
-            _mockShipInfoRepository
-                .Setup(e => e.GetByShipKeyAsync(param.ShipKey))
-                .ReturnsAsync(oldShipInfo);
-
-            ShipInfo? capturedEntity = null;
-            _mockShipInfoRepository.Setup(e => e.UpsertAsync(It.IsAny<ShipInfo>()))
-                .Callback<ShipInfo>(arg => capturedEntity = arg)
-                .Returns(Task.CompletedTask);
-
-            // Act
-            await _sut.Process(param);
-
-            capturedEntity.Should().NotBeNull();
-            capturedEntity.ShipServices.Should().BeEmpty();
-
-            capturedEntity.ShipSatellite.Should().BeNull();
-            capturedEntity.IsUseKtsat.Should().BeFalse();
-            capturedEntity.ExternalShipId.Should().BeNull();
-
-            capturedEntity.SkTelinkCompanyShip.Should().BeNull();
         }
 
         [Fact(DisplayName = "사용중인 GPS 서비스를 비활성화하면 관련 엔티티와 필드를 초기화한다")]
