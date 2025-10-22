@@ -66,17 +66,15 @@ namespace ShipParticularsApi.Tests.Examples
             await using (var assertContext = CreateContext())
             {
                 var savedShipInfo = await assertContext.ShipInfos
+                    .AsNoTracking()
                     .Include(s => s.ReplaceShipName)
                     .Include(s => s.ShipServices)
                     .AsSplitQuery()
                     .SingleAsync(s => s.ShipKey == shipKey && s.IsService == true);
 
-                var shipServices = savedShipInfo.ShipServices;
-                var replaceShipName = savedShipInfo.ReplaceShipName;
-
-                shipServices.Should().NotBeNullOrEmpty()
+                savedShipInfo.ShipServices.Should().NotBeNullOrEmpty()
                         .And.HaveCount(3);
-                replaceShipName.Should().NotBeNull();
+                savedShipInfo.ReplaceShipName.Should().NotBeNull();
             }
         }
 
@@ -110,6 +108,7 @@ namespace ShipParticularsApi.Tests.Examples
             await using (var assertContext = CreateContext())
             {
                 ShipInfo target = await assertContext.ShipInfos
+                    .AsNoTracking()
                     .Include(s => s.ShipServices)
                     .SingleAsync(s => s.ShipKey == shipKey && s.IsService == true);
 
@@ -149,6 +148,7 @@ namespace ShipParticularsApi.Tests.Examples
             await using (var assertContext = CreateContext())
             {
                 ShipInfo actual = await assertContext.ShipInfos
+                    .AsNoTracking()
                     .Include(s => s.ShipServices)
                     .Include(s => s.ShipSatellite)
                     .Include(s => s.SkTelinkCompanyShip)
