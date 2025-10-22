@@ -3,15 +3,12 @@ using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using ShipParticularsApi.Contexts;
 using ShipParticularsApi.Entities;
-using ShipParticularsApi.Entities.Enums;
 using ShipParticularsApi.ValueObjects;
 using Xunit;
 using Xunit.Abstractions;
 using static ShipParticularsApi.Tests.Builders.Entities.ReplaceShipNameTestBuilder;
 using static ShipParticularsApi.Tests.Builders.Entities.ShipInfoTestBuilder;
-using static ShipParticularsApi.Tests.Builders.Entities.ShipSatelliteTestBuilder;
 using static ShipParticularsApi.Tests.Builders.Entities.ShipServiceTestBuilder;
-using static ShipParticularsApi.Tests.Builders.Entities.SkTelinkCompanyShipTestBuilder;
 
 namespace ShipParticularsApi.Tests.Examples
 {
@@ -49,18 +46,19 @@ namespace ShipParticularsApi.Tests.Examples
         [Fact]
         public async Task SplitQueryTest()
         {
+            const string shipKey = "SHIP01";
+
             // Arrange
             await using (var arrangeContext = CreateContext())
             {
-                arrangeContext.ShipInfos.Add(ShipInfo()
-                    .WithShipKey("SHIP01")
-                    .WithReplaceShipName(ReplaceShipName().WithReplaceShipName("Next Vessel"))
-                    .WithShipServices(
-                        ShipService().WithServiceName(ServiceNameTypes.Cctv).WithIsCompleted(true),
-                        ShipService().WithServiceName(ServiceNameTypes.EuMrv).WithIsCompleted(true),
-                        ShipService().WithServiceName(ServiceNameTypes.NoonReport).WithIsCompleted(false)
-                    )
-                    .Build());
+                arrangeContext.ShipInfos.Add(NoService(shipKey)
+                        .WithReplaceShipName(ReplaceShipName().WithReplaceShipName("Next Vessel"))
+                        .WithShipServices(
+                            ShipService().WithServiceName(ServiceNameTypes.Cctv).WithIsCompleted(true),
+                            ShipService().WithServiceName(ServiceNameTypes.EuMrv).WithIsCompleted(true),
+                            ShipService().WithServiceName(ServiceNameTypes.NoonReport).WithIsCompleted(false)
+                        )
+                        .Build());
                 await arrangeContext.SaveChangesAsync();
             }
 
@@ -71,7 +69,7 @@ namespace ShipParticularsApi.Tests.Examples
                     .Include(s => s.ReplaceShipName)
                     .Include(s => s.ShipServices)
                     .AsSplitQuery()
-                    .SingleAsync(s => s.ShipKey == "SHIP01");
+                    .SingleAsync(s => s.ShipKey == shipKey && s.IsService == true);
 
                 var shipServices = savedShipInfo.ShipServices;
                 var replaceShipName = savedShipInfo.ReplaceShipName;
@@ -85,15 +83,16 @@ namespace ShipParticularsApi.Tests.Examples
         [Fact(DisplayName = "AIS 서비스 사용중 AIS 비활성화하면, 서비스 컬렉션에서 SatAis만 제거된다.")]
         public async Task Ais_toggle_off_test()
         {
+            const string shipKey = "UNIQUE_SHIP_KEY";
+
             await using (var arrangeContext = CreateContext())
             {
-                arrangeContext.ShipInfos.Add(ShipInfo()
-                    .WithShipKey("TEST_SHIP_KEY")
-                    .WithShipServices(
+                arrangeContext.ShipInfos.Add(
+                    NoService(shipKey).WithShipServices(
                         ShipService().WithServiceName(ServiceNameTypes.SatAis).WithIsCompleted(true),
                         ShipService().WithServiceName(ServiceNameTypes.KtSat).WithIsCompleted(true)
-                    )
-                    .Build());
+                    ).Build()
+                );
                 await arrangeContext.SaveChangesAsync();
             }
 
@@ -101,7 +100,7 @@ namespace ShipParticularsApi.Tests.Examples
             {
                 ShipInfo target = await actContext.ShipInfos
                     .Include(s => s.ShipServices)
-                    .SingleAsync(s => s.ShipKey == "TEST_SHIP_KEY");
+                    .SingleAsync(s => s.ShipKey == shipKey && s.IsService == true);
 
                 target.ManageAisService(false);
 
@@ -112,7 +111,7 @@ namespace ShipParticularsApi.Tests.Examples
             {
                 ShipInfo target = await assertContext.ShipInfos
                     .Include(s => s.ShipServices)
-                    .SingleAsync(s => s.ShipKey == "TEST_SHIP_KEY");
+                    .SingleAsync(s => s.ShipKey == shipKey && s.IsService == true);
 
                 target.Should().NotBeNull();
                 target.ShipServices.Should().NotBeEmpty()
@@ -125,24 +124,11 @@ namespace ShipParticularsApi.Tests.Examples
         [Fact(DisplayName = "SK TELINK 위성 사용 중에 GPS 비활성화하면, 모든 관련 자식 엔티티가 DELETE 되고, 부모 컬럼도 업데이트 된다")]
         public async Task Gps_toggle_off_test()
         {
+            const string shipKey = "UNIQUE_SHIP_KEY";
+
             await using (var arrangeContext = CreateContext())
             {
-                arrangeContext.ShipInfos.Add(ShipInfo()
-                      .WithShipKey("UNIQUE_SHIP_KEY")
-                      .WithShipServices(KtSatService("UNIQUE_SHIP_KEY"))
-                      .WithShipSatellite(
-                            ShipSatellite()
-                                .WithShipKey("UNIQUE_SHIP_KEY")
-                                .WithSatelliteType(SatelliteTypes.SkTelink)
-                                .WithSatelliteId("SATELLITE_ID")
-                                .WithIsUseSatellite(true)
-                                .WithCreateUserId(FixedUserId)
-                                .Build()
-                       )
-                      .WithExternalShipId("SATELLITE_ID")
-                      .WithIsUseKtsat(true)
-                      .WithSkTelinkCompanyShip(SkTelinkCompanyShip("UNIQUE_SHIP_KEY", "UNIQUE_COMPANY_NAME"))
-                      .Build());
+                arrangeContext.ShipInfos.Add(UsingSkTelink(shipKey, FixedUserId, 0L).Build());
                 await arrangeContext.SaveChangesAsync();
             }
 
@@ -153,7 +139,7 @@ namespace ShipParticularsApi.Tests.Examples
                     .Include(s => s.ShipSatellite)
                     .Include(s => s.SkTelinkCompanyShip)
                     .AsSplitQuery()
-                    .SingleAsync(s => s.ShipKey == "UNIQUE_SHIP_KEY");
+                    .SingleAsync(s => s.ShipKey == shipKey && s.IsService == true);
 
                 target.ManageGpsService(false, new SatelliteDetails(null, null, null), FixedUserId);
 
@@ -167,7 +153,7 @@ namespace ShipParticularsApi.Tests.Examples
                     .Include(s => s.ShipSatellite)
                     .Include(s => s.SkTelinkCompanyShip)
                     .AsSplitQuery()
-                    .SingleAsync(s => s.ShipKey == "UNIQUE_SHIP_KEY");
+                    .SingleAsync(s => s.ShipKey == shipKey && s.IsService == true);
 
                 actual.Should().NotBeNull();
                 actual.ExternalShipId.Should().BeNull();

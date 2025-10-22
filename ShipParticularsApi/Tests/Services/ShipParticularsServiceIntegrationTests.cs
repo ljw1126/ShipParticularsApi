@@ -63,7 +63,7 @@ namespace ShipParticularsApi.Tests.Services
 
             // Assert
             var repository = serviceProvider.GetRequiredService<IShipInfoRepository>();
-            var actual = await repository.GetByShipKeyAsync(shipKey);
+            var actual = await repository.GetReadOnlyByShipKeyAsync(shipKey);
 
             actual.Should().NotBeNull();
             actual.ShipType.Should().Be(ShipTypes.Default);
@@ -89,14 +89,14 @@ namespace ShipParticularsApi.Tests.Services
 
             // Assert
             var repository = serviceProvider.GetRequiredService<IShipInfoRepository>();
-            var actual = await repository.GetByShipKeyAsync(param.ShipKey);
+            var actual = await repository.GetReadOnlyByShipKeyAsync(param.ShipKey);
 
             actual.Should().NotBeNull();
             actual.IsUseAis.Should().BeTrue();
 
             actual.ShipServices.Should().ContainSingle();
             actual.ShipServices.Should().ContainEquivalentOf(
-                SatAisService().WithShipKey(param.ShipKey).Build(),
+                SatAisService(param.ShipKey).Build(),
                 options => options.Including(s => s.ShipKey).Including(s => s.ServiceName)
             );
         }
@@ -122,19 +122,19 @@ namespace ShipParticularsApi.Tests.Services
 
             // Assert
             var repository = serviceProvider.GetRequiredService<IShipInfoRepository>();
-            var actual = await repository.GetByShipKeyAsync(param.ShipKey);
+            var actual = await repository.GetReadOnlyByShipKeyAsync(param.ShipKey);
 
             actual.Should().NotBeNull();
             actual.IsUseKtsat.Should().BeTrue();
             actual.ShipServices.Should().ContainSingle();
             actual.ShipServices.Should().ContainEquivalentOf(
-                KtSatService().WithShipKey(shipKey).Build(),
+                KtSatService(shipKey).Build(),
                 options => options.Including(s => s.ShipKey).Including(s => s.ServiceName)
             );
 
             actual.ShipSatellite.Should().NotBeNull();
             actual.ShipSatellite.Should().BeEquivalentTo(
-                KtSatellite().WithShipKey(shipKey).WithSatelliteId(satelliteId).Build(),
+                KtSatellite(shipKey).WithSatelliteId(satelliteId).Build(),
                 options => options.Including(s => s.ShipKey)
                                   .Including(s => s.SatelliteId)
                                   .Including(s => s.SatelliteType)
@@ -163,7 +163,7 @@ namespace ShipParticularsApi.Tests.Services
 
             // Assert
             var repository = serviceProvider.GetRequiredService<IShipInfoRepository>();
-            var actual = await repository.GetByShipKeyAsync(param.ShipKey);
+            var actual = await repository.GetReadOnlyByShipKeyAsync(param.ShipKey);
 
             actual.Should().NotBeNull();
             actual.IsUseKtsat.Should().BeTrue();
@@ -171,13 +171,13 @@ namespace ShipParticularsApi.Tests.Services
 
             actual.ShipServices.Should().ContainSingle();
             actual.ShipServices.Should().ContainEquivalentOf(
-                KtSatService().WithShipKey(shipKey).Build(),
+                KtSatService(shipKey).Build(),
                 options => options.Including(s => s.ShipKey).Including(s => s.ServiceName)
             );
 
             actual.ShipSatellite.Should().NotBeNull();
             actual.ShipSatellite.Should().BeEquivalentTo(
-                SkTelinkSatellite().WithShipKey(shipKey).WithSatelliteId(satelliteId).Build(),
+                SkTelinkSatellite(shipKey).WithSatelliteId(satelliteId).Build(),
                 options => options.Including(s => s.ShipKey)
                                   .Including(s => s.SatelliteId)
                                   .Including(s => s.SatelliteType)
@@ -212,7 +212,7 @@ namespace ShipParticularsApi.Tests.Services
 
             // Assert
             var repository = serviceProvider.GetRequiredService<IShipInfoRepository>();
-            var actual = await repository.GetByShipKeyAsync(param.ShipKey);
+            var actual = await repository.GetReadOnlyByShipKeyAsync(param.ShipKey);
 
             actual.Should().NotBeNull();
             actual.Callsign.Should().Be(param.Callsign);
@@ -248,14 +248,14 @@ namespace ShipParticularsApi.Tests.Services
 
             // Assert
             var repository = serviceProvider.GetRequiredService<IShipInfoRepository>();
-            var actual = await repository.GetByShipKeyAsync(param.ShipKey);
+            var actual = await repository.GetReadOnlyByShipKeyAsync(param.ShipKey);
 
             actual.Should().NotBeNull();
             actual.ShipType.Should().Be(ShipTypes.Default);
 
             actual.ShipServices.Should().ContainSingle();
             actual.ShipServices.Should().ContainEquivalentOf(
-                    SatAisService().WithShipKey(shipKey).Build(),
+                    SatAisService(shipKey).Build(),
                     options => options.Including(s => s.ShipKey).Including(s => s.ServiceName)
             );
         }
@@ -281,7 +281,7 @@ namespace ShipParticularsApi.Tests.Services
 
             // Assert
             var repository = serviceProvider.GetRequiredService<IShipInfoRepository>();
-            var actual = await repository.GetByShipKeyAsync(param.ShipKey);
+            var actual = await repository.GetReadOnlyByShipKeyAsync(param.ShipKey);
 
             actual.Should().NotBeNull();
             actual.IsUseAis.Should().BeFalse();
@@ -311,7 +311,7 @@ namespace ShipParticularsApi.Tests.Services
 
             // Assert
             var repository = serviceProvider.GetRequiredService<IShipInfoRepository>();
-            var actual = await repository.GetByShipKeyAsync(param.ShipKey);
+            var actual = await repository.GetReadOnlyByShipKeyAsync(param.ShipKey);
 
             actual.Should().NotBeNull();
             actual.ShipKey.Should().Be(param.ShipKey);
@@ -346,7 +346,7 @@ namespace ShipParticularsApi.Tests.Services
 
             // Assert
             var repository = serviceProvider.GetRequiredService<IShipInfoRepository>();
-            var actual = await repository.GetByShipKeyAsync(param.ShipKey);
+            var actual = await repository.GetReadOnlyByShipKeyAsync(param.ShipKey);
 
             actual.Should().NotBeNull();
             actual.ShipKey.Should().Be(param.ShipKey);
@@ -383,7 +383,7 @@ namespace ShipParticularsApi.Tests.Services
 
             // Assert
             var repository = serviceProvider.GetRequiredService<IShipInfoRepository>();
-            var actual = await repository.GetByShipKeyAsync(shipKey);
+            var actual = await repository.GetReadOnlyByShipKeyAsync(shipKey);
 
             actual.Should().NotBeNull();
             actual.IsUseKtsat.Should().BeTrue();
@@ -391,13 +391,13 @@ namespace ShipParticularsApi.Tests.Services
 
             actual.ShipServices.Should().ContainSingle()
                 .And.ContainEquivalentOf(
-                    KtSatService().WithShipKey(shipKey).Build(),
+                    KtSatService(shipKey).Build(),
                     options => options.Including(s => s.ShipKey).Including(s => s.ServiceName)
             );
 
             actual.ShipSatellite.Should().NotBeNull();
             actual.ShipSatellite.Should().BeEquivalentTo(
-                KtSatellite().WithShipKey(shipKey).WithSatelliteId(satelliteId).Build(),
+                KtSatellite(shipKey).WithSatelliteId(satelliteId).Build(),
                 options => options.Including(s => s.ShipKey)
                                   .Including(s => s.SatelliteId)
                                   .Including(s => s.SatelliteType)
@@ -430,7 +430,7 @@ namespace ShipParticularsApi.Tests.Services
 
             // Assert
             var repository = serviceProvider.GetRequiredService<IShipInfoRepository>();
-            var actual = await repository.GetByShipKeyAsync(param.ShipKey);
+            var actual = await repository.GetReadOnlyByShipKeyAsync(param.ShipKey);
 
             actual.Should().NotBeNull();
             actual.IsUseKtsat.Should().BeTrue();
@@ -438,13 +438,13 @@ namespace ShipParticularsApi.Tests.Services
 
             actual.ShipServices.Should().ContainSingle()
                 .And.ContainEquivalentOf(
-                    KtSatService().WithShipKey(shipKey).Build(),
+                    KtSatService(shipKey).Build(),
                     options => options.Including(s => s.ShipKey).Including(s => s.ServiceName)
             );
 
             actual.ShipSatellite.Should().NotBeNull();
             actual.ShipSatellite.Should().BeEquivalentTo(
-                SkTelinkSatellite().WithShipKey(shipKey).WithSatelliteId(satelliteId).Build(),
+                SkTelinkSatellite(shipKey).WithSatelliteId(satelliteId).Build(),
                 options => options.Including(s => s.ShipKey)
                                   .Including(s => s.SatelliteId)
                                   .Including(s => s.SatelliteType)
@@ -480,7 +480,7 @@ namespace ShipParticularsApi.Tests.Services
 
             // Assert
             var repository = serviceProvider.GetRequiredService<IShipInfoRepository>();
-            var actual = await repository.GetByShipKeyAsync(param.ShipKey);
+            var actual = await repository.GetReadOnlyByShipKeyAsync(param.ShipKey);
 
             actual.Should().NotBeNull();
             actual.IsUseKtsat.Should().BeTrue();
@@ -488,13 +488,13 @@ namespace ShipParticularsApi.Tests.Services
 
             actual.ShipServices.Should().ContainSingle()
                 .And.ContainEquivalentOf(
-                    KtSatService().WithShipKey(shipKey).Build(),
+                    KtSatService(shipKey).Build(),
                     options => options.Including(s => s.ShipKey).Including(s => s.ServiceName)
             );
 
             actual.ShipSatellite.Should().NotBeNull();
             actual.ShipSatellite.Should().BeEquivalentTo(
-                SkTelinkSatellite().WithShipKey(shipKey).WithSatelliteId(satelliteId).Build(),
+                SkTelinkSatellite(shipKey).WithSatelliteId(satelliteId).Build(),
                 options => options.Including(s => s.ShipKey)
                                   .Including(s => s.SatelliteId)
                                   .Including(s => s.SatelliteType)
@@ -530,7 +530,7 @@ namespace ShipParticularsApi.Tests.Services
 
             // Assert
             var repository = serviceProvider.GetRequiredService<IShipInfoRepository>();
-            var actual = await repository.GetByShipKeyAsync(param.ShipKey);
+            var actual = await repository.GetReadOnlyByShipKeyAsync(param.ShipKey);
 
             actual.Should().NotBeNull();
             actual.IsUseKtsat.Should().BeTrue();
@@ -538,14 +538,14 @@ namespace ShipParticularsApi.Tests.Services
 
             actual.ShipServices.Should().ContainSingle()
                 .And.ContainEquivalentOf(
-                    KtSatService().WithShipKey(shipKey).Build(),
+                    KtSatService(shipKey).Build(),
                     options => options.Including(s => s.ShipKey)
                                       .Including(s => s.ServiceName)
             );
 
             actual.ShipSatellite.Should().NotBeNull();
             actual.ShipSatellite.Should().BeEquivalentTo(
-                KtSatellite().WithShipKey(shipKey).WithSatelliteId(satelliteId).Build(),
+                KtSatellite(shipKey).WithSatelliteId(satelliteId).Build(),
                 options => options.Including(s => s.ShipKey)
                                   .Including(s => s.SatelliteId)
                                   .Including(s => s.SatelliteType)
@@ -580,7 +580,7 @@ namespace ShipParticularsApi.Tests.Services
 
             // Assert
             var repository = serviceProvider.GetRequiredService<IShipInfoRepository>();
-            var actual = await repository.GetByShipKeyAsync(param.ShipKey);
+            var actual = await repository.GetReadOnlyByShipKeyAsync(param.ShipKey);
 
             actual.Should().NotBeNull();
 

@@ -34,33 +34,28 @@ namespace ShipParticularsApi.Tests.Entities
 
         ShipParticularsContext CreateContext() => new(_options);
 
+        // NOTE. Text Fixture 재활용해 검증시 실패
         [Fact]
         public async Task Save_shipService()
         {
             // Arrange
+            const string shipKey = "UNIQUE_SHIP_KEY";
             await using var context = CreateContext();
 
-            ShipInfo newShip = ShipInfo()
-                .WithShipKey("TEST_KEY")
-                .Build();
-
-            ShipService satAisShipService = ShipService()
-                .WithServiceName(ServiceNameTypes.SatAis)
-                .WithIsCompleted(true)
-                .Build();
-
-            newShip.ShipServices.Add(satAisShipService);
+            ShipInfo newShip = NoService(shipKey).Build();
+            newShip.ShipServices.Add(SatAisService(shipKey).Build());
             context.ShipInfos.Add(newShip);
 
             await context.SaveChangesAsync();
 
             // Act & Assert
             var actual = await context.ShipServices.AsNoTracking()
-                               .SingleAsync(s => s.ShipKey == "TEST_KEY");
+                               .SingleAsync(s => s.ShipKey == shipKey && s.IsCompleted == true);
+
             var expected = ShipService().WithId(1L)
                             .WithIsCompleted(true)
                             .WithServiceName(ServiceNameTypes.SatAis)
-                            .WithShipKey("TEST_KEY")
+                            .WithShipKey(shipKey)
                             .Build();
 
             actual.Should().BeEquivalentTo(expected);

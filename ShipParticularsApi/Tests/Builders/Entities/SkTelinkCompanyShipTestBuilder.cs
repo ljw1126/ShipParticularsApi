@@ -4,40 +4,22 @@ namespace ShipParticularsApi.Tests.Builders.Entities
 {
     public class SkTelinkCompanyShipTestBuilder
     {
-        private const long NEW_ID = 0L;
         private const string DEFAULT_COMPANY_NAME = "UNIQUE_COMPANY_NAME";
 
         private long _Id;
         private string _ShipKey;
-        private string _CompanyName = "UNIQUE_COMPANY_NAME";
+        private string _CompanyName = DEFAULT_COMPANY_NAME;
 
         public static SkTelinkCompanyShipTestBuilder SkTelinkCompanyShip()
         {
             return new SkTelinkCompanyShipTestBuilder();
         }
 
-        public static SkTelinkCompanyShip SkTelinkCompanyShip(long id, string shipKey)
-        {
-            return SkTelinkCompanyShip(id, shipKey, DEFAULT_COMPANY_NAME);
-        }
-
-        public static SkTelinkCompanyShip SkTelinkCompanyShip(string shipKey)
-        {
-            return SkTelinkCompanyShip(NEW_ID, shipKey, DEFAULT_COMPANY_NAME);
-        }
-
-        public static SkTelinkCompanyShip SkTelinkCompanyShip(string shipKey, string companyName)
-        {
-            return SkTelinkCompanyShip(NEW_ID, shipKey, companyName);
-        }
-
-        public static SkTelinkCompanyShip SkTelinkCompanyShip(long id, string shipKey, string companyName)
+        public static SkTelinkCompanyShipTestBuilder SkTelinkCompanyShip(string shipKey, long id = 0L)
         {
             return SkTelinkCompanyShip()
                 .WithId(id)
-                .WithShipKey(shipKey)
-                .WithCompanyName(companyName)
-                .Build();
+                .WithShipKey(shipKey);
         }
 
         public SkTelinkCompanyShipTestBuilder WithId(long id)
