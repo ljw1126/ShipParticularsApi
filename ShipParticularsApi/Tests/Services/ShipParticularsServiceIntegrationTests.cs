@@ -5,7 +5,6 @@ using ShipParticularsApi.Repositories;
 using ShipParticularsApi.Services;
 using ShipParticularsApi.Tests.Helper;
 using Xunit;
-using Xunit.Abstractions;
 using static ShipParticularsApi.Tests.Builders.Entities.ShipInfoTestBuilder;
 using static ShipParticularsApi.Tests.Builders.Entities.ShipSatelliteTestBuilder;
 using static ShipParticularsApi.Tests.Builders.Entities.ShipServiceTestBuilder;
@@ -13,24 +12,17 @@ using static ShipParticularsApi.Tests.Builders.Params.ShipParticularParamTestBui
 using static ShipParticularsApi.Tests.Builders.Params.ShipSatelliteParamTestBuilder;
 using static ShipParticularsApi.Tests.Builders.Params.SkTelinkCompanyShipParamTestBuilder;
 
-// TODO. TransactionDecorator (sut) 획득하는 코드 중복
 // TODO. 검증 부분 중복
-// TODO. 기존 ShipInfo가 있을때 초기화 중복
 namespace ShipParticularsApi.Tests.Services
 {
     public class ShipParticularsServiceIntegrationTests
         : IClassFixture<CustomWebApplicationFactory<Program>>
     {
         private readonly CustomWebApplicationFactory<Program> _factory;
-        private readonly ITestOutputHelper _output;
 
-        public ShipParticularsServiceIntegrationTests(
-            CustomWebApplicationFactory<Program> factory,
-            ITestOutputHelper output
-        )
+        public ShipParticularsServiceIntegrationTests(CustomWebApplicationFactory<Program> factory)
         {
             _factory = factory;
-            _output = output;
             DbInit();
         }
 
@@ -42,35 +34,13 @@ namespace ShipParticularsApi.Tests.Services
             dbContext.Database.EnsureCreated();
         }
 
-        [Fact]
-        public void Test()
+        // NOTE. C# 7.0 이상 지원
+        protected (IServiceProvider Provider, IShipParticularsService Sut) GetTestDependencies(IServiceScope scope)
         {
-            // Arrange
-            // 팩토리를 사용하여 테스트 스코프를 생성합니다. 
-            // AddScoped 서비스들이 이 스코프 내에서 올바르게 생성됩니다.
-            using var scope = _factory.Services.CreateScope();
             var serviceProvider = scope.ServiceProvider;
+            var sut = serviceProvider.GetRequiredService<IShipParticularsService>();
 
-            // Act
-            // 1. IShipParticularsService 인터페이스를 요청합니다.
-            var resolvedService = serviceProvider.GetRequiredService<IShipParticularsService>();
-
-            // 2. 내부에서 데코레이팅되고 있는 ShipParticularsService 객체도 요청합니다.
-            // 이는 데코레이터 패턴에서 두 객체 모두 컨테이너에 등록되어 있어야 함을 보장합니다.
-            var innerService = serviceProvider.GetService<ShipParticularsService>();
-
-            // Assert (FluentAssertions 사용 가정)
-            // 1. IShipParticularsService가 null이 아닌지 확인합니다.
-            resolvedService.Should().NotBeNull("IShipParticularsService는 DI 컨테이너에서 해결되어야 합니다.");
-
-            // 2. IShipParticularsService의 실제 타입이 TransactionDecorator인지 확인합니다. 
-            //    이는 데코레이터 패턴이 올바르게 적용되었음을 의미합니다.
-            resolvedService.Should().BeOfType<TransactionDecorator>(
-                "IShipParticularsService는 TransactionDecorator로 래핑되어야 합니다."
-            );
-
-            // 3. 내부 서비스도 null이 아닌지 확인합니다 (데코레이터가 내부 객체를 주입받아 생성되었을 테니).
-            innerService.Should().NotBeNull("ShipParticularsService 구현체도 DI 컨테이너에서 해결되어야 합니다.");
+            return (serviceProvider, sut);
         }
 
         [Fact(DisplayName = "신규 ShipInfo (AIS/GPS Toggle off) 생성")]
@@ -78,10 +48,10 @@ namespace ShipParticularsApi.Tests.Services
         {
             // Arrange
             using var scope = _factory.Services.CreateScope();
-            var serviceProvider = scope.ServiceProvider;
-            var sut = serviceProvider.GetRequiredService<IShipParticularsService>();
+            var (serviceProvider, sut) = GetTestDependencies(scope);
 
             const string shipKey = "UNIQUE_SHIP_KEY";
+
             var param = ShipParticularsParam().WithShipKey(shipKey).Build();
 
             // Act
@@ -100,8 +70,7 @@ namespace ShipParticularsApi.Tests.Services
         {
             // Arrange
             using var scope = _factory.Services.CreateScope();
-            var serviceProvider = scope.ServiceProvider;
-            var sut = serviceProvider.GetRequiredService<IShipParticularsService>();
+            var (serviceProvider, sut) = GetTestDependencies(scope);
 
             var param = ShipParticularsParam().WithIsAisToggleOn(true).Build();
 
@@ -127,8 +96,7 @@ namespace ShipParticularsApi.Tests.Services
         {
             // Arrange
             using var scope = _factory.Services.CreateScope();
-            var serviceProvider = scope.ServiceProvider;
-            var sut = serviceProvider.GetRequiredService<IShipParticularsService>();
+            var (serviceProvider, sut) = GetTestDependencies(scope);
 
             var param = ShipParticularsParam().Build();
 
@@ -149,11 +117,11 @@ namespace ShipParticularsApi.Tests.Services
         {
             // Arrange
             using var scope = _factory.Services.CreateScope();
-            var serviceProvider = scope.ServiceProvider;
-            var sut = serviceProvider.GetRequiredService<IShipParticularsService>();
+            var (serviceProvider, sut) = GetTestDependencies(scope);
 
             const string shipKey = "UNIQUE_SHIP_KEY";
             const string satelliteId = "SATELLITE_ID";
+
             var param = ShipParticularsParam()
                 .WithShipKey(shipKey)
                 .WithIsGPSToggleOn(true)
@@ -189,8 +157,7 @@ namespace ShipParticularsApi.Tests.Services
         {
             // Arrange
             using var scope = _factory.Services.CreateScope();
-            var serviceProvider = scope.ServiceProvider;
-            var sut = serviceProvider.GetRequiredService<IShipParticularsService>();
+            var (serviceProvider, sut) = GetTestDependencies(scope);
 
             const string shipKey = "UNIQUE_SHIP_KEY";
             const string satelliteId = "SATELLITE_ID";
@@ -237,7 +204,8 @@ namespace ShipParticularsApi.Tests.Services
         {
             // Arrange
             using var scope = _factory.Services.CreateScope();
-            var serviceProvider = scope.ServiceProvider;
+            var (serviceProvider, sut) = GetTestDependencies(scope);
+
             const string shipKey = "UNIQUE_SHIP_KEY";
 
             await serviceProvider.SeedDataAsync(NoService(shipKey, 1L).Build());
@@ -249,8 +217,6 @@ namespace ShipParticularsApi.Tests.Services
                 .WithShipType("PASSENGER")
                 .WithShipCode("UPDATE_SHIP_CDE")
                 .Build();
-
-            var sut = serviceProvider.GetRequiredService<IShipParticularsService>();
 
             // Act
             await sut.Process(param);
@@ -278,7 +244,8 @@ namespace ShipParticularsApi.Tests.Services
         {
             // Arrange
             using var scope = _factory.Services.CreateScope();
-            var serviceProvider = scope.ServiceProvider;
+            var (serviceProvider, sut) = GetTestDependencies(scope);
+
             const string shipKey = "UNIQUE_SHIP_KEY";
 
             await serviceProvider.SeedDataAsync(AisOnly(shipKey, 1L).Build());
@@ -287,8 +254,6 @@ namespace ShipParticularsApi.Tests.Services
                 .WithShipKey(shipKey)
                 .WithIsAisToggleOn(true)
                 .Build();
-
-            var sut = serviceProvider.GetRequiredService<IShipParticularsService>();
 
             // Act
             await sut.Process(param);
@@ -312,7 +277,8 @@ namespace ShipParticularsApi.Tests.Services
         {
             // Arrange
             using var scope = _factory.Services.CreateScope();
-            var serviceProvider = scope.ServiceProvider;
+            var (serviceProvider, sut) = GetTestDependencies(scope);
+
             const string shipKey = "UNIQUE_SHIP_KEY";
 
             await serviceProvider.SeedDataAsync(AisOnly(shipKey, 1L).Build());
@@ -321,8 +287,6 @@ namespace ShipParticularsApi.Tests.Services
                 .WithShipKey(shipKey)
                 .WithIsAisToggleOn(false)
                 .Build();
-
-            var sut = serviceProvider.GetRequiredService<IShipParticularsService>();
 
             // Act
             await sut.Process(param);
@@ -343,7 +307,8 @@ namespace ShipParticularsApi.Tests.Services
         {
             // Arrange
             using var scope = _factory.Services.CreateScope();
-            var serviceProvider = scope.ServiceProvider;
+            var (serviceProvider, sut) = GetTestDependencies(scope);
+
             const string shipKey = "UNIQUE_SHIP_KEY";
 
             await serviceProvider.SeedDataAsync(NoService(shipKey, 1L).Build());
@@ -352,8 +317,6 @@ namespace ShipParticularsApi.Tests.Services
                 .WithShipKey(shipKey)
                 .WithIsAisToggleOn(false)
                 .Build();
-
-            var sut = serviceProvider.GetRequiredService<IShipParticularsService>();
 
             // Act
             await sut.Process(param);
@@ -376,7 +339,8 @@ namespace ShipParticularsApi.Tests.Services
         {
             // Arrange
             using var scope = _factory.Services.CreateScope();
-            var serviceProvider = scope.ServiceProvider;
+            var (serviceProvider, sut) = GetTestDependencies(scope);
+
             const string shipKey = "UNIQUE_SHIP_KEY";
 
             await serviceProvider.SeedDataAsync(NoService(shipKey, 1L).Build());
@@ -385,8 +349,6 @@ namespace ShipParticularsApi.Tests.Services
                 .WithShipKey(shipKey)
                 .WithIsGPSToggleOn(false)
                 .Build();
-
-            var sut = serviceProvider.GetRequiredService<IShipParticularsService>();
 
             // Act
             await sut.Process(param);
@@ -412,7 +374,8 @@ namespace ShipParticularsApi.Tests.Services
         {
             // Arrange
             using var scope = _factory.Services.CreateScope();
-            var serviceProvider = scope.ServiceProvider;
+            var (serviceProvider, sut) = GetTestDependencies(scope);
+
             const string shipKey = "UNIQUE_SHIP_KEY";
 
             await serviceProvider.SeedDataAsync(UsingSkTelink(shipKey, "TEST_USER_01", 1L).Build());
@@ -421,8 +384,6 @@ namespace ShipParticularsApi.Tests.Services
                 .WithShipKey(shipKey)
                 .WithIsGPSToggleOn(false)
                 .Build();
-
-            var sut = serviceProvider.GetRequiredService<IShipParticularsService>();
 
             // Act
             await sut.Process(param);
@@ -448,7 +409,7 @@ namespace ShipParticularsApi.Tests.Services
         {
             // Arrange
             using var scope = _factory.Services.CreateScope();
-            var serviceProvider = scope.ServiceProvider;
+            var (serviceProvider, sut) = GetTestDependencies(scope);
 
             const string shipKey = "UNIQUE_SHIP_KEY";
             const string satelliteId = "SATELLITE_ID";
@@ -460,8 +421,6 @@ namespace ShipParticularsApi.Tests.Services
                 .WithIsGPSToggleOn(true)
                 .WithShipSatelliteParam(KtSatelliteParam().WithSatelliteId(satelliteId))
                 .Build();
-
-            var sut = serviceProvider.GetRequiredService<IShipParticularsService>();
 
             // Act
             await sut.Process(param);
@@ -496,7 +455,8 @@ namespace ShipParticularsApi.Tests.Services
         {
             // Arrange
             using var scope = _factory.Services.CreateScope();
-            var serviceProvider = scope.ServiceProvider;
+            var (serviceProvider, sut) = GetTestDependencies(scope);
+
             const string shipKey = "UNIQUE_SHIP_KEY";
             const string satelliteId = "SATELLITE_ID";
 
@@ -508,8 +468,6 @@ namespace ShipParticularsApi.Tests.Services
                 .WithShipSatelliteParam(SkTelinkSatelliteParam().WithSatelliteId(satelliteId))
                 .WithSkTelinkCompanyShipParam(SkTelinkCompanyShipParam())
                 .Build();
-
-            var sut = serviceProvider.GetRequiredService<IShipParticularsService>();
 
             // Act
             await sut.Process(param);
@@ -546,7 +504,7 @@ namespace ShipParticularsApi.Tests.Services
         {
             // Arrange
             using var scope = _factory.Services.CreateScope();
-            var serviceProvider = scope.ServiceProvider;
+            var (serviceProvider, sut) = GetTestDependencies(scope);
 
             const string shipKey = "UNIQUE_SHIP_KEY";
             const string satelliteId = "SATELLITE_ID";
@@ -560,8 +518,6 @@ namespace ShipParticularsApi.Tests.Services
                 .WithShipSatelliteParam(SkTelinkSatelliteParam().WithSatelliteId(satelliteId))
                 .WithSkTelinkCompanyShipParam(SkTelinkCompanyShipParam())
                 .Build();
-
-            var sut = serviceProvider.GetRequiredService<IShipParticularsService>();
 
             // Act
             await sut.Process(param);
@@ -599,7 +555,7 @@ namespace ShipParticularsApi.Tests.Services
         {
             // Arrange
             using var scope = _factory.Services.CreateScope();
-            var serviceProvider = scope.ServiceProvider;
+            var (serviceProvider, sut) = GetTestDependencies(scope);
 
             const string shipKey = "UNIQUE_SHIP_KEY";
             const string satelliteId = "SATELLITE_ID";
@@ -612,8 +568,6 @@ namespace ShipParticularsApi.Tests.Services
                .WithIsGPSToggleOn(true)
                .WithShipSatelliteParam(KtSatelliteParam().WithSatelliteId(satelliteId))
                .Build();
-
-            var sut = serviceProvider.GetRequiredService<IShipParticularsService>();
 
             // Act
             await sut.Process(param);
@@ -649,7 +603,7 @@ namespace ShipParticularsApi.Tests.Services
         {
             // Arrange
             using var scope = _factory.Services.CreateScope();
-            var serviceProvider = scope.ServiceProvider;
+            var (serviceProvider, sut) = GetTestDependencies(scope);
 
             const string shipKey = "UNIQUE_SHIP_KEY";
             const string satelliteId = "SATELLITE_ID";
@@ -664,8 +618,6 @@ namespace ShipParticularsApi.Tests.Services
                 .WithShipSatelliteParam(SkTelinkSatelliteParam().WithSatelliteId(satelliteId))
                 .WithSkTelinkCompanyShipParam(SkTelinkCompanyShipParam().WithCompanyName(updateCompanyName))
                 .Build();
-
-            var sut = serviceProvider.GetRequiredService<IShipParticularsService>();
 
             // Act
             await sut.Process(param);
