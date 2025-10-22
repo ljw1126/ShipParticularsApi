@@ -7,7 +7,6 @@ using ShipParticularsApi.ValueObjects;
 
 namespace ShipParticularsApi.Services
 {
-    // TODO. IUserService 정의해서 임의 랜덤한 userId 값 반환하는 구현체 추가
     public class ShipParticularsService(
         IShipInfoRepository shipInfoRepository,
         IUserService userService
@@ -15,7 +14,6 @@ namespace ShipParticularsApi.Services
     {
         public async Task Process(ShipParticularsParam param)
         {
-
             ShipInfo? shipInfo = await shipInfoRepository.GetByShipKeyAsync(param.ShipKey);
 
             var shipInfoDetails = ShipInfoDetails.From(param);
