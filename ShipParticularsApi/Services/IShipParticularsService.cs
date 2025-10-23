@@ -6,7 +6,7 @@ namespace ShipParticularsApi.Services
     public interface IShipParticularsService
     {
         Task Create(ShipParticularsParam param);
-        Task Upsert(ShipParticularsParam param);
+        Task<bool> Upsert(ShipParticularsParam param);
         Task<ShipParticularsResult> GetShipParticulars(string shipKey);
     }
 }

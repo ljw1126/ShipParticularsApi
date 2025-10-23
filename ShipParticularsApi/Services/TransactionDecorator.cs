@@ -41,16 +41,18 @@ namespace ShipParticularsApi.Services
             }
         }
 
-        public async Task Upsert(ShipParticularsParam param)
+        public async Task<bool> Upsert(ShipParticularsParam param)
         {
             await using var transaction = await _dbContext.Database.BeginTransactionAsync();
 
             try
             {
-                await _target.Upsert(param);
+                bool isNewResource = await _target.Upsert(param);
 
                 await _dbContext.SaveChangesAsync();
                 await transaction.CommitAsync();
+
+                return isNewResource;
             }
             catch (DbUpdateException e)
             {

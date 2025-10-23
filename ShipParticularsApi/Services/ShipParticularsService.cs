@@ -30,18 +30,22 @@ namespace ShipParticularsApi.Services
             await shipInfoRepository.UpsertAsync(entity);
         }
 
-        public async Task Upsert(ShipParticularsParam param)
+        public async Task<bool> Upsert(ShipParticularsParam param)
         {
             ShipInfo? shipInfo = await shipInfoRepository.GetByShipKeyAsync(param.ShipKey);
 
+            bool isNewResource = (shipInfo == null);
+
             var shipInfoDetails = ShipInfoDetails.From(param);
-            ShipInfo entity = (shipInfo == null)
+            ShipInfo entity = isNewResource
                 ? ShipInfo.From(shipInfoDetails)
                 : shipInfo.UpdateDetails(shipInfoDetails);
 
             ExecuteDomainLogic(entity, param);
 
             await shipInfoRepository.UpsertAsync(entity);
+
+            return isNewResource;
         }
 
         private void ExecuteDomainLogic(ShipInfo entityToProcess, ShipParticularsParam param)

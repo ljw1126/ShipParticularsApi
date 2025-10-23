@@ -11,6 +11,7 @@ namespace ShipParticularsApi.Controllers
     public class ShipParticularsControllers(IShipParticularsService service) : ControllerBase
     {
 
+        // NOTE. https://developer.mozilla.org/ko/docs/Web/HTTP/Reference/Methods/POST
         [HttpPost]
         public async Task<IActionResult> CreateShipParticularsAsync([FromBody] ShipParticularsReq req)
         {
@@ -18,13 +19,10 @@ namespace ShipParticularsApi.Controllers
 
             await service.Create(param);
 
-            return CreatedAtAction(
-                nameof(GetShipParticularsAsync),
-                new { shipKey = req.ShipKey },
-                new { shipKey = req.ShipKey }
-            );
+            return CreatedAtAction(nameof(GetShipParticularsAsync), new { shipKey = req.ShipKey });
         }
 
+        // NOTE. https://developer.mozilla.org/ko/docs/Web/HTTP/Reference/Methods/PUT
         [HttpPut("{shipKey}")]
         public async Task<IActionResult> UpdateShipParticularsAsync(string shipKey, [FromBody] ShipParticularsReq req)
         {
@@ -35,7 +33,12 @@ namespace ShipParticularsApi.Controllers
 
             var param = ShipParticularsParamMapper.ToParam(req);
 
-            await service.Upsert(param);
+            bool isNewResource = await service.Upsert(param);
+
+            if (isNewResource)
+            {
+                return CreatedAtAction(nameof(GetShipParticularsAsync), new { shipKey = req.ShipKey });
+            }
 
             return NoContent();
         }
