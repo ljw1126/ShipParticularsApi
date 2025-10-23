@@ -2,9 +2,9 @@
 {
     public static class SatelliteTypesConverter
     {
-        public static SatelliteTypes ToSatelliteTypes(string value)
+        public static SatelliteTypes ToEnum(string value)
         {
-            return value switch
+            return value.ToUpperInvariant() switch
             {
                 "NONE" => SatelliteTypes.None,
                 "KT_SAT" => SatelliteTypes.KtSat,

@@ -8,7 +8,7 @@ namespace ShipParticularsApi.ValueConverters
     {
         public ServiceNameToStringConverter() : base(
             v => ServiceNameTypesConverter.ToString(v),
-            v => ServiceNameTypesConverter.ToServiceNameTypes(v))
+            v => ServiceNameTypesConverter.ToEnum(v))
         {
         }
     }

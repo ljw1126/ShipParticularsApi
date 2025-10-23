@@ -2,9 +2,9 @@
 {
     public static class ServiceNameTypesConverter
     {
-        public static ServiceNameTypes ToServiceNameTypes(string value)
+        public static ServiceNameTypes ToEnum(string value)
         {
-            return value switch
+            return value.ToLowerInvariant() switch
             {
                 "pdca" => ServiceNameTypes.Pdca,
                 "me-shop-test" => ServiceNameTypes.MeShopTest,

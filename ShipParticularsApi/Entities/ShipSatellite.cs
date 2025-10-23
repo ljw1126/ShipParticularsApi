@@ -46,7 +46,7 @@ namespace ShipParticularsApi.Entities
             {
                 ShipKey = shipKey,
                 SatelliteId = satelliteId,
-                SatelliteType = SatelliteTypesConverter.ToSatelliteTypes(satelliteType),
+                SatelliteType = SatelliteTypesConverter.ToEnum(satelliteType),
                 IsUseSatellite = true,
                 UpdateUserId = null,
                 UpdateDateTime = null
@@ -61,7 +61,7 @@ namespace ShipParticularsApi.Entities
             {
                 ShipKey = shipKey,
                 SatelliteId = satelliteId,
-                SatelliteType = SatelliteTypesConverter.ToSatelliteTypes(satelliteType),
+                SatelliteType = SatelliteTypesConverter.ToEnum(satelliteType),
                 IsUseSatellite = true,
                 CreateUserId = userId
             };
@@ -78,7 +78,7 @@ namespace ShipParticularsApi.Entities
             ArgumentException.ThrowIfNullOrWhiteSpace(satelliteType);
 
             this.SatelliteId = satelliteId;
-            this.SatelliteType = SatelliteTypesConverter.ToSatelliteTypes(satelliteType);
+            this.SatelliteType = SatelliteTypesConverter.ToEnum(satelliteType);
         }
 
         public void Update(string satelliteId, string satelliteType, string userId)
@@ -87,7 +87,7 @@ namespace ShipParticularsApi.Entities
             ArgumentException.ThrowIfNullOrWhiteSpace(satelliteType);
 
             this.SatelliteId = satelliteId;
-            this.SatelliteType = SatelliteTypesConverter.ToSatelliteTypes(satelliteType);
+            this.SatelliteType = SatelliteTypesConverter.ToEnum(satelliteType);
             this.UpdateUserId = userId;
         }
     }

@@ -2,9 +2,9 @@
 {
     public static class ShipTypesConverter
     {
-        public static ShipTypes ToShipTypes(string value)
+        public static ShipTypes ToEnum(string value)
         {
-            return value switch
+            return value.ToUpperInvariant() switch
             {
                 "-" => ShipTypes.Default,
                 "RORO" => ShipTypes.Roro,

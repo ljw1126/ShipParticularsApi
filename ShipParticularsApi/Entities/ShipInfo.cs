@@ -66,7 +66,7 @@ namespace ShipParticularsApi.Entities
                 ShipKey = details.ShipKey,
                 Callsign = details.Callsign,
                 ShipName = details.ShipName,
-                ShipType = ShipTypesConverter.ToShipTypes(details.ShipType),
+                ShipType = ShipTypesConverter.ToEnum(details.ShipType),
                 ShipCode = details.ShipCode,
                 IsService = true
             };
@@ -76,7 +76,7 @@ namespace ShipParticularsApi.Entities
         {
             this.Callsign = details.Callsign;
             this.ShipName = details.ShipName;
-            this.ShipType = ShipTypesConverter.ToShipTypes(details.ShipType);
+            this.ShipType = ShipTypesConverter.ToEnum(details.ShipType);
             this.ShipCode = details.ShipCode;
             return this;
         }
