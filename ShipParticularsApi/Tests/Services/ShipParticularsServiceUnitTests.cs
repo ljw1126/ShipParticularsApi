@@ -48,8 +48,8 @@ namespace ShipParticularsApi.Tests.Services
                 .Build();
 
             _mockShipInfoRepository
-                .Setup(e => e.GetByShipKeyAsync(param.ShipKey))
-                .ReturnsAsync((ShipInfo?)null);
+                .Setup(e => e.ExistsByShipKeyAsync(param.ShipKey))
+                .ReturnsAsync(false);
 
             ShipInfo? capturedEntity = null;
             _mockShipInfoRepository.Setup(e => e.UpsertAsync(It.IsAny<ShipInfo>()))
@@ -75,8 +75,8 @@ namespace ShipParticularsApi.Tests.Services
             var param = ShipParticularsParam().WithIsAisToggleOn(true).Build();
 
             _mockShipInfoRepository
-                .Setup(e => e.GetByShipKeyAsync(param.ShipKey))
-                .ReturnsAsync((ShipInfo?)null);
+                .Setup(e => e.ExistsByShipKeyAsync(param.ShipKey))
+                .ReturnsAsync(false);
 
             ShipInfo? capturedEntity = null;
             _mockShipInfoRepository.Setup(e => e.UpsertAsync(It.IsAny<ShipInfo>()))
@@ -110,8 +110,8 @@ namespace ShipParticularsApi.Tests.Services
                 .Build();
 
             _mockShipInfoRepository
-                .Setup(e => e.GetByShipKeyAsync(param.ShipKey))
-                .ReturnsAsync((ShipInfo?)null);
+                .Setup(e => e.ExistsByShipKeyAsync(param.ShipKey))
+                .ReturnsAsync(false);
 
             ShipInfo? capturedEntity = null;
             _mockShipInfoRepository.Setup(e => e.UpsertAsync(It.IsAny<ShipInfo>()))
@@ -155,8 +155,8 @@ namespace ShipParticularsApi.Tests.Services
                 .Build();
 
             _mockShipInfoRepository
-                .Setup(e => e.GetByShipKeyAsync(param.ShipKey))
-                .ReturnsAsync((ShipInfo?)null);
+                .Setup(e => e.ExistsByShipKeyAsync(param.ShipKey))
+                .ReturnsAsync(false);
 
             ShipInfo? capturedEntity = null;
             _mockShipInfoRepository.Setup(e => e.UpsertAsync(It.IsAny<ShipInfo>()))
