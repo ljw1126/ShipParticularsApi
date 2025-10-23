@@ -1,4 +1,6 @@
-﻿using ShipParticularsApi.Contexts;
+﻿using Microsoft.EntityFrameworkCore;
+using ShipParticularsApi.Contexts;
+using ShipParticularsApi.Exceptions;
 using ShipParticularsApi.Services.Dtos.Params;
 using ShipParticularsApi.Services.Dtos.Results;
 
@@ -26,7 +28,13 @@ namespace ShipParticularsApi.Services
                 await _dbContext.SaveChangesAsync();
                 await transaction.CommitAsync();
             }
-            catch
+            catch (DbUpdateException e)
+            {
+                await transaction.RollbackAsync();
+
+                throw new DatabaseConstraintException("데이터베이스 처리 중 예기치 않은 오류가 발생했습니다. 관리자에게 문의해주세요.", e);
+            }
+            catch (Exception)
             {
                 await transaction.RollbackAsync();
                 throw;
