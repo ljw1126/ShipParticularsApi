@@ -93,5 +93,39 @@ namespace ShipParticularsApi.Tests.Repositories
                 entry.State.Should().Be(EntityState.Detached);
             }
         }
+
+        [Fact(DisplayName = "shipKey에 해당하는 선박 정보가 있으면 true를 반환한다")]
+        public async Task ExistsByShipKeyAsync()
+        {
+            // Arrange
+            const string shipKey = "UNIQUE_SHIP_KEY";
+
+            await using (var arrangeContext = CreateContext())
+            {
+                arrangeContext.ShipInfos.Add(NoService(shipKey, 1L).Build());
+                await arrangeContext.SaveChangesAsync();
+            }
+
+            // Act & Assert
+            await using (var dbContext = CreateContext())
+            {
+                var repository = new ShipInfoRepository(dbContext);
+
+                bool actual = await repository.ExistsByShipKeyAsync(shipKey);
+
+                actual.Should().BeTrue();
+            }
+        }
+
+        [Fact(DisplayName = "shipKey에 해당하는 선박 정보가 없으면 false를 반환한다")]
+        public async Task None_ExistsByShipKeyAsync()
+        {
+            await using var dbContext = CreateContext();
+            var repository = new ShipInfoRepository(dbContext);
+
+            bool actual = await repository.ExistsByShipKeyAsync("UNIQUE_SHIP_KEY");
+
+            actual.Should().BeFalse();
+        }
     }
 }

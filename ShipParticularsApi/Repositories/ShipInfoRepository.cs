@@ -45,5 +45,6 @@ namespace ShipParticularsApi.Repositories
                  .SingleOrDefaultAsync(s => s.ShipKey == shipKey && s.IsService == true);
         }
 
+        public async Task<bool> ExistsByShipKeyAsync(string shipKey) => await context.ShipInfos.AnyAsync(s => s.ShipKey == shipKey);
     }
 }

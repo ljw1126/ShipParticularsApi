@@ -15,9 +15,7 @@ namespace ShipParticularsApi.Services
     {
         public async Task Create(ShipParticularsParam param)
         {
-            ShipInfo? existingShipInfo = await shipInfoRepository.GetReadOnlyByShipKeyAsync(param.ShipKey);
-
-            if (existingShipInfo != null)
+            if (await shipInfoRepository.ExistsByShipKeyAsync(param.ShipKey))
             {
                 throw new ResourceAlreadyExistsException("이미 등록된 ShipKey 입니다.");
             }
