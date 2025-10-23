@@ -38,21 +38,6 @@ namespace ShipParticularsApi.Entities
         [MaxLength(200)]
         public string? UpdateUserId { get; set; }
 
-        public static ShipSatellite Of(string shipKey, string satelliteId, string satelliteType)
-        {
-            // TODO. 유효성 검사
-
-            return new()
-            {
-                ShipKey = shipKey,
-                SatelliteId = satelliteId,
-                SatelliteType = SatelliteTypesConverter.ToEnum(satelliteType),
-                IsUseSatellite = true,
-                UpdateUserId = null,
-                UpdateDateTime = null
-            };
-        }
-
         public static ShipSatellite Of(string shipKey, string satelliteId, string satelliteType, string userId)
         {
             // TODO. 유효성 검사
@@ -61,7 +46,7 @@ namespace ShipParticularsApi.Entities
             {
                 ShipKey = shipKey,
                 SatelliteId = satelliteId,
-                SatelliteType = SatelliteTypesConverter.ToEnum(satelliteType),
+                SatelliteType = SatelliteTypesConverter.ParseFromRequest(satelliteType),
                 IsUseSatellite = true,
                 CreateUserId = userId
             };

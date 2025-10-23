@@ -1,4 +1,6 @@
-﻿namespace ShipParticularsApi.Entities.Enums
+﻿using ShipParticularsApi.Exceptions;
+
+namespace ShipParticularsApi.Entities.Enums
 {
     public static class ShipTypesConverter
     {
@@ -26,7 +28,7 @@
                 "GAS_CARRIER" => ShipTypes.GasCarrier,
                 "OIL_TANKER" => ShipTypes.OilTanker,
                 "Tanker" => ShipTypes.Tanker,
-                _ => throw new ArgumentException($"Invalid string value '{value}' for ShipTypes enum")
+                _ => throw new InvalidOperationException($"선박 타입 변환 실패: 허용되지 않은 문자열 값 '{value}'")
             };
         }
 
@@ -54,8 +56,20 @@
                 ShipTypes.GasCarrier => "GAS_CARRIER",
                 ShipTypes.OilTanker => "OIL_TANKER",
                 ShipTypes.Tanker => "Tanker",
-                _ => throw new ArgumentException($"Invalid ShipTypes '{types}'")
+                _ => throw new InvalidOperationException($"유효하지 않은 선박 타입 값 입니다. '{types}'")
             };
+        }
+
+        public static ShipTypes ParseFromRequest(string value)
+        {
+            try
+            {
+                return ToEnum(value);
+            }
+            catch (InvalidOperationException)
+            {
+                throw new BadRequestException($"유효하지 않은 선박 타입 입니다. 입력 값: '{value}'");
+            }
         }
     }
 }
