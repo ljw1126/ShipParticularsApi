@@ -26,7 +26,7 @@ namespace ShipParticularsApi.Tests.Entities
                 var newShipInfo = ShipParticularsApi.Entities.ShipInfo.From(shipInfoDetails);
 
                 // Act
-                newShipInfo.ManageAisService(false);
+                newShipInfo.DeactiveAisService();
 
                 // Assert
                 var expected = ShipInfo().WithShipKey(shipInfoDetails.ShipKey)
@@ -51,7 +51,7 @@ namespace ShipParticularsApi.Tests.Entities
                 var newShipInfo = ShipParticularsApi.Entities.ShipInfo.From(shipInfoDetails);
 
                 // Act
-                newShipInfo.ManageAisService(true);
+                newShipInfo.ActiveAisService();
 
                 // Assert
                 var expected = ShipInfo().WithShipKey(shipInfoDetails.ShipKey)
@@ -78,7 +78,7 @@ namespace ShipParticularsApi.Tests.Entities
                 var newShipInfo = ShipParticularsApi.Entities.ShipInfo.From(shipInfoDetails);
 
                 // Act
-                newShipInfo.ManageGpsService(false, new SatelliteDetails(null, null, null), FixedUserId);
+                newShipInfo.DeactiveGpsService();
 
                 // Assert
                 var expected = ShipInfo().WithShipKey(shipInfoDetails.ShipKey)
@@ -105,7 +105,7 @@ namespace ShipParticularsApi.Tests.Entities
                 var newShipInfo = ShipParticularsApi.Entities.ShipInfo.From(shipInfoDetails);
 
                 // Act
-                newShipInfo.ManageGpsService(true, satelliteDetails, FixedUserId);
+                newShipInfo.ActiveGpsService(satelliteDetails, FixedUserId);
 
                 // Assert
                 var expected = ShipInfo().WithShipKey(shipInfoDetails.ShipKey)
@@ -143,7 +143,7 @@ namespace ShipParticularsApi.Tests.Entities
                 var newShipInfo = ShipParticularsApi.Entities.ShipInfo.From(shipInfoDetails);
 
                 // Act
-                newShipInfo.ManageGpsService(true, satelliteDetails, FixedUserId);
+                newShipInfo.ActiveGpsService(satelliteDetails, FixedUserId);
 
                 // Assert
                 var expected = ShipInfo().WithShipKey(shipInfoDetails.ShipKey)
@@ -212,7 +212,7 @@ namespace ShipParticularsApi.Tests.Entities
                 var target = NoService(shipKey, 1L).Build();
 
                 // Act
-                target.ManageAisService(true);
+                target.ActiveAisService();
 
                 // Assert
                 target.ShipServices.Should().NotBeEmpty();
@@ -228,7 +228,7 @@ namespace ShipParticularsApi.Tests.Entities
                 var target = AisOnly(shipKey, 1L).Build();
 
                 // Act
-                target.ManageAisService(true);
+                target.ActiveAisService();
 
                 // Assert
                 target.ShipServices.Should().HaveCount(1);
@@ -244,7 +244,7 @@ namespace ShipParticularsApi.Tests.Entities
                 var target = AisOnly(shipKey, 1L).Build();
 
                 // Act
-                target.ManageAisService(false);
+                target.DeactiveAisService();
 
                 // Assert 
                 target.ShipServices.Should().BeEmpty();
@@ -259,7 +259,7 @@ namespace ShipParticularsApi.Tests.Entities
                 var target = NoService(shipKey, 1L).Build();
 
                 // Act
-                target.ManageAisService(false);
+                target.DeactiveAisService();
 
                 // Assert 
                 target.ShipServices.Should().BeEmpty();
@@ -274,7 +274,7 @@ namespace ShipParticularsApi.Tests.Entities
                 var target = NoService(shipKey, 1L).Build();
 
                 // Act
-                target.ManageGpsService(false, new SatelliteDetails(null, null, null), FixedUserId);
+                target.DeactiveGpsService();
 
                 // Assert
                 target.ShipServices.Should().BeEmpty();
@@ -295,7 +295,7 @@ namespace ShipParticularsApi.Tests.Entities
                 var target = UsingSkTelink(shipKey, FixedUserId, 1L).Build();
 
                 // Act
-                target.ManageGpsService(false, new SatelliteDetails(null, null, null), FixedUserId);
+                target.DeactiveGpsService();
 
                 // Assert
                 target.ShipServices.Should().BeEmpty();
@@ -316,11 +316,7 @@ namespace ShipParticularsApi.Tests.Entities
                 var target = NoService(shipKey, 1L).Build();
 
                 // Act
-                target.ManageGpsService(
-                    true,
-                    new SatelliteDetails(satelliteId, "KT_SAT", null),
-                    FixedUserId
-                );
+                target.ActiveGpsService(new SatelliteDetails(satelliteId, "KT_SAT", null), FixedUserId);
 
                 // Assert
                 target.ShipServices.Should().ContainEquivalentOf(KtSatService(shipKey).Build());
@@ -349,8 +345,7 @@ namespace ShipParticularsApi.Tests.Entities
                 var target = NoService(shipKey, 1L).Build();
 
                 // Act
-                target.ManageGpsService(
-                    true,
+                target.ActiveGpsService(
                     new SatelliteDetails(satelliteId, "SK_TELINK", "UNIQUE_COMPANY_NAME"),
                     FixedUserId
                 );
@@ -380,8 +375,7 @@ namespace ShipParticularsApi.Tests.Entities
                 var target = UsingKtSat(shipKey, FixedUserId, 1L).Build();
 
                 // Act
-                target.ManageGpsService(
-                    true,
+                target.ActiveGpsService(
                     new SatelliteDetails(satelliteId, "SK_TELINK", "UNIQUE_COMPANY_NAME"),
                     FixedUserId
                 );
@@ -414,8 +408,7 @@ namespace ShipParticularsApi.Tests.Entities
                 var target = UsingSkTelink(shipKey, FixedUserId, 1L).Build();
 
                 // Act
-                target.ManageGpsService(
-                    true,
+                target.ActiveGpsService(
                     new SatelliteDetails(satelliteId, "KT_SAT", null),
                     FixedUserId
                 );
@@ -450,8 +443,7 @@ namespace ShipParticularsApi.Tests.Entities
                 var target = UsingSkTelink(shipKey, FixedUserId, 1L).Build();
 
                 // Act
-                target.ManageGpsService(
-                    true,
+                target.ActiveGpsService(
                     new SatelliteDetails(satelliteId, "SK_TELINK", updateCompaynName),
                     FixedUserId
                 );
@@ -470,8 +462,7 @@ namespace ShipParticularsApi.Tests.Entities
                 var target = UsingSkTelink(shipKey, FixedUserId, 1L).Build();
 
                 // Act
-                target.ManageGpsService(
-                    true,
+                target.ActiveGpsService(
                     new SatelliteDetails(satelliteId, "SK_TELINK", "UPDATE_COMPANY_NAME"),
                     FixedUserId
                 );

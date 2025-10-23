@@ -98,7 +98,7 @@ namespace ShipParticularsApi.Tests.Examples
                     .AsSplitQuery()
                     .SingleAsync(s => s.ShipKey == shipKey && s.IsService == true);
 
-                shipInfo.ManageGpsService(true, new SatelliteDetails("SATELLITE_ID", "SK_TELINK", "COMPANY_NAME"), FixedUserId);
+                shipInfo.ActiveGpsService(new SatelliteDetails("SATELLITE_ID", "SK_TELINK", "COMPANY_NAME"), FixedUserId);
                 await actConext.SaveChangesAsync();
             }
 

@@ -48,13 +48,23 @@ namespace ShipParticularsApi.Services
 
         private void ExecuteDomainLogic(ShipInfo entityToProcess, ShipParticularsParam param)
         {
-            entityToProcess.ManageAisService(param.IsAisToggleOn);
+            if (param.IsAisToggleOn)
+            {
+                entityToProcess.ActiveAisService();
+            }
+            else
+            {
+                entityToProcess.DeactiveAisService();
+            }
 
-            var satelliteDetails = new SatelliteDetails(
-                param.ShipSatelliteParam?.SatelliteId,
-                param.ShipSatelliteParam?.SatelliteType,
-                param.SkTelinkCompanyShipParam?.CompanyName);
-            entityToProcess.ManageGpsService(param.IsGPSToggleOn, satelliteDetails, userService.GetCurrentUserId());
+            if (param.IsGPSToggleOn)
+            {
+                entityToProcess.ActiveGpsService(SatelliteDetails.From(param), userService.GetCurrentUserId());
+            }
+            else
+            {
+                entityToProcess.DeactiveGpsService();
+            }
 
             if (param.ReplaceShipNameParam != null)
             {
