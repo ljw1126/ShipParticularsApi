@@ -31,6 +31,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseGlobalExceptioHandler();
+
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
