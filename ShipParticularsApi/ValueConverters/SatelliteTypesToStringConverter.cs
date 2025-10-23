@@ -7,7 +7,7 @@ namespace ShipParticularsApi.ValueConverters
     {
         public SatelliteTypesToStringConverter() : base(
             v => SatelliteTypesConverter.ToString(v),
-            v => SatelliteTypesConverter.ToSatelliteTypes(v))
+            v => SatelliteTypesConverter.ToEnum(v))
         {
         }
     }

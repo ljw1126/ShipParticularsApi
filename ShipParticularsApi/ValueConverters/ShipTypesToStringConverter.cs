@@ -7,7 +7,7 @@ namespace ShipParticularsApi.ValueConverters
     {
         public ShipTypesToStringConverter() : base(
             v => ShipTypesConverter.ToString(v),
-            v => ShipTypesConverter.ToShipTypes(v)
+            v => ShipTypesConverter.ToEnum(v)
         )
         {
         }
