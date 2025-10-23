@@ -81,31 +81,21 @@ namespace ShipParticularsApi.Entities
             return this;
         }
 
-        public void ManageAisService(bool isAisToggleOn)
+        public void ActiveAisService()
         {
-            if (ShouldActivateAis(isAisToggleOn))
-            {
-                this.ShipServices.Add(ShipService.Of(this.ShipKey, ServiceNameTypes.SatAis));
-                this.ActiveAis();
-                return;
-            }
+            if (this.HasSatAisService()) return;
 
-            if (ShouldDeactivateAis(isAisToggleOn))
-            {
-                var existingService = this.ShipServices.First(s => s.ServiceName == ServiceNameTypes.SatAis);
-                this.ShipServices.Remove(existingService);
-                this.DeactiveAis();
-            }
+            this.ShipServices.Add(ShipService.Of(this.ShipKey, ServiceNameTypes.SatAis));
+            this.ActiveAis();
         }
 
-        private bool ShouldActivateAis(bool isAisToggleOn)
+        public void DeactiveAisService()
         {
-            return isAisToggleOn && !this.HasSatAisService();
-        }
+            if (!this.HasSatAisService()) return;
 
-        private bool ShouldDeactivateAis(bool isAisToggleOn)
-        {
-            return !isAisToggleOn && this.HasSatAisService();
+            var existingService = this.ShipServices.First(s => s.ServiceName == ServiceNameTypes.SatAis);
+            this.ShipServices.Remove(existingService);
+            this.DeactiveAis();
         }
 
         public bool HasSatAisService()
@@ -123,17 +113,10 @@ namespace ShipParticularsApi.Entities
             this.IsUseAis = false;
         }
 
-        public void ManageGpsService(bool isGPSToggleOn, SatelliteDetails details, string userId)
+        public void ActiveGpsService(SatelliteDetails details, string userId)
         {
-            if (isGPSToggleOn)
-            {
-                this.ActivateGpsService(details.SatelliteId, details.SatelliteType, userId);
-                this.ManageSkTelinkCompanyShip(details.CompanyName);
-            }
-            else
-            {
-                DeactiveGpsService();
-            }
+            this.ActivateGpsService(details.SatelliteId, details.SatelliteType, userId);
+            this.ManageSkTelinkCompanyShip(details.CompanyName);
         }
 
         private void ActivateGpsService(string? satelliteId, string? satelliteType, string userId)
@@ -175,7 +158,7 @@ namespace ShipParticularsApi.Entities
             }
         }
 
-        private void DeactiveGpsService()
+        public void DeactiveGpsService()
         {
             if (!HasKtSatService())
             {

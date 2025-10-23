@@ -3,7 +3,6 @@ using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using ShipParticularsApi.Contexts;
 using ShipParticularsApi.Entities;
-using ShipParticularsApi.ValueObjects;
 using Xunit;
 using Xunit.Abstractions;
 using static ShipParticularsApi.Tests.Builders.Entities.ReplaceShipNameTestBuilder;
@@ -100,7 +99,7 @@ namespace ShipParticularsApi.Tests.Examples
                     .Include(s => s.ShipServices)
                     .SingleAsync(s => s.ShipKey == shipKey && s.IsService == true);
 
-                target.ManageAisService(false);
+                target.DeactiveAisService();
 
                 await actContext.SaveChangesAsync();
             }
@@ -140,7 +139,7 @@ namespace ShipParticularsApi.Tests.Examples
                     .AsSplitQuery()
                     .SingleAsync(s => s.ShipKey == shipKey && s.IsService == true);
 
-                target.ManageGpsService(false, new SatelliteDetails(null, null, null), FixedUserId);
+                target.DeactiveGpsService();
 
                 await actContext.SaveChangesAsync();
             }
