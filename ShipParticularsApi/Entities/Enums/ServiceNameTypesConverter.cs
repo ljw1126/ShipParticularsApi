@@ -1,4 +1,6 @@
-﻿namespace ShipParticularsApi.Entities.Enums
+﻿using ShipParticularsApi.Exceptions;
+
+namespace ShipParticularsApi.Entities.Enums
 {
     public static class ServiceNameTypesConverter
     {
@@ -20,7 +22,7 @@
                 "ship-particular" => ServiceNameTypes.ShipParticular,
                 "ams" => ServiceNameTypes.Ams,
                 "small-logger" => ServiceNameTypes.SmallLogger,
-                _ => throw new ArgumentException($"Invalid string value '{value}' for ServiceNameTypes enum")
+                _ => throw new InvalidOperationException($"서비스명 타입 변환 실패: 허용되지 않은 문자열 값 '{value}'")
             };
         }
 
@@ -42,8 +44,20 @@
                 ServiceNameTypes.ShipParticular => "ship-particular",
                 ServiceNameTypes.Ams => "ams",
                 ServiceNameTypes.SmallLogger => "small-logger",
-                _ => throw new ArgumentException($"Invalid ServiceNameTypes '{types}'")
+                _ => throw new InvalidOperationException($"유효하지 않은 서비스명 타입 값 입니다. '{types}'")
             };
+        }
+
+        public static ServiceNameTypes ParseFromRequest(string value)
+        {
+            try
+            {
+                return ToEnum(value);
+            }
+            catch (InvalidOperationException)
+            {
+                throw new BadRequestException($"유효하지 않은 서비스명 입니다. 입력 값: '{value}'");
+            }
         }
 
     }

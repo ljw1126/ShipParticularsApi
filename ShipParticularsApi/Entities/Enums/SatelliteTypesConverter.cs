@@ -1,4 +1,6 @@
-﻿namespace ShipParticularsApi.Entities.Enums
+﻿using ShipParticularsApi.Exceptions;
+
+namespace ShipParticularsApi.Entities.Enums
 {
     public static class SatelliteTypesConverter
     {
@@ -10,7 +12,7 @@
                 "KT_SAT" => SatelliteTypes.KtSat,
                 "SK_TELINK" => SatelliteTypes.SkTelink,
                 "SYNER_SAT" => SatelliteTypes.SynerSat,
-                _ => throw new ArgumentException($"Invalid string value '{value}' for SatelliteTypes enum")
+                _ => throw new InvalidOperationException($"위성 타입 변환 실패: 허용되지 않은 문자열 값 '{value}'")
             };
         }
 
@@ -22,8 +24,20 @@
                 SatelliteTypes.KtSat => "KT_SAT",
                 SatelliteTypes.SkTelink => "SK_TELINK",
                 SatelliteTypes.SynerSat => "SYNER_SAT",
-                _ => throw new ArgumentException($"Invalid SatelliteTypes '{types}'")
+                _ => throw new InvalidOperationException($"유효하지 않은 위성 타입 값 입니다. '{types}'")
             };
+        }
+
+        public static SatelliteTypes ParseFromRequest(string value)
+        {
+            try
+            {
+                return ToEnum(value);
+            }
+            catch (InvalidOperationException)
+            {
+                throw new BadRequestException($"유효하지 않은 위성 타입입니다. 입력 값: '{value}'");
+            }
         }
     }
 }
