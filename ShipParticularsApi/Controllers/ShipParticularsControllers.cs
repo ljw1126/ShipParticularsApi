@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using ShipParticularsApi.Controllers.Dtos.Mappers;
 using ShipParticularsApi.Controllers.Dtos.Reqs;
+using ShipParticularsApi.Exceptions;
 using ShipParticularsApi.Services;
 
 namespace ShipParticularsApi.Controllers
@@ -29,7 +30,7 @@ namespace ShipParticularsApi.Controllers
         {
             if (shipKey != req.ShipKey)
             {
-                return BadRequest();
+                throw new BadRequestException($"요청 오류: URL 경로의 선박 키('{shipKey}')와 본문의 선박 키('{req.ShipKey}')가 일치하지 않습니다. 키 값을 확인해주세요.");
             }
 
             var param = ShipParticularsParamMapper.ToParam(req);

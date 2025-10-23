@@ -1,4 +1,5 @@
 ﻿using ShipParticularsApi.Entities;
+using ShipParticularsApi.Exceptions;
 using ShipParticularsApi.Repositories;
 using ShipParticularsApi.Services.Dtos.Mapper;
 using ShipParticularsApi.Services.Dtos.Params;
@@ -49,8 +50,7 @@ namespace ShipParticularsApi.Services
 
             if (shipInfo == null)
             {
-                // TODO. 비즈니스적인 예와와 메시지 
-                throw new Exception();
+                throw new ResourceNotFoundException($"요청한 리소스(Resource)를 찾을 수 없습니다. : '{shipKey}'");
             }
 
             return ShipParticularsResultMapper.ToResult(shipInfo);
