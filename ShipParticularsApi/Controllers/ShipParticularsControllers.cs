@@ -19,7 +19,11 @@ namespace ShipParticularsApi.Controllers
 
             await service.Create(param);
 
-            return CreatedAtAction(nameof(GetShipParticularsAsync), new { shipKey = req.ShipKey });
+            return CreatedAtAction(
+                nameof(GetShipParticularsAsync),
+                new { shipKey = req.ShipKey },
+                new { shipKey = req.ShipKey }
+            );
         }
 
         // NOTE. https://developer.mozilla.org/ko/docs/Web/HTTP/Reference/Methods/PUT
@@ -35,12 +39,16 @@ namespace ShipParticularsApi.Controllers
 
             bool isNewResource = await service.Upsert(param);
 
-            if (isNewResource)
+            if (!isNewResource)
             {
-                return CreatedAtAction(nameof(GetShipParticularsAsync), new { shipKey = req.ShipKey });
+                return NoContent();
             }
 
-            return NoContent();
+            return CreatedAtAction(
+                nameof(GetShipParticularsAsync),
+                new { shipKey = req.ShipKey },
+                new { shipKey = req.ShipKey }
+            );
         }
 
         [HttpGet("{shipKey}")]
