@@ -59,7 +59,7 @@ namespace ShipParticularsApi.Tests.Services
                 .Build();
 
             // Act
-            await sut.Process(param);
+            await sut.Create(param);
 
             // Assert
             var repository = serviceProvider.GetRequiredService<IShipInfoRepository>();
@@ -85,7 +85,7 @@ namespace ShipParticularsApi.Tests.Services
             var param = ShipParticularsParam().WithIsAisToggleOn(true).Build();
 
             // Act
-            await sut.Process(param);
+            await sut.Create(param);
 
             // Assert
             var repository = serviceProvider.GetRequiredService<IShipInfoRepository>();
@@ -118,7 +118,7 @@ namespace ShipParticularsApi.Tests.Services
                 .Build();
 
             // Act
-            await sut.Process(param);
+            await sut.Create(param);
 
             // Assert
             var repository = serviceProvider.GetRequiredService<IShipInfoRepository>();
@@ -159,7 +159,7 @@ namespace ShipParticularsApi.Tests.Services
                 .Build();
 
             // Act
-            await sut.Process(param);
+            await sut.Create(param);
 
             // Assert
             var repository = serviceProvider.GetRequiredService<IShipInfoRepository>();
@@ -208,7 +208,7 @@ namespace ShipParticularsApi.Tests.Services
                 .Build();
 
             // Act
-            await sut.Process(param);
+            await sut.Upsert(param);
 
             // Assert
             var repository = serviceProvider.GetRequiredService<IShipInfoRepository>();
@@ -244,7 +244,7 @@ namespace ShipParticularsApi.Tests.Services
                 .Build();
 
             // Act
-            await sut.Process(param);
+            await sut.Upsert(param);
 
             // Assert
             var repository = serviceProvider.GetRequiredService<IShipInfoRepository>();
@@ -277,7 +277,7 @@ namespace ShipParticularsApi.Tests.Services
                 .Build();
 
             // Act
-            await sut.Process(param);
+            await sut.Upsert(param);
 
             // Assert
             var repository = serviceProvider.GetRequiredService<IShipInfoRepository>();
@@ -307,7 +307,7 @@ namespace ShipParticularsApi.Tests.Services
                 .Build();
 
             // Act
-            await sut.Process(param);
+            await sut.Upsert(param);
 
             // Assert
             var repository = serviceProvider.GetRequiredService<IShipInfoRepository>();
@@ -342,7 +342,7 @@ namespace ShipParticularsApi.Tests.Services
                 .Build();
 
             // Act
-            await sut.Process(param);
+            await sut.Upsert(param);
 
             // Assert
             var repository = serviceProvider.GetRequiredService<IShipInfoRepository>();
@@ -379,7 +379,7 @@ namespace ShipParticularsApi.Tests.Services
                 .Build();
 
             // Act
-            await sut.Process(param);
+            await sut.Upsert(param);
 
             // Assert
             var repository = serviceProvider.GetRequiredService<IShipInfoRepository>();
@@ -425,7 +425,7 @@ namespace ShipParticularsApi.Tests.Services
                 .Build();
 
             // Act
-            await sut.Process(param);
+            await sut.Upsert(param);
 
             // Assert
             var repository = serviceProvider.GetRequiredService<IShipInfoRepository>();
@@ -474,7 +474,7 @@ namespace ShipParticularsApi.Tests.Services
                 .Build();
 
             // Act
-            await sut.Process(param);
+            await sut.Upsert(param);
 
             // Assert
             var repository = serviceProvider.GetRequiredService<IShipInfoRepository>();
@@ -523,7 +523,7 @@ namespace ShipParticularsApi.Tests.Services
                .Build();
 
             // Act
-            await sut.Process(param);
+            await sut.Upsert(param);
 
             // Assert
             var repository = serviceProvider.GetRequiredService<IShipInfoRepository>();
@@ -572,7 +572,7 @@ namespace ShipParticularsApi.Tests.Services
                 .Build();
 
             // Act
-            await sut.Process(param);
+            await sut.Upsert(param);
 
             // Assert
             var repository = serviceProvider.GetRequiredService<IShipInfoRepository>();

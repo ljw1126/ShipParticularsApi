@@ -16,7 +16,7 @@ namespace ShipParticularsApi.Controllers
         {
             var param = ShipParticularsParamMapper.ToParam(req);
 
-            await service.Process(param);
+            await service.Create(param);
 
             return CreatedAtAction(
                 nameof(GetShipParticularsAsync),
@@ -35,7 +35,7 @@ namespace ShipParticularsApi.Controllers
 
             var param = ShipParticularsParamMapper.ToParam(req);
 
-            await service.Process(param);
+            await service.Upsert(param);
 
             return NoContent();
         }
