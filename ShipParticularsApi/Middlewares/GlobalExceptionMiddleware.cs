@@ -26,6 +26,10 @@ namespace ShipParticularsApi.Middlewares
 
             switch (exception)
             {
+                case ResourceAlreadyExistsException:
+                    context.Response.StatusCode = StatusCodes.Status409Conflict;
+                    title = "Resource Conflict";
+                    break;
                 case BadRequestException:
                     context.Response.StatusCode = StatusCodes.Status400BadRequest;
                     title = "Bad Request";

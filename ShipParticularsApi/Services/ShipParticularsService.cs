@@ -13,16 +13,39 @@ namespace ShipParticularsApi.Services
         IUserService userService
     ) : IShipParticularsService
     {
-        public async Task Process(ShipParticularsParam param)
+        public async Task Create(ShipParticularsParam param)
+        {
+            ShipInfo? existingShipInfo = await shipInfoRepository.GetReadOnlyByShipKeyAsync(param.ShipKey);
+
+            if (existingShipInfo != null)
+            {
+                throw new ResourceAlreadyExistsException("이미 등록된 ShipKey 입니다.");
+            }
+
+            var shipInfoDetails = ShipInfoDetails.From(param);
+            var entity = ShipInfo.From(shipInfoDetails);
+
+            ExecuteDomainLogic(entity, param);
+
+            await shipInfoRepository.UpsertAsync(entity);
+        }
+
+        public async Task Upsert(ShipParticularsParam param)
         {
             ShipInfo? shipInfo = await shipInfoRepository.GetByShipKeyAsync(param.ShipKey);
 
             var shipInfoDetails = ShipInfoDetails.From(param);
-            ShipInfo entityToProcess = (shipInfo == null)
+            ShipInfo entity = (shipInfo == null)
                 ? ShipInfo.From(shipInfoDetails)
                 : shipInfo.UpdateDetails(shipInfoDetails);
 
+            ExecuteDomainLogic(entity, param);
 
+            await shipInfoRepository.UpsertAsync(entity);
+        }
+
+        private void ExecuteDomainLogic(ShipInfo entityToProcess, ShipParticularsParam param)
+        {
             entityToProcess.ManageAisService(param.IsAisToggleOn);
 
             var satelliteDetails = new SatelliteDetails(
@@ -40,8 +63,6 @@ namespace ShipParticularsApi.Services
             {
                 entityToProcess.ManageShipModelTest(ShipModelTestDetails.From(param.ShipModelTestParam));
             }
-
-            await shipInfoRepository.UpsertAsync(entityToProcess);
         }
 
         public async Task<ShipParticularsResult> GetShipParticulars(string shipKey)

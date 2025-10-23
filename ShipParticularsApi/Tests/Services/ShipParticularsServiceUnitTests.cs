@@ -57,7 +57,7 @@ namespace ShipParticularsApi.Tests.Services
                 .Returns(Task.CompletedTask);
 
             // Act
-            await _sut.Process(param);
+            await _sut.Create(param);
 
             // Assert
             _mockShipInfoRepository.Verify(e => e.UpsertAsync(It.IsAny<ShipInfo>()), Times.Once);
@@ -84,7 +84,7 @@ namespace ShipParticularsApi.Tests.Services
                 .Returns(Task.CompletedTask);
 
             // Act
-            await _sut.Process(param);
+            await _sut.Create(param);
 
             // Assert
             _mockShipInfoRepository.Verify(e => e.UpsertAsync(It.IsAny<ShipInfo>()), Times.Once);
@@ -119,7 +119,7 @@ namespace ShipParticularsApi.Tests.Services
                 .Returns(Task.CompletedTask);
 
             // Act
-            await _sut.Process(param);
+            await _sut.Create(param);
 
             // Assert
             _mockShipInfoRepository.Verify(e => e.UpsertAsync(It.IsAny<ShipInfo>()), Times.Once);
@@ -164,7 +164,7 @@ namespace ShipParticularsApi.Tests.Services
                  .Returns(Task.CompletedTask);
 
             // Act
-            await _sut.Process(param);
+            await _sut.Create(param);
 
             // Assert
             _mockShipInfoRepository.Verify(e => e.UpsertAsync(It.IsAny<ShipInfo>()), Times.Once);
@@ -214,7 +214,7 @@ namespace ShipParticularsApi.Tests.Services
                  .Returns(Task.CompletedTask);
 
             // Act
-            await _sut.Process(param);
+            await _sut.Upsert(param);
 
             // Assert
             capturedEntity.Should().NotBeNull();
@@ -247,7 +247,7 @@ namespace ShipParticularsApi.Tests.Services
                 .Returns(Task.CompletedTask);
 
             // Act
-            await _sut.Process(param);
+            await _sut.Upsert(param);
 
             // Assert
             capturedEntity.Should().NotBeNull();
@@ -277,7 +277,7 @@ namespace ShipParticularsApi.Tests.Services
                 .Returns(Task.CompletedTask);
 
             // Act
-            await _sut.Process(param);
+            await _sut.Upsert(param);
 
             // Assert
             capturedEntity.Should().NotBeNull();
@@ -305,7 +305,7 @@ namespace ShipParticularsApi.Tests.Services
                 .Returns(Task.CompletedTask);
 
             // Act
-            await _sut.Process(param);
+            await _sut.Upsert(param);
 
             // Assert
             capturedEntity.Should().NotBeNull();
@@ -334,7 +334,7 @@ namespace ShipParticularsApi.Tests.Services
                 .Returns(Task.CompletedTask);
 
             // Act
-            await _sut.Process(param);
+            await _sut.Upsert(param);
 
             capturedEntity.Should().NotBeNull();
             capturedEntity.IsUseAis.Should().BeFalse();
@@ -361,7 +361,7 @@ namespace ShipParticularsApi.Tests.Services
                  .Returns(Task.CompletedTask);
 
             // Act
-            await _sut.Process(param);
+            await _sut.Upsert(param);
 
             capturedEntity.Should().NotBeNull();
 
@@ -396,7 +396,7 @@ namespace ShipParticularsApi.Tests.Services
                 .Returns(Task.CompletedTask);
 
             // Act
-            await _sut.Process(param);
+            await _sut.Upsert(param);
 
             // Assert
             capturedEntity.Should().NotBeNull();
@@ -437,7 +437,7 @@ namespace ShipParticularsApi.Tests.Services
                 .Returns(Task.CompletedTask);
 
             // Act
-            await _sut.Process(param);
+            await _sut.Upsert(param);
 
             // Assert
             capturedEntity.Should().NotBeNull();
@@ -481,7 +481,7 @@ namespace ShipParticularsApi.Tests.Services
                 .Returns(Task.CompletedTask);
 
             // Act
-            await _sut.Process(param);
+            await _sut.Upsert(param);
 
             // Assert
             capturedEntity.Should().NotBeNull();
@@ -525,7 +525,7 @@ namespace ShipParticularsApi.Tests.Services
                 .Returns(Task.CompletedTask);
 
             // Act
-            await _sut.Process(param);
+            await _sut.Upsert(param);
 
             // Assert
             capturedEntity.Should().NotBeNull();
@@ -571,7 +571,7 @@ namespace ShipParticularsApi.Tests.Services
                 .Returns(Task.CompletedTask);
 
             // Act
-            await _sut.Process(param);
+            await _sut.Upsert(param);
 
             // Assert
             capturedEntity.Should().NotBeNull();
