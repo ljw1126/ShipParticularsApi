@@ -115,11 +115,11 @@ namespace ShipParticularsApi.Entities
 
         public void ActiveGpsService(SatelliteDetails details, string userId)
         {
-            this.ActivateGpsService(details.SatelliteId, details.SatelliteType, userId);
+            this.ManageGpsService(details.SatelliteId, details.SatelliteType, userId);
             this.ManageSkTelinkCompanyShip(details.CompanyName);
         }
 
-        private void ActivateGpsService(string? satelliteId, string? satelliteType, string userId)
+        private void ManageGpsService(string? satelliteId, string? satelliteType, string userId)
         {
             if (HasKtSatService())
             {
