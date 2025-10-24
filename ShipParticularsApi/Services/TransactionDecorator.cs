@@ -6,26 +6,18 @@ using ShipParticularsApi.Services.Dtos.Results;
 
 namespace ShipParticularsApi.Services
 {
-    public class TransactionDecorator : IShipParticularsService
+    public class TransactionDecorator(ShipParticularsContext dbContext, IShipParticularsService target)
+        : IShipParticularsService
     {
-        private readonly ShipParticularsContext _dbContext;
-        private readonly IShipParticularsService _target;
-
-        public TransactionDecorator(ShipParticularsContext dbContext, IShipParticularsService target)
-        {
-            _dbContext = dbContext;
-            _target = target;
-        }
-
         public async Task Create(ShipParticularsParam param)
         {
-            await using var transaction = await _dbContext.Database.BeginTransactionAsync();
+            await using var transaction = await dbContext.Database.BeginTransactionAsync();
 
             try
             {
-                await _target.Create(param);
+                await target.Create(param);
 
-                await _dbContext.SaveChangesAsync();
+                await dbContext.SaveChangesAsync();
                 await transaction.CommitAsync();
             }
             catch (DbUpdateException e)
@@ -43,13 +35,13 @@ namespace ShipParticularsApi.Services
 
         public async Task<bool> Upsert(ShipParticularsParam param)
         {
-            await using var transaction = await _dbContext.Database.BeginTransactionAsync();
+            await using var transaction = await dbContext.Database.BeginTransactionAsync();
 
             try
             {
-                bool isNewResource = await _target.Upsert(param);
+                bool isNewResource = await target.Upsert(param);
 
-                await _dbContext.SaveChangesAsync();
+                await dbContext.SaveChangesAsync();
                 await transaction.CommitAsync();
 
                 return isNewResource;
@@ -69,7 +61,7 @@ namespace ShipParticularsApi.Services
 
         public Task<ShipParticularsResult> GetShipParticulars(string shipKey)
         {
-            return _target.GetShipParticulars(shipKey);
+            return target.GetShipParticulars(shipKey);
         }
 
     }
