@@ -15,8 +15,6 @@ namespace ShipParticularsApi.Entities
         [MaxLength(10)]
         public string ShipKey { get; set; }
 
-        public virtual ShipInfo ShipInfo { get; set; }
-
         [Column("SERVICE_NAME")]
         [MaxLength(100)]
         public ServiceNameTypes? ServiceName { get; set; }
