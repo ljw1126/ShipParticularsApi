@@ -36,13 +36,13 @@ Content-Type: application/json
   "shipCode": "TEST_SHIP_CODE"
 }
 
-### isGPSToggleOn on/off (SK TELINK 사용하지 않는 경우)
+### isAisToggleOn 
 PUT {{ShipParticularsApi_HostAddress}}/{{ShipKey}}
 Content-Type: application/json
 
 {
-  "isAisToggleOn": false,
-  "isGPSToggleOn": true,
+  "isAisToggleOn": true,
+  "isGPSToggleOn": false,
   "shipKey": "{{ShipKey}}",
   "callsign": "CALLSIGN",
   "shipName": "SHIP_NAME",
@@ -125,5 +125,8 @@ Content-Type: application/json
   },
   "skTelinkCompanyShipReq": {
     "companyName": "TEST_COMPANY_NAME"
+  },
+  "replaceShipNameReq" : {
+    "replacedShipName" : "변경된 선박명"
   }
 }
