@@ -21,8 +21,6 @@ namespace ShipParticularsApi.Entities
         [MaxLength(100)]
         public string CompanyName { get; set; }
 
-        public virtual ShipInfo ShipInfo { get; set; }
-
         public static SkTelinkCompanyShip Of(string shipKey, string companyName)
         {
             return new SkTelinkCompanyShip

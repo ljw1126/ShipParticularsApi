@@ -17,8 +17,6 @@ namespace ShipParticularsApi.Entities
         [MaxLength(10)]
         public string ShipKey { get; set; }
 
-        public virtual ShipInfo ShipInfo { get; set; }
-
         [Column("SATELLITE_TYPE")]
         [MaxLength(200)]
         public SatelliteTypes? SatelliteType { get; set; }

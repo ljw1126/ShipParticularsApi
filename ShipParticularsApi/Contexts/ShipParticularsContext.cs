@@ -20,7 +20,7 @@ namespace ShipParticularsApi.Contexts
 
             modelBuilder.Entity<ReplaceShipName>(entity =>
             {
-                entity.HasOne(child => child.ShipInfo)
+                entity.HasOne<ShipInfo>()
                 .WithOne(parent => parent.ReplaceShipName)
                 .HasForeignKey<ReplaceShipName>(child => child.ShipKey)
                 .HasPrincipalKey<ShipInfo>(parent => parent.ShipKey);
@@ -44,7 +44,7 @@ namespace ShipParticularsApi.Contexts
 
             modelBuilder.Entity<ShipModelTest>(entity =>
             {
-                entity.HasOne(child => child.ShipInfo)
+                entity.HasOne<ShipInfo>()
                 .WithOne(parent => parent.ShipModelTest)
                 .HasForeignKey<ShipModelTest>(child => child.ShipKey)
                 .HasPrincipalKey<ShipInfo>(parent => parent.ShipKey);
@@ -52,7 +52,7 @@ namespace ShipParticularsApi.Contexts
 
             modelBuilder.Entity<ShipSatellite>(entity =>
             {
-                entity.HasOne(child => child.ShipInfo)
+                entity.HasOne<ShipInfo>()
                 .WithOne(parent => parent.ShipSatellite)
                 .HasForeignKey<ShipSatellite>(child => child.ShipKey)
                 .HasPrincipalKey<ShipInfo>(parent => parent.ShipKey);
@@ -63,7 +63,7 @@ namespace ShipParticularsApi.Contexts
 
             modelBuilder.Entity<ShipService>(entity =>
             {
-                entity.HasOne(child => child.ShipInfo)
+                entity.HasOne<ShipInfo>()
                 .WithMany(parent => parent.ShipServices)
                 .HasForeignKey(child => child.ShipKey)
                 .HasPrincipalKey(parent => parent.ShipKey);
@@ -77,7 +77,7 @@ namespace ShipParticularsApi.Contexts
 
             modelBuilder.Entity<SkTelinkCompanyShip>(entity =>
             {
-                entity.HasOne(child => child.ShipInfo)
+                entity.HasOne<ShipInfo>()
                 .WithOne(parent => parent.SkTelinkCompanyShip)
                 .HasForeignKey<SkTelinkCompanyShip>(child => child.ShipKey)
                 .HasPrincipalKey<ShipInfo>(parent => parent.ShipKey);
