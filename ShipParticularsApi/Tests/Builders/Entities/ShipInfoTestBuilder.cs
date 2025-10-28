@@ -192,24 +192,23 @@ namespace ShipParticularsApi.Tests.Builders.Entities
 
         public ShipInfo Build()
         {
-            return new ShipInfo
-            {
-                Id = _Id,
-                ShipKey = _ShipKey,
-                Callsign = _Callsign,
-                ShipName = _ShipName,
-                ShipType = _ShipType,
-                ShipCode = _ShipCode,
-                ExternalShipId = _ExternalShipId,
-                IsUseKtsat = _IsUseKtsat,
-                IsService = _IsService,
-                IsUseAis = _IsUseAis,
-                ReplaceShipName = _ReplaceShipName,
-                ShipModelTest = _ShipModelTest,
-                ShipSatellite = _ShipSatellite,
-                ShipServices = _ShipServices,
-                SkTelinkCompanyShip = _SkTelinkCompanyShip
-            };
+            return new(
+                _Id,
+                _ShipKey,
+                _Callsign,
+                _ShipName,
+                _ShipType,
+                _ShipCode,
+                _ExternalShipId,
+                _IsUseKtsat,
+                _IsService,
+                _IsUseAis,
+                _ReplaceShipName,
+                _ShipModelTest,
+                _ShipSatellite,
+                _ShipServices,
+                _SkTelinkCompanyShip
+            );
         }
     }
 }

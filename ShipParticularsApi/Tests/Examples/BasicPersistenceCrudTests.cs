@@ -147,16 +147,17 @@ namespace ShipParticularsApi.Tests.Examples
 
             // Act
             var target = await context.ShipInfos.SingleAsync(s => s.ShipKey == "UPDATE01");
-            target.ShipName = "New Name";
-            target.IsUseAis = true;
+            target.ActiveAisService();
             await context.SaveChangesAsync();
 
             // Assert
             var actual = await context.ShipInfos.AsNoTracking()
+                                .Include(s => s.ShipServices)
                                 .SingleAsync(s => s.ShipKey == "UPDATE01");
 
-            actual.ShipName.Should().Be("New Name");
+            actual.Should().NotBeNull();
             actual.IsUseAis.Should().BeTrue();
+            actual.ShipServices.Should().ContainSingle();
         }
 
         [Fact]

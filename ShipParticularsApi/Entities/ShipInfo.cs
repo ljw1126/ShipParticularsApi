@@ -13,47 +13,108 @@ namespace ShipParticularsApi.Entities
         [Key]
         [Column("ID")]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public long Id { get; set; }
+        public long Id { get; private set; }
 
         [Required]
         [Column("SHIP_KEY")]
         [MaxLength(10)]
-        public string ShipKey { get; set; }
+        public string ShipKey { get; private set; }
 
         [Column("CALLSIGN")]
         [MaxLength(10)]
-        public string Callsign { get; set; }
+        public string Callsign { get; private set; }
 
         [Column("SHIP_NAME")]
         [MaxLength(10)]
-        public string ShipName { get; set; }
+        public string ShipName { get; private set; }
 
         [Column("SHIP_TYPE")]
         [MaxLength(100)]
-        public ShipTypes? ShipType { get; set; }
+        public ShipTypes? ShipType { get; private set; }
 
         [Column("SHIP_CODE")]
         [MaxLength(100)]
-        public string? ShipCode { get; set; }
+        public string? ShipCode { get; private set; }
 
         [Column("EXTERNAL_SHIP_ID")]
         [MaxLength(36)]
-        public string? ExternalShipId { get; set; }
+        public string? ExternalShipId { get; private set; }
 
         [Column("IS_USE_KTSAT")]
-        public bool? IsUseKtsat { get; set; }
+        public bool? IsUseKtsat { get; private set; }
 
         [Column("IS_SERVICE")]
-        public bool? IsService { get; set; }
+        public bool? IsService { get; private set; }
 
         [Column("IS_USE_AIS")]
-        public bool IsUseAis { get; set; }
+        public bool IsUseAis { get; private set; }
 
-        public virtual ReplaceShipName? ReplaceShipName { get; set; }
-        public virtual ShipModelTest? ShipModelTest { get; set; }
-        public virtual ShipSatellite? ShipSatellite { get; set; }
-        public virtual ICollection<ShipService>? ShipServices { get; set; } = [];
-        public virtual SkTelinkCompanyShip? SkTelinkCompanyShip { get; set; }
+        public virtual ReplaceShipName? ReplaceShipName { get; private set; }
+        public virtual ShipModelTest? ShipModelTest { get; private set; }
+        public virtual ShipSatellite? ShipSatellite { get; private set; }
+        public virtual ICollection<ShipService>? ShipServices { get; private set; } = [];
+        public virtual SkTelinkCompanyShip? SkTelinkCompanyShip { get; private set; }
+
+        public ShipInfo(
+            string shipKey,
+            string callsign,
+            string shipName,
+            ShipTypes? shipType,
+            string? shipCode,
+            bool? isService
+        ) : this(
+            0L,
+            shipKey,
+            callsign,
+            shipName,
+            shipType,
+            shipCode,
+            null,
+            false,
+            isService,
+            false,
+            null,
+            null,
+            null,
+            [],
+            null)
+        {
+        }
+
+        public ShipInfo(
+            long id,
+            string shipKey,
+            string callsign,
+            string shipName,
+            ShipTypes? shipType,
+            string? shipCode,
+            string? externalShipId,
+            bool? isUseKtsat,
+            bool? isService,
+            bool isUseAis,
+            ReplaceShipName? replaceShipName,
+            ShipModelTest? shipModelTest,
+            ShipSatellite? shipSatellite,
+            ICollection<ShipService>? shipServices,
+            SkTelinkCompanyShip? skTelinkCompanyShip
+        )
+        {
+            Id = id;
+            ShipKey = shipKey;
+            Callsign = callsign;
+            ShipName = shipName;
+            ShipType = shipType;
+            ShipCode = shipCode;
+            ExternalShipId = externalShipId;
+            IsUseKtsat = isUseKtsat;
+            IsService = isService;
+            IsUseAis = isUseAis;
+            ReplaceShipName = replaceShipName;
+            ShipModelTest = shipModelTest;
+            ShipSatellite = shipSatellite;
+            ShipServices = shipServices;
+            SkTelinkCompanyShip = skTelinkCompanyShip;
+        }
 
         public static ShipInfo From(ShipInfoDetails details)
         {
@@ -61,15 +122,14 @@ namespace ShipParticularsApi.Entities
             ArgumentException.ThrowIfNullOrEmpty(details.Callsign);
             ArgumentException.ThrowIfNullOrEmpty(details.ShipName);
 
-            return new()
-            {
-                ShipKey = details.ShipKey,
-                Callsign = details.Callsign,
-                ShipName = details.ShipName,
-                ShipType = ShipTypesConverter.ParseFromRequest(details.ShipType),
-                ShipCode = details.ShipCode,
-                IsService = true
-            };
+            return new(
+                details.ShipKey,
+                details.Callsign,
+                details.ShipName,
+                ShipTypesConverter.ParseFromRequest(details.ShipType),
+                details.ShipCode,
+                true
+            );
         }
 
         public ShipInfo UpdateDetails(ShipInfoDetails details)
