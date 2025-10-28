@@ -71,7 +71,7 @@ namespace ShipParticularsApi.Tests.Examples
                 actual.ShipSatellite.Should().NotBeNull();
                 actual.ShipSatellite.CreateDateTime.Should().BeOnOrAfter(startTime)
                     .And.BeOnOrBefore(endTime);
-                actual.ShipSatellite.UpdateDateTime.Should().Be(default);
+                actual.ShipSatellite.UpdateDateTime.Should().BeNull();
             }
         }
 
