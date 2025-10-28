@@ -51,7 +51,7 @@ namespace ShipParticularsApi.Tests.Examples
             await using (var arrangeContext = CreateContext())
             {
                 arrangeContext.ShipInfos.Add(NoService(shipKey)
-                        .WithReplaceShipName(ReplaceShipName().WithReplaceShipName("Next Vessel"))
+                        .WithReplaceShipName(ReplaceShipName().WithShipKey(shipKey).WithReplaceShipName("Next Vessel"))
                         .WithShipServices(
                             ShipService().WithShipKey(shipKey).WithServiceName(ServiceNameTypes.Cctv).WithIsCompleted(true),
                             ShipService().WithShipKey(shipKey).WithServiceName(ServiceNameTypes.EuMrv).WithIsCompleted(true),
