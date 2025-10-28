@@ -29,6 +29,8 @@ namespace ShipParticularsApi.Entities
 
         public ShipService(long id, string shipKey, ServiceNameTypes? serviceName, bool isCompleted)
         {
+            ArgumentException.ThrowIfNullOrEmpty(shipKey);
+
             Id = id;
             ShipKey = shipKey;
             ServiceName = serviceName;
@@ -37,8 +39,6 @@ namespace ShipParticularsApi.Entities
 
         public static ShipService Of(string shipKey, ServiceNameTypes serviceName)
         {
-            ArgumentException.ThrowIfNullOrEmpty(shipKey);
-
             return new(shipKey, serviceName, true);
         }
     }

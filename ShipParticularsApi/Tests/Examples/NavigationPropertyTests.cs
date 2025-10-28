@@ -53,9 +53,9 @@ namespace ShipParticularsApi.Tests.Examples
                 arrangeContext.ShipInfos.Add(NoService(shipKey)
                         .WithReplaceShipName(ReplaceShipName().WithReplaceShipName("Next Vessel"))
                         .WithShipServices(
-                            ShipService().WithServiceName(ServiceNameTypes.Cctv).WithIsCompleted(true),
-                            ShipService().WithServiceName(ServiceNameTypes.EuMrv).WithIsCompleted(true),
-                            ShipService().WithServiceName(ServiceNameTypes.NoonReport).WithIsCompleted(false)
+                            ShipService().WithShipKey(shipKey).WithServiceName(ServiceNameTypes.Cctv).WithIsCompleted(true),
+                            ShipService().WithShipKey(shipKey).WithServiceName(ServiceNameTypes.EuMrv).WithIsCompleted(true),
+                            ShipService().WithShipKey(shipKey).WithServiceName(ServiceNameTypes.NoonReport).WithIsCompleted(false)
                         )
                         .Build());
                 await arrangeContext.SaveChangesAsync();
@@ -86,8 +86,8 @@ namespace ShipParticularsApi.Tests.Examples
             {
                 arrangeContext.ShipInfos.Add(
                     NoService(shipKey).WithShipServices(
-                        ShipService().WithServiceName(ServiceNameTypes.SatAis).WithIsCompleted(true),
-                        ShipService().WithServiceName(ServiceNameTypes.KtSat).WithIsCompleted(true)
+                        SatAisService(shipKey),
+                        KtSatService(shipKey)
                     ).Build()
                 );
                 await arrangeContext.SaveChangesAsync();
