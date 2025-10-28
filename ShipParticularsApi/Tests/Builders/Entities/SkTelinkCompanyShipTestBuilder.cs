@@ -42,12 +42,7 @@ namespace ShipParticularsApi.Tests.Builders.Entities
 
         public SkTelinkCompanyShip Build()
         {
-            return new()
-            {
-                Id = _Id,
-                ShipKey = _ShipKey,
-                CompanyName = _CompanyName
-            };
+            return new(_Id, _ShipKey, _CompanyName);
         }
     }
 }

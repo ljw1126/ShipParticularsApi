@@ -153,29 +153,28 @@ namespace ShipParticularsApi.Tests.Builders.Entities
 
         public ShipModelTest Build()
         {
-            return new()
-            {
-                Id = _Id,
-                ShipKey = _ShipKey,
-                ZaBallast = _ZaBallast,
-                TransverseProjectionAreaBallast = _TransverseProjectionAreaBallast,
-                TransverseProjectionAreaScantling = _TransverseProjectionAreaScantling,
-                Kyy = _Kyy,
-                DraftFore = _DraftFore,
-                DraftAft = _DraftAft,
-                CbBallast = _CbBallast,
-                CbScantling = _CbScantling,
-                SubmergedSurfaceBallast = _SubmergedSurfaceBallast,
-                SubmergedSurfaceScantling = _SubmergedSurfaceScantling,
-                MidShipSectionAreaBallast = _MidShipSectionAreaBallast,
-                MidShipSectionAreaScantling = _MidShipSectionAreaScantling,
-                DisplacementBallast = _DisplacementBallast,
-                DisplacementScantling = _DisplacementScantling,
-                SpeedEtaDBallast = _SpeedEtaDBallast,
-                EtaDBallast = _EtaDBallast,
-                SpeedEtaDScantling = _SpeedEtaDScantling,
-                EtaDScantling = _EtaDScantling
-            };
+            return new(
+                _Id,
+                _ShipKey,
+                _ZaBallast,
+                _TransverseProjectionAreaBallast,
+                _TransverseProjectionAreaScantling,
+                _Kyy,
+                _DraftFore,
+                _DraftAft,
+                _CbBallast,
+                _CbScantling,
+                _SubmergedSurfaceBallast,
+                _SubmergedSurfaceScantling,
+                _MidShipSectionAreaBallast,
+                _MidShipSectionAreaScantling,
+                _DisplacementBallast,
+                _DisplacementScantling,
+                _SpeedEtaDBallast,
+                _EtaDBallast,
+                _SpeedEtaDScantling,
+                _EtaDScantling
+            );
         }
     }
 }
