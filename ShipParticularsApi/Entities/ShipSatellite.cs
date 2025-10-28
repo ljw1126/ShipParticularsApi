@@ -38,7 +38,10 @@ namespace ShipParticularsApi.Entities
 
         public static ShipSatellite Of(string shipKey, string satelliteId, string satelliteType, string userId)
         {
-            // TODO. 유효성 검사
+            ArgumentException.ThrowIfNullOrEmpty(shipKey);
+            ArgumentException.ThrowIfNullOrEmpty(satelliteId);
+            ArgumentException.ThrowIfNullOrEmpty(satelliteType);
+            ArgumentException.ThrowIfNullOrEmpty(userId);
 
             return new()
             {
@@ -59,6 +62,7 @@ namespace ShipParticularsApi.Entities
         {
             ArgumentException.ThrowIfNullOrWhiteSpace(satelliteId);
             ArgumentException.ThrowIfNullOrWhiteSpace(satelliteType);
+            ArgumentException.ThrowIfNullOrWhiteSpace(userId);
 
             this.SatelliteId = satelliteId;
             this.SatelliteType = SatelliteTypesConverter.ParseFromRequest(satelliteType);
