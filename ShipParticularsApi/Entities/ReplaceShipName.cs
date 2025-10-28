@@ -26,6 +26,8 @@ namespace ShipParticularsApi.Entities
 
         public ReplaceShipName(long id, string shipKey, string replacedShipName)
         {
+            ArgumentException.ThrowIfNullOrEmpty(shipKey);
+
             Id = id;
             ShipKey = shipKey;
             ReplacedShipName = replacedShipName;
@@ -33,8 +35,6 @@ namespace ShipParticularsApi.Entities
 
         public static ReplaceShipName From(string shipKey, ReplaceShipNameDetails data)
         {
-            ArgumentException.ThrowIfNullOrEmpty(shipKey);
-
             return new(shipKey, data.ReplacedShipName);
         }
 
