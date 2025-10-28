@@ -9,25 +9,33 @@ namespace ShipParticularsApi.Entities
         [Key]
         [Column("ID")]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public long Id { get; set; }
+        public long Id { get; private set; }
 
         [Required]
         [Column("SHIP_KEY")]
         [MaxLength(10)]
-        public string ShipKey { get; set; }
+        public string ShipKey { get; private set; }
 
         [Column("REPLACED_SHIP_NAME")]
-        public string ReplacedShipName { get; set; }
+        public string ReplacedShipName { get; private set; }
+
+        public ReplaceShipName(string shipKey, string replacedShipName)
+            : this(0L, shipKey, replacedShipName)
+        {
+        }
+
+        public ReplaceShipName(long id, string shipKey, string replacedShipName)
+        {
+            Id = id;
+            ShipKey = shipKey;
+            ReplacedShipName = replacedShipName;
+        }
 
         public static ReplaceShipName From(string shipKey, ReplaceShipNameDetails data)
         {
             ArgumentException.ThrowIfNullOrEmpty(shipKey);
 
-            return new()
-            {
-                ShipKey = shipKey,
-                ReplacedShipName = data.ReplacedShipName
-            };
+            return new(shipKey, data.ReplacedShipName);
         }
 
         public void Update(ReplaceShipNameDetails data)

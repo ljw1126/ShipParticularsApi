@@ -33,12 +33,7 @@ namespace ShipParticularsApi.Tests.Builders.Entities
 
         public ReplaceShipName Build()
         {
-            return new()
-            {
-                Id = _Id,
-                ShipKey = _ShipKey,
-                ReplacedShipName = _ReplacedShipName
-            };
+            return new(_Id, _ShipKey, _ReplacedShipName);
         }
     }
 }
