@@ -35,6 +35,7 @@ namespace ShipParticularsApi.Tests.Entities
                     .WithShipType(ShipTypes.Fishing)
                     .WithShipCode(shipInfoDetails.ShipCode)
                     .WithIsUseAis(false)
+                    .WithIsUseKtsat(false)
                     .Build();
 
                 newShipInfo.Should().NotBeNull();
@@ -62,6 +63,7 @@ namespace ShipParticularsApi.Tests.Entities
                     .WithIsUseAis(true)
                     .WithShipServices(SatAisService(shipInfoDetails.ShipKey))
                     .WithIsService(true)
+                    .WithIsUseKtsat(false)
                     .Build();
 
                 newShipInfo.Should().NotBeNull();
@@ -87,6 +89,7 @@ namespace ShipParticularsApi.Tests.Entities
                     .WithShipType(ShipTypes.Fishing)
                     .WithShipCode(shipInfoDetails.ShipCode)
                     .WithIsService(true)
+                    .WithIsUseKtsat(false)
                     .Build();
 
                 newShipInfo.Should().NotBeNull();
