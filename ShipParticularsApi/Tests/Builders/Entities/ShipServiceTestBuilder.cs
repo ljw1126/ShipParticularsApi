@@ -69,13 +69,7 @@ namespace ShipParticularsApi.Tests.Builders.Entities
 
         public ShipService Build()
         {
-            return new()
-            {
-                Id = _Id,
-                ShipKey = _ShipKey,
-                ServiceName = _ServiceName,
-                IsCompleted = _IsCompleted
-            };
+            return new(_Id, _ShipKey, _ServiceName, _IsCompleted);
         }
     }
 }
