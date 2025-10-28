@@ -24,7 +24,7 @@ namespace ShipParticularsApi.Entities
 
         public static ShipService Of(string shipKey, ServiceNameTypes serviceName)
         {
-            // 유효성 검사
+            ArgumentException.ThrowIfNullOrEmpty(shipKey);
 
             return new()
             {

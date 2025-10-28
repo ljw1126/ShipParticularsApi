@@ -23,6 +23,8 @@ namespace ShipParticularsApi.Entities
 
         public static SkTelinkCompanyShip Of(string shipKey, string companyName)
         {
+            ArgumentException.ThrowIfNullOrEmpty(shipKey);
+
             return new SkTelinkCompanyShip
             {
                 ShipKey = shipKey,
