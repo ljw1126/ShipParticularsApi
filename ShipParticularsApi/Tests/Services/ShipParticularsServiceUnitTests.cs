@@ -17,7 +17,7 @@ namespace ShipParticularsApi.Tests.Services
 {
     public class ShipParticularsServiceUnitTests
     {
-        private readonly ShipParticularsService _sut;
+        private readonly ShipParticularsService _sut; // System Under Test : 테스트 대상 시스템
         private readonly Mock<IShipInfoRepository> _mockShipInfoRepository;
         private readonly Mock<IUserService> _mockUserService;
         private const string FixedUserId = "TEST_USER_01";

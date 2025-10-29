@@ -41,8 +41,6 @@ namespace ShipParticularsApi.Tests.Examples
 
         ShipParticularsContext CreateContext() => new(_options);
 
-        // NOTE. UpdateDateTime이 nullable인데도 DateTime 기본값 할당됨
-        // Did not expect actual.ShipSatellite.UpdateDateTime to have a value, but found <0001-01-01 00:00:00.000>.
         [Fact]
         public async Task CreateDateTime_test()
         {
