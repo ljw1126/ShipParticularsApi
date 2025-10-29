@@ -22,6 +22,7 @@ namespace ShipParticularsApi.Tests.Services
         private readonly Mock<IUserService> _mockUserService;
         private const string FixedUserId = "TEST_USER_01";
 
+        // BeforeEach
         public ShipParticularsServiceUnitTests()
         {
             _mockShipInfoRepository = new Mock<IShipInfoRepository>();
