@@ -22,7 +22,7 @@ Content-Type: application/json
 GET {{ShipParticularsApi_HostAddress}}/{{ShipKey}}
 
 
-### isAisToggleOn on/off
+### shipType 수정하는 경우 (PASSENGER -> VEHICLE)
 PUT {{ShipParticularsApi_HostAddress}}/{{ShipKey}}
 Content-Type: application/json
 
@@ -36,7 +36,7 @@ Content-Type: application/json
   "shipCode": "TEST_SHIP_CODE"
 }
 
-### isAisToggleOn 
+### isAisToggleOn 하는 경우
 PUT {{ShipParticularsApi_HostAddress}}/{{ShipKey}}
 Content-Type: application/json
 
@@ -50,7 +50,7 @@ Content-Type: application/json
   "shipCode": "TEST_SHIP_CODE"
 }
 
-### isGPSToggleOn on (using KT_SAT)
+### KT 위성 서비스를 사용하는 경우
 PUT {{ShipParticularsApi_HostAddress}}/{{ShipKey}}
 Content-Type: application/json
 
@@ -69,7 +69,7 @@ Content-Type: application/json
 }
 
 
-### isGPSToggle On & Change to SK_TELINK
+### SK_TELINK 위성 서비스를 사용하는 경우
 ### SHIP_SATELLITE에 수정일이 반영되는지도 확인
 PUT {{ShipParticularsApi_HostAddress}}/{{ShipKey}}
 Content-Type: application/json
@@ -92,7 +92,7 @@ Content-Type: application/json
 }
 
 
-### isGPSToggleOn off
+### AIS/GPS 모두 Off 하는 경우
 PUT {{ShipParticularsApi_HostAddress}}/{{ShipKey}}
 Content-Type: application/json
 
@@ -106,8 +106,7 @@ Content-Type: application/json
   "shipCode": "TEST_SHIP_CODE"
 }
 
-### 신규 추가 & 전체 서비스 On
-### isAisToggleOn On & isGPSToggleOn On (using SK_TELINK)
+### AIS 서비스와 SK_TELINK 위성 서비스를 모두 사용하는 경우   
 POST {{ShipParticularsApi_HostAddress}}
 Content-Type: application/json
 
