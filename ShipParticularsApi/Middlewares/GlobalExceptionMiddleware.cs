@@ -35,7 +35,7 @@ namespace ShipParticularsApi.Middlewares
                     title = "Bad Request";
                     break;
                 case ResourceNotFoundException:
-                    context.Response.StatusCode = StatusCodes.Status404NotFound;
+                    context.Response.StatusCode = StatusCodes.Status204NoContent;
                     title = "Resource Not Found";
                     break;
                 case DatabaseConstraintException:
