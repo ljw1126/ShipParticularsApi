@@ -153,7 +153,8 @@ namespace ShipParticularsApi.Entities
         {
             if (!this.HasSatAisService()) return;
 
-            var existingService = this.ShipServices.First(s => s.ServiceName == ServiceNameTypes.SatAis);
+            var existingService = this.ShipServices.Single(s => s.ServiceName == ServiceNameTypes.SatAis);
+
             this.ShipServices.Remove(existingService);
             this.DeactiveAis();
         }
@@ -234,7 +235,7 @@ namespace ShipParticularsApi.Entities
             this.ExternalShipId = null;
             this.IsUseKtsat = false;
 
-            var existingService = this.ShipServices.First(s => s.ServiceName == ServiceNameTypes.KtSat);
+            var existingService = this.ShipServices.Single(s => s.ServiceName == ServiceNameTypes.KtSat);
             this.ShipServices.Remove(existingService);
         }
 
