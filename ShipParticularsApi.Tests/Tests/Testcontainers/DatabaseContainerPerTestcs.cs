@@ -7,6 +7,7 @@ using Xunit.Abstractions;
 
 using static ShipParticularsApi.Tests.Tests.Builders.Entities.ShipInfoTestBuilder;
 
+// NOTE. https://blog.jetbrains.com/dotnet/2023/10/24/how-to-use-testcontainers-with-dotnet-unit-tests/#container-per-test-strategy
 namespace ShipParticularsApi.Tests.Tests.Testcontainers
 {
     public class DatabaseContainerPerTestcs(ITestOutputHelper output)
@@ -21,6 +22,8 @@ namespace ShipParticularsApi.Tests.Tests.Testcontainers
         private DbContextOptions<ShipParticularsContext> _options;
 
         private ShipParticularsContext CreateContext() => new(_options);
+
+        private const string reason = "Study purpose";
 
         public async Task DisposeAsync()
         {
@@ -41,7 +44,7 @@ namespace ShipParticularsApi.Tests.Tests.Testcontainers
         }
 
 
-        [Fact(DisplayName = "DB에서 조회한 엔티티는 DbContext가 상태 추적 한다.")]
+        [Fact(DisplayName = "DB에서 조회한 엔티티는 DbContext가 상태 추적 한다.", Skip = reason)]
         public async Task AsTracking()
         {
             // Arrange
@@ -65,7 +68,7 @@ namespace ShipParticularsApi.Tests.Tests.Testcontainers
             // 🌟 await using 블록 종료 시, transaction이 롤백되어 데이터 자동 정리.
         }
 
-        [Fact(DisplayName = "AsNoTracking()으로 조회한 엔티티는 상태추적하지 않는다.")]
+        [Fact(DisplayName = "AsNoTracking()으로 조회한 엔티티는 상태추적하지 않는다.", Skip = reason)]
         public async Task AsNoTracking()
         {
             // Arrange
@@ -87,7 +90,7 @@ namespace ShipParticularsApi.Tests.Tests.Testcontainers
             entry.State.Should().Be(EntityState.Detached);
         }
 
-        [Fact(DisplayName = "shipKey에 해당하는 선박 정보가 있으면 true를 반환한다")]
+        [Fact(DisplayName = "shipKey에 해당하는 선박 정보가 있으면 true를 반환한다", Skip = reason)]
         public async Task ExistsByShipKeyAsync()
         {
             // Arrange
@@ -106,7 +109,7 @@ namespace ShipParticularsApi.Tests.Tests.Testcontainers
             actual.Should().BeTrue();
         }
 
-        [Fact(DisplayName = "shipKey에 해당하는 선박 정보가 없으면 false를 반환한다")]
+        [Fact(DisplayName = "shipKey에 해당하는 선박 정보가 없으면 false를 반환한다", Skip = reason)]
         public async Task None_ExistsByShipKeyAsync()
         {
             await using var context = CreateContext();
