@@ -4,6 +4,8 @@ using ShipParticularsApi.Repositories;
 using Xunit.Abstractions;
 using static ShipParticularsApi.Tests.Tests.Builders.Entities.ShipInfoTestBuilder;
 
+// NOTE. https://blog.jetbrains.com/dotnet/2023/10/24/how-to-use-testcontainers-with-dotnet-unit-tests/#container-per-collection-strategy
+// NOTE. nameof(..) 사용시 컴파일 시점에 클래스마다 다르게 해석되어 컨테이너가 각각 생성됨 (유의) => 문자열로 지정하는게 안정적
 namespace ShipParticularsApi.Tests.Tests.Testcontainers
 {
     [CollectionDefinition("Database Collection")]
