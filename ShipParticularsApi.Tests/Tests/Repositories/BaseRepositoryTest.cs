@@ -1,15 +1,13 @@
-﻿using Microsoft.EntityFrameworkCore.Storage;
-using ShipParticularsApi.Contexts;
+﻿using ShipParticularsApi.Contexts;
 using ShipParticularsApi.Tests.Tests.Testcontainers;
 using Xunit.Abstractions;
 
 namespace ShipParticularsApi.Tests.Tests.Repositories
 {
-    public abstract class BaseRepositoryTest : ITransactionalTest, IAsyncLifetime
+    // NOTE. IAsyncLifetime은 클래스 단위로 초기화/종료를 선언하다보니 동일한 DbContext 사용하게 됨 => 테스트 메서드별 개별 트랜잭션 관리 위해 사용하지 않음
+    public abstract class BaseRepositoryTest : ITransactionalTest
     {
         protected readonly DatabaseFixture _fixture;
-        protected ShipParticularsContext _context;
-        protected IDbContextTransaction _transaction;
         protected readonly ITestOutputHelper _output;
 
         protected BaseRepositoryTest(DatabaseFixture fixture, ITestOutputHelper output)
@@ -18,24 +16,6 @@ namespace ShipParticularsApi.Tests.Tests.Repositories
             this._output = output;
         }
 
-        public ShipParticularsContext Context => _context;
-
-        public async Task InitializeAsync()
-        {
-            _context = _fixture.CreateContext();
-            _transaction = await _context.Database.BeginTransactionAsync();
-        }
-
-        public async Task DisposeAsync()
-        {
-            _output.WriteLine($"Container Id = {_fixture.ContainerId}");
-            if (_transaction != null)
-            {
-                await _transaction.RollbackAsync();
-                await _transaction.DisposeAsync();
-            }
-
-            await _context.DisposeAsync();
-        }
+        public ShipParticularsContext Context => this._fixture.CreateContext();
     }
 }

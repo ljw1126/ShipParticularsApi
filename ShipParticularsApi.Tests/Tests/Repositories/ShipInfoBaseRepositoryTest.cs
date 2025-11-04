@@ -8,24 +8,33 @@ using static ShipParticularsApi.Tests.Tests.Builders.Entities.ShipInfoTestBuilde
 
 namespace ShipParticularsApi.Tests.Tests.Repositories
 {
+    // NOTE. IClassFixture를 추상 클래스에서 상속받아 사용하려 했으나, 컨테이너 초기화 이슈 발생하여 테스트 클래스에 직접 선언 유지
     public class ShipInfoBaseRepositoryTest(DatabaseFixture fixture, ITestOutputHelper output)
-        : BaseRepositoryTest(fixture, output), IClassFixture<DatabaseFixture>
+        : BaseRepositoryTest(fixture, output), IClassFixture<DatabaseFixture>, IDisposable
     {
+        public void Dispose()
+        {
+            this._output.WriteLine("Container Id = " + fixture.ContainerId);
+        }
+
         [Fact(DisplayName = "DB에서 조회한 엔티티는 DbContext가 상태 추적 한다.")]
         public async Task AsTracking()
         {
             // Arrange
+            await using var context = Context;
+            await using var transaction = await context.Database.BeginTransactionAsync();
+
             const string shipKey = "SHIP_KEY";
-            Context.ShipInfos.Add(NoService(shipKey).Build());
-            await Context.SaveChangesAsync();
+            context.ShipInfos.Add(NoService(shipKey).Build());
+            await context.SaveChangesAsync();
 
             // Act & Assert
-            var repository = new ShipInfoRepository(Context);
+            var repository = new ShipInfoRepository(context);
             var actual = await repository.GetByShipKeyAsync(shipKey);
 
             actual.Should().NotBeNull();
 
-            var entry = Context.Entry(actual!);
+            var entry = context.Entry(actual!);
             entry.State.Should().Be(EntityState.Unchanged);
         }
 
@@ -33,18 +42,21 @@ namespace ShipParticularsApi.Tests.Tests.Repositories
         public async Task AsNoTracking()
         {
             // Arrange
+            await using var context = Context;
+            await using var transaction = await context.Database.BeginTransactionAsync();
+
             const string shipKey = "SHIP_KEY";
 
-            Context.ShipInfos.Add(NoService(shipKey).Build());
-            await Context.SaveChangesAsync();
+            context.ShipInfos.Add(NoService(shipKey).Build());
+            await context.SaveChangesAsync();
 
             // Act & Assert
-            var repository = new ShipInfoRepository(Context);
+            var repository = new ShipInfoRepository(context);
             var actual = await repository.GetReadOnlyByShipKeyAsync(shipKey);
 
             actual.Should().NotBeNull();
 
-            var entry = Context.Entry(actual!);
+            var entry = context.Entry(actual!);
             entry.State.Should().Be(EntityState.Detached);
         }
 
@@ -52,12 +64,15 @@ namespace ShipParticularsApi.Tests.Tests.Repositories
         public async Task ExistsByShipKeyAsync()
         {
             // Arrange
+            await using var context = Context;
+            await using var transaction = await context.Database.BeginTransactionAsync();
+
             const string shipKey = "SHIP_KEY";
-            Context.ShipInfos.Add(NoService(shipKey).Build());
-            await Context.SaveChangesAsync();
+            context.ShipInfos.Add(NoService(shipKey).Build());
+            await context.SaveChangesAsync();
 
             // Act & Assert
-            var repository = new ShipInfoRepository(Context);
+            var repository = new ShipInfoRepository(context);
             bool actual = await repository.ExistsByShipKeyAsync(shipKey);
             actual.Should().BeTrue();
         }
@@ -65,13 +80,13 @@ namespace ShipParticularsApi.Tests.Tests.Repositories
         [Fact(DisplayName = "shipKey에 해당하는 선박 정보가 없으면 false를 반환한다")]
         public async Task None_ExistsByShipKeyAsync()
         {
-            var repository = new ShipInfoRepository(Context);
+            await using var context = Context;
+            await using var transaction = await context.Database.BeginTransactionAsync();
+            var repository = new ShipInfoRepository(context);
 
             bool actual = await repository.ExistsByShipKeyAsync("SHIP_KEY");
 
             actual.Should().BeFalse();
         }
-
-
     }
 }
